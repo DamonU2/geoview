@@ -123,7 +123,7 @@
         var group = groupNames.length > 0 ? groupNames[groupNames.length - 1] : '';
         cgpv.api.map('mapWM').layer.vector.deleteGeometryGroup(group);
         groupNames.splice(-1);
-        document.getElementById('created-group').innerHTML = groupNames.join(', ');
+        document.getElementById('created-group').textContent = groupNames.join(', ');
       });
 
       // get create GeomtryFromGroup button element and add event handler
@@ -133,6 +133,6 @@
         var name = document.getElementById('groupname').value !== '' ? document.getElementById('groupname').value : '';
         cgpv.api.map('mapWM').layer.vector.createGeometryGroup(name);
         groupNames.push(name);
-        document.getElementById('created-group').innerHTML = groupNames.join(', ');
+        document.getElementById('created-group').textContent = groupNames.join(', ');
       });
     });</script></body></html>
