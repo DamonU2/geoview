@@ -1,4 +1,4 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link href="https://fonts.googleapis.com/css?family=Roboto|Montserrat:200,300,400,900|Merriweather" rel="stylesheet"/><link rel="stylesheet" href="css/style.css"/><script src="cgpv-main.js"></script></head><body><div class="header-table"><table><tbody><tr><td><img class="header-logo" alt="logo" src="./img/Logo.png"/></td><td class="header-title"><h1><strong>Add Panels</strong></h1></td></tr><tr><td><a href="./index.html">Main</a><br/></td></tr></tbody></table><table><tbody><tr><td>This page is used to showcase adding panels to the appbar and adding panels and buttons to the navbar.</td></tr></tbody></table></div><div class="toolbar"><button class="add-appbar-panel-btn">Add Appbar Panel</button> <button class="add-navbar-panel-btn">Add Navbar Panel</button> <button class="add-navbar-button-btn">Add Navbar Button</button> <button class="add-navbar-button-group-btn">Add Navbar Panel New Group</button></div><div id="mapWM" class="llwp-map" data-lang="en" data-config="{
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link href="https://fonts.googleapis.com/css?family=Roboto|Montserrat:200,300,400,900|Merriweather" rel="stylesheet"/><link rel="stylesheet" href="css/style.css"/><script src="cgpv-main.js"></script></head><body><div class="header-table"><table><tbody><tr><td><img class="header-logo" alt="logo" src="./img/Logo.png"/></td><td class="header-title"><h1><strong>Add Panels</strong></h1></td></tr><tr><td><a href="./index.html">Main</a><br/></td></tr></tbody></table><table><tbody><tr><td>This page is used to showcase adding panels to the app-bar and adding panels and buttons to the navbar.</td></tr></tbody></table></div><div class="toolbar"><button class="add-appbar-panel-btn">Add Appbar Panel</button> <button class="add-navbar-panel-btn">Add Navbar Panel</button> <button class="add-navbar-button-btn">Add Navbar Button</button> <button class="add-navbar-button-group-btn">Add Navbar Panel New Group</button></div><div id="mapWM" class="llwp-map" data-lang="en" data-config="{
         'map': {
           'interaction': 'dynamic',
           'viewSettings': {
@@ -12,7 +12,7 @@
             'labeled': true
           }
         },
-        'components': ['overview-map', 'navbar', 'appbar'],
+        'components': ['overview-map', 'nav-bar', 'app-bar'],
         'corePackages': [],
         'theme': 'dark',
         'suportedLanguages': ['en']
@@ -29,8 +29,8 @@
       // get add panel button element for WM map
       var addAppbarPanelBtn = document.getElementsByClassName('add-appbar-panel-btn')[0];
 
-      // add appbar panel btn click event handler
-      // button will open a panel on the appbar
+      // add app-bar panel btn click event handler
+      // button will open a panel on the app-bar
       addAppbarPanelBtn.addEventListener('click', function (e) {
         const button = {
           tooltip: 'Test',
@@ -48,11 +48,11 @@
         cgpv.api.map('mapWM').appBarButtons.createAppbarPanel(button, panel, null);
       });
 
-      // get add navbar panel button element for WM map
+      // get add nav-bar panel button element for WM map
       var addNavbarPanelBtn = document.getElementsByClassName('add-navbar-panel-btn')[0];
 
-      // add navbar panel btn click event handler
-      // button will open a panel on the navbar
+      // add nav-bar panel btn click event handler
+      // button will open a panel on the nav-bar
       addNavbarPanelBtn.addEventListener('click', function (e) {
         const button = {
           tooltip: 'Test',
@@ -70,10 +70,10 @@
         cgpv.api.map('mapWM').navBarButtons.createNavbarButtonPanel(button, panel, null);
       });
 
-      // get add navbar button element for WM map
+      // get add nav-bar button element for WM map
       var addNavbarButtonBtn = document.getElementsByClassName('add-navbar-button-btn')[0];
 
-      // add navbar button btn click event handler
+      // add nav-bar button btn click event handler
       // button will call a function
       addNavbarButtonBtn.addEventListener('click', function (e) {
         const button = {
@@ -89,11 +89,11 @@
         cgpv.api.map('mapWM').navBarButtons.createNavbarButton(button, null);
       });
 
-      // get add navbar button group element for WM map
+      // get add nav-bar button group element for WM map
       var addNavbarButtonGroupBtn = document.getElementsByClassName('add-navbar-button-group-btn')[0];
 
-      // add navbar button group btn click event handler
-      // button will add a button panel on the navbar in a new group
+      // add nav-bar button group btn click event handler
+      // button will add a button panel on the nav-bar in a new group
       addNavbarButtonGroupBtn.addEventListener('click', function (e) {
         const button = {
           tooltip: 'Group',
@@ -107,7 +107,7 @@
           width: 400,
         };
 
-        // call an api function to add a new button panel in the navbar in a new group
+        // call an api function to add a new button panel in the nav-bar in a new group
         cgpv.api.map('mapWM').navBarButtons.createNavbarButtonPanel(button, panel, 'newGroup');
       });
     });</script></body></html>
