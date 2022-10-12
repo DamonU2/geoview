@@ -13,15 +13,39 @@
         },
         'listOfGeoviewLayerConfig': [
           {
-            'layerId': 'Other',
-            'layerName': { 'en': 'Other' },
-            'metadataAccessPath': { 'en': 'https://geo.weather.gc.ca/geomet' },
+            'layerId': 'wmsLYR1-Root',
+            'layerName': { 'en': 'Root' },
+            'metadataAccessPath': { 'en': 'https://ows.mundialis.de/services/service' },
+            'initialSettings': { 'visible': true },
+            'geoviewLayerType': 'ogcWms',
+            'listOfLayerEntryConfig': [
+              {
+                'entryType': 'group',
+                'layerId': 'wmsLYR1-Group',
+                'layerName': { 'en': 'Group' },
+                'listOfLayerEntryConfig': [
+                  {
+                    'initialSettings': { 'visible': true },
+                    'layerId': 'OSM-WMS'
+                  },
+                  {
+                    'initialSettings': { 'visible': false },
+                    'layerId': 'TOPO-OSM-WMS'
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            'layerId': 'DataCube',
+            'layerName': { 'en': 'MSI' },
+            'metadataAccessPath': { 'en': 'https://datacube.services.geo.ca/ows/msi' },
             'initialSettings': { 'visible': true },
             'geoviewLayerType': 'ogcWms',
             'listOfLayerEntryConfig': [
               {
                 'initialSettings': { 'visible': true },
-                'layerId': 'RAQDPS-FW.CE_HOTSPOTS.2019'
+                'layerId': 'top-layer'
               }
             ]
           }
@@ -38,10 +62,10 @@
         cgpv.api.map('LYR3').layer.layers['esriDynamicLYR3.2'].setVisible(false, '1');
         cgpv.api.map('LYR3').layer.layers['esriDynamicLYR3.2'].setVisible(true, '2');
         cgpv.api.map('LYR3').layer.layers['esriDynamicLYR3.2'].setVisible(false, '3');
-        /* /
-        cgpv.api.map('LYR1').layer.layers['DataCube'].setVisible(false, 'top-layer');
-        cgpv.api.map('LYR1').layer.layers['DataCube'].setVisible(false, 'msi');
-        cgpv.api.map('LYR1').layer.layers['DataCube'].setVisible(false, 'msi-94-or-more');
+        /*/
+        cgpv.api.map('LYR1').layer.layers['DataCube'].setVisible(true, 'top-layer');
+        cgpv.api.map('LYR1').layer.layers['DataCube'].setVisible(true, 'msi');
+        cgpv.api.map('LYR1').layer.layers['DataCube'].setVisible(true, 'msi-94-or-more');
         const gvLayer = cgpv.api.map('LYR1').layer.layers['wmsLYR1-Root'];
         if (gvLayer) {
           // gvLayer.setVisible(true, 'OSM-WMS');
@@ -52,7 +76,7 @@
         cgpv.api.event.on(cgpv.api.eventNames.GET_FEATURE_INFO.QUERY_RESULT, (payload) => {
           console.log(payload)
         }, 'LYR1/msi');
-        //* /
+        //*/
 
         var getFeatureInfoButton = document.getElementById('get-feature-info');
         getFeatureInfoButton.addEventListener('click', function (e) {
