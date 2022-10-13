@@ -106,7 +106,7 @@
               {
                 'layerId': 'esriDynamicLYR3.2',
                 'layerName': {
-                  'en': 'Eco Geo'
+                  'en': 'Flood'
                 },
                 'metadataAccessPath': {
                   'en': 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/historical_flood_event_en/MapServer/'
@@ -142,11 +142,11 @@
                 'layerId': 'esriFeatureLYR4',
                 'layerName': { 'en': 'Water quality at monitoring sites' },
                 'metadataAccessPath': {
-                  'en': 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/CESI/MapServer'
+                  'en': 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/DMS/DEU_CSO_Volume/MapServer'
                 },
                 'geoviewLayerType': 'esriFeature',
                 'listOfLayerEntryConfig': [
-                  { 'layerId': '5' }
+                  { 'layerId': '8' }
                 ]
               }
             ]
@@ -401,16 +401,34 @@
     });
 
 
-    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR3', 'esriDynamicLYR3.2') }, 'LYR3');
-    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR4', 'esriFeatureLYR4') }, 'LYR4');
-    function handleMapClick(payload, mapId, layerId) {
-      const prom = cgpv.api.map(mapId).layer.layers[layerId].getFeatureInfo(payload.coordinates.lnglat, undefined, 'at pixel');
+    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR1', 'OSM-WMS') }, 'LYR1');
+    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR3', '0') }, 'LYR3');
+    // NOT WORKING: Always return null
+    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR4', '8') }, 'LYR4');
+    // NOT WORKING: Always return null
+    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR5', 'polygons.json') }, 'LYR5');
+    // NOT WORKING: Always return null
+    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR6', 'GISDATA.AIRPORTS_PT') }, 'LYR6');
+    // NOT WORKING: Always return null
+    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR7', 'lakes') }, 'LYR7');
+    // NOT WORKING: Event not trapped
+    cgpv.api.event.on(cgpv.api.eventNames.MAP.EVENT_MAP_SINGLE_CLICK, (payload) => { handleMapClick(payload, 'LYR8', 'ccc75c12-5acc-4a6a-959f-ef6f621147b9') }, 'LYR8');
 
-      prom.then((val) => {
+    function handleMapClick(payload, mapId, layerId) {
+      cgpv.api.event.once(cgpv.api.eventNames.GET_FEATURE_INFO.QUERY_RESULT, (payload) => {
         document.getElementById(`${mapId}INFO`).textContent = 'Click on feature on the map';
-        if (val !== null) document.getElementById(`${mapId}INFO`).textContent = JSON.stringify(val.pop(), undefined, 2);
-      })
+        if (payload.data !== null) document.getElementById(`${mapId}INFO`).textContent = JSON.stringify(payload.data.pop(), undefined, 2);
+      }, `${mapId}/${layerId}`);
+      
+      cgpv.api.event.emit(
+        cgpv.types.getFeatureInfoPayload(
+          cgpv.api.eventNames.GET_FEATURE_INFO.QUERY_LAYER,
+          `${mapId}/${layerId}`,
+          { location: payload.coordinates.lnglat, queryType: 'at coordinate' }
+        )
+      );
     }
+    
 
     /**
     //add legend to WMS layer
