@@ -60,7 +60,7 @@
     function addCircle(map) {
       cgpv.api.map(map).layer.vector.setActiveGeometryGroup(document.getElementById('groupname').value);
       // call an api function to draw a polygon
-      const circle = cgpv.api.map(map).layer.vector.addCircle([-100, 50], 0.25, {
+      const circle = cgpv.api.map(map).layer.vector.addCircle([-100, 50], 1, {
         style: {
           strokeColor: 'red',
           fillColor: '#f03',
@@ -73,7 +73,7 @@
     function addCircleMarker(map) {
       cgpv.api.map(map).layer.vector.setActiveGeometryGroup(document.getElementById('groupname').value);
       // call an api function to draw a polygon
-      const circleMarker = cgpv.api.map(map).layer.vector.addCircleMarker([-109, 70], 0.25, {
+      const circleMarker = cgpv.api.map(map).layer.vector.addCircleMarker([-109, 70], 1, {
         style: {
           strokeColor: 'red',
           fillColor: '#f03',
