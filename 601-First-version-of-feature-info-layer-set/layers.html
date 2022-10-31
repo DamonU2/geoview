@@ -526,7 +526,7 @@
           const addRow = (layerPath, label, canvas) => {
             const tableRow = document.createElement('tr');
             addData(layerPath, tableRow);
-            addData(label, tableRow); canvas.style = "border: 1px solid black;"
+            addData(label, tableRow); // canvas.style = "border: 1px solid black;"
             addData(canvas, tableRow);
             table.appendChild(tableRow);
           }
