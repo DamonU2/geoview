@@ -220,7 +220,7 @@
       'suportedLanguages': [
         'en'
       ]
-  }"></div><p>Add a legend component.</p><button type="button" class="collapsible">Configuration Snippet</button><pre id="UC4CS" class="panel"></pre><script src="codedoc.js"></script><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
+  }"></div><p>Add a legend component in Panel.</p><div id="legend-item-example"></div><p>Add a single legend item component in div.</p><button type="button" class="collapsible">Configuration Snippet</button><pre id="UC4CS" class="panel"></pre><script src="codedoc.js"></script><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
     cgpv.init(function () {
       console.log('api is ready');
 
@@ -229,7 +229,7 @@
       createConfigSnippet();
 
       // import react and api from the core
-      const { react, api, ui } = cgpv;
+      const { react, reactDOM, api, ui } = cgpv;
 
       // define the map id
       const mapIdOne = 'UC1';
@@ -294,5 +294,9 @@
 
       // call an api function to add a panel with a button in the default group
       api.map(mapIdFour).appBarButtons.createAppbarPanel(button, panel, null);
+
+      const legendItemOutside = api.map(mapIdFour).legend.createLegendItem({layerId: 'wmsLYR1-msi'})
+      const legendItemDiv = document.getElementById('legend-item-example');
+      reactDOM.render(legendItemOutside, legendItemDiv);
 
     });</script></body></html>
