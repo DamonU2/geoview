@@ -233,7 +233,7 @@
       let isOpen = false;
       function LayerDataGridComponent() { return cgpv.api.maps.mapWM.dataGrid.createDataGrid({ layerId: 'esriFeatureLYR4' })};
       document.getElementById('grid-sample-button').addEventListener('click', () => {
-        if (!isOpen) cgpv.reactDom.render(cgpv.api.maps.mapWM.dataGrid.createDataGrid({ layerId: 'esriFeatureLYR4' }), document.getElementById('grid-sample'));
+        if (!isOpen) cgpv.reactDOM.render(cgpv.api.maps.mapWM.dataGrid.createDataGrid({ layerId: 'esriFeatureLYR4' }), document.getElementById('grid-sample'));
         isOpen = !isOpen;
       });
     });</script></body></html>
