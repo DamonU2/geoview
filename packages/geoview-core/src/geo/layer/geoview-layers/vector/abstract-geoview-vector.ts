@@ -1,10 +1,10 @@
 /* eslint-disable no-param-reassign, no-var */
 import Feature from 'ol/Feature';
-import { Vector as VectorSource } from 'ol/source';
+import { Cluster, Vector as VectorSource } from 'ol/source';
 import { Options as SourceOptions } from 'ol/source/Vector';
 import { VectorImage as VectorLayer } from 'ol/layer';
 import { Options as VectorLayerOptions } from 'ol/layer/VectorImage';
-import { Geometry } from 'ol/geom';
+import { Geometry, Point, Polygon, LineString } from 'ol/geom';
 import { all } from 'ol/loadingstrategy';
 import { ReadOptions } from 'ol/format/Feature';
 import BaseLayer from 'ol/layer/Base';
@@ -141,12 +141,35 @@ export abstract class AbstractGeoViewVector extends AbstractGeoViewLayer {
   private createVectorLayer(layerEntryConfig: TypeBaseLayerEntryConfig, vectorSource: VectorSource<Geometry>): VectorLayer<VectorSource> {
     const layerOptions: VectorLayerOptions<VectorSource> = {
       properties: { layerEntryConfig },
-      source: vectorSource,
+      source: layerEntryConfig.source!.cluster.enable
+        ? new Cluster({
+            source: vectorSource,
+            distance: layerEntryConfig.source!.cluster.distance,
+            minDistance: layerEntryConfig.source!.cluster.minDistance,
+            geometryFunction: (feature) => {
+              if (feature.getGeometry() instanceof Polygon && layerEntryConfig.source!.cluster.clusterPolygon) {
+                return feature.getGeometry()!.getInteriorPoint();
+              }
+
+              if (feature.getGeometry() instanceof LineString && layerEntryConfig.source!.cluster.clusterLineString) {
+                return new Point(feature.getGeometry()!.getCoordinateAt(0.5));
+              }
+
+              return feature.getGeometry();
+            },
+          })
+        : vectorSource,
       style: (feature) => {
+        const { geoviewRenderer } = api.map(this.mapId);
+
+        if (layerEntryConfig.source!.cluster.enable && feature.get('features').length > 1) {
+          return geoviewRenderer.getClusterStyle(feature, layerEntryConfig);
+        }
+
         if ('style' in layerEntryConfig) {
-          const { geoviewRenderer } = api.map(this.mapId);
           return geoviewRenderer.getFeatureStyle(feature, layerEntryConfig);
         }
+
         return undefined;
       },
     };
