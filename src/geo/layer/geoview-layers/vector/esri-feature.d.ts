@@ -108,6 +108,8 @@ export declare class EsriFeature extends AbstractGeoViewVector {
      * Create a source configuration for the vector layer.
      *
      * @param {TypeEsriFeatureLayerEntryConfig} layerEntryConfig The layer entry configuration.
+     * @param {SourceOptions} sourceOptions The source options (default: { strategy: all }).
+     * @param {ReadOptions} readOptions The read options (default: {}).
      *
      * @returns {VectorSource<Geometry>} The source configuration that will be used to create the vector layer.
      */

@@ -6,6 +6,8 @@ export interface TypeLegendItemProps {
     subLayerId?: string;
     layerConfigEntry?: TypeLayerEntryConfig;
     isRemoveable?: boolean;
+    isParentVisible?: boolean;
+    toggleParentVisible?: () => void;
 }
 /**
  * Legend Item for a Legend list

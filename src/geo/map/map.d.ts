@@ -139,10 +139,12 @@ export declare class MapViewer {
      */
     toggleMapInteraction: (interaction: string) => void;
     /**
-     * Create bounds on map
+     * Fit the map to its boundaries. It is assumed that the boundaries use the map projection. If projectionCode is undefined,
+     * the boundaries are used as is, otherwise they are reprojected from the specified projection code to the map projection.
      *
      * @param {Extent} bounds map bounds
+     * @param {string | number | undefined} projectionCode Optional projection code used by the bounds.
      * @returns the bounds
      */
-    fitBounds: (bounds: Extent) => void;
+    fitBounds: (bounds: Extent, projectionCode?: string | number | undefined) => void;
 }

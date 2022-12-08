@@ -53,13 +53,16 @@ export declare abstract class AbstractGeoViewVector extends AbstractGeoViewLayer
      * Create a source configuration for the vector layer.
      *
      * @param {TypeBaseLayerEntryConfig} layerEntryConfig The layer entry configuration.
+     * @param {SourceOptions} sourceOptions The source options (default: { strategy: all }).
+     * @param {ReadOptions} readOptions The read options (default: {}).
      *
      * @returns {VectorSource<Geometry>} The source configuration that will be used to create the vector layer.
      */
     protected createVectorSource(layerEntryConfig: TypeBaseLayerEntryConfig, sourceOptions?: SourceOptions, readOptions?: ReadOptions): VectorSource<Geometry>;
     /** ***************************************************************************************************************************
      * Create a vector layer. The layer has in its properties a reference to the layer entry configuration used at creation time.
-     * The layer entry configuration keeps a reference to the layer in the gvLayer attribute.
+     * The layer entry configuration keeps a reference to the layer in the gvLayer attribute. If clustering is enabled, creates a
+     * cluster source and uses that to create the layer.
      *
      * @param {TypeBaseLayerEntryConfig} layerEntryConfig The layer entry configuration used by the source.
      * @param {VectorSource<Geometry>} vectorSource The source configuration for the vector layer.
