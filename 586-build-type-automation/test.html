@@ -42,15 +42,23 @@
       'suportedLanguages': ['en']
     }"></div><button class="Get-Legend">Get Legend</button> <button class="Show-Bounds-wms">Show Bounds</button> <button class="Show-MultiPolygons">Find multi-polygons</button> <button class="Show-MultiPoints">Find multi-points</button><div id="legend-table-div"></div><button type="button" class="collapsible">Get Feature Info</button><pre style="height: 20pc; overflow-y: scroll;" id="wmsResultSetId" class="panel">Click on feature on the map</pre><hr/><button type="button" class="collapsible">Configuration Snippet</button><pre id="LYR1CS" class="panel"></pre><hr/><script src="codedoc.js"></script><script>const showBoundsFunction = () => {
         cgpv.api.map('LYR1').layer.vector.deleteGeometryGroup();
+        var allBounds;
         Object.keys(cgpv.api.map('LYR1').layer.geoviewLayers).forEach((geoviewLayerId) => {
           Object.keys(cgpv.api.map('LYR1').layer.registeredLayers).forEach((layerPath) => {
             if (layerPath.startsWith(geoviewLayerId)) {
-              const bbox = cgpv.api.map('LYR1').layer.geoviewLayers[geoviewLayerId].getBounds(layerPath, 4326);
+              const bbox = cgpv.api.map('LYR1').layer.geoviewLayers[geoviewLayerId].calculateBounds(layerPath, 4326);
               addBoundsPolygon(bbox, 4326, 4326);
+              if (!allBounds) allBounds = bbox;
+              else allBounds = [
+                Math.min(allBounds[0], bbox[0]),
+                Math.min(allBounds[1], bbox[1]),
+                Math.max(allBounds[2], bbox[2]),
+                Math.max(allBounds[3], bbox[3]),
+              ];
             }
           });
         });
-        cgpv.api.map('LYR1').fitBounds();
+        cgpv.api.map('LYR1').fitBounds(allBounds, 4326);
       }
       // initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
       cgpv.init(function () {
