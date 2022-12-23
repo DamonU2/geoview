@@ -6,6 +6,7 @@ import BaseLayer from 'ol/layer/Base';
 import LayerGroup from 'ol/layer/Group';
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
+import { Extent } from 'ol/extent';
 import { AbstractGeoViewLayer } from '../abstract-geoview-layers';
 import { TypeBaseLayerEntryConfig, TypeLayerEntryConfig, TypeListOfLayerEntryConfig } from '../../../map/map-schema-types';
 import { TypeArrayOfFeatureInfoEntries } from '../../../../api/events/payloads/get-feature-info-payload';
@@ -53,13 +54,16 @@ export declare abstract class AbstractGeoViewVector extends AbstractGeoViewLayer
      * Create a source configuration for the vector layer.
      *
      * @param {TypeBaseLayerEntryConfig} layerEntryConfig The layer entry configuration.
+     * @param {SourceOptions} sourceOptions The source options (default: { strategy: all }).
+     * @param {ReadOptions} readOptions The read options (default: {}).
      *
      * @returns {VectorSource<Geometry>} The source configuration that will be used to create the vector layer.
      */
     protected createVectorSource(layerEntryConfig: TypeBaseLayerEntryConfig, sourceOptions?: SourceOptions, readOptions?: ReadOptions): VectorSource<Geometry>;
     /** ***************************************************************************************************************************
      * Create a vector layer. The layer has in its properties a reference to the layer entry configuration used at creation time.
-     * The layer entry configuration keeps a reference to the layer in the gvLayer attribute.
+     * The layer entry configuration keeps a reference to the layer in the gvLayer attribute. If clustering is enabled, creates a
+     * cluster source and uses that to create the layer.
      *
      * @param {TypeBaseLayerEntryConfig} layerEntryConfig The layer entry configuration used by the source.
      * @param {VectorSource<Geometry>} vectorSource The source configuration for the vector layer.
@@ -129,4 +133,18 @@ export declare abstract class AbstractGeoViewVector extends AbstractGeoViewLayer
      * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
      */
     protected getFeatureInfoUsingPolygon(location: Coordinate[], layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    /** ***************************************************************************************************************************
+     * Compute the layer bounds or undefined if the result can not be obtained from le feature extents that compose the layer. If
+     * layerPathOrConfig is undefined, the active layer is used. If projectionCode is defined, returns the bounds in the specified
+     * projection otherwise use the map projection. The bounds are different from the extent. They are mainly used for display
+     * purposes to show the bounding box in which the data resides and to zoom in on the entire layer data. It is not used by
+     * openlayer to limit the display of data on the map.
+     *
+     * @param {string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null} layerPathOrConfig Optional layer path or
+     * configuration.
+     * @param {string | number | undefined} projectionCode Optional projection code to use for the returned bounds.
+     *
+     * @returns {Extent} The layer bounding box.
+     */
+    calculateBounds(layerPathOrConfig?: string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null, projectionCode?: string | number | undefined): Extent | undefined;
 }

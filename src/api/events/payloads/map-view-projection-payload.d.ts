@@ -1,6 +1,6 @@
 import { PayloadBaseClass } from './payload-base-class';
 import { EventStringId } from '../event-types';
-import { TypeProjectionCodes } from '../../../geo/map/map-schema-types';
+import { TypeValidMapProjectionCodes } from '../../../geo/map/map-schema-types';
 /**
  * type guard function that redefines a PayloadBaseClass as a MapViewProjectionPayload
  * if the event attribute of the verifyIfPayload parameter is valid. The type ascention
@@ -17,7 +17,7 @@ export declare const payloadIsAMapViewProjection: (verifyIfPayload: PayloadBaseC
  * @class MapViewProjectionPayload
  */
 export declare class MapViewProjectionPayload extends PayloadBaseClass {
-    projection: TypeProjectionCodes;
+    projection: TypeValidMapProjectionCodes;
     /**
      * Constructor for the class
      *
@@ -25,7 +25,7 @@ export declare class MapViewProjectionPayload extends PayloadBaseClass {
      * @param {string | null} handlerName the handler Name
      * @param {number} projection the map view projection
      */
-    constructor(event: EventStringId, handlerName: string | null, projection: TypeProjectionCodes);
+    constructor(event: EventStringId, handlerName: string | null, projection: TypeValidMapProjectionCodes);
 }
 /**
  * Helper function used to instanciate a MapViewProjectionPayload object. This function
@@ -37,4 +37,4 @@ export declare class MapViewProjectionPayload extends PayloadBaseClass {
  *
  * @returns {MapViewProjectionPayload} the MapViewProjectionPayload object created
  */
-export declare const mapViewProjectionPayload: (event: EventStringId, handlerName: string | null, projection: TypeProjectionCodes) => MapViewProjectionPayload;
+export declare const mapViewProjectionPayload: (event: EventStringId, handlerName: string | null, projection: TypeValidMapProjectionCodes) => MapViewProjectionPayload;
