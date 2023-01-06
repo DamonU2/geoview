@@ -1,5 +1,5 @@
 import { TypeBasemapOptions } from '../../../geo/layer/basemap/basemap-types';
-import { TypeDisplayLanguage, TypeProjectionCodes, TypeValidVersions, TypeListOfGeoviewLayerConfig, TypeListOfLocalizedLanguages } from '../../../geo/map/map-schema-types';
+import { TypeDisplayLanguage, TypeValidMapProjectionCodes, TypeValidVersions, TypeListOfGeoviewLayerConfig, TypeListOfLocalizedLanguages } from '../../../geo/map/map-schema-types';
 import { TypeMapFeaturesConfig } from '../../types/global-types';
 /** *****************************************************************************************************************************
  * A class to define the default values of a GeoView map configuration and validation methods for the map config attributes.
@@ -66,12 +66,12 @@ export declare class ConfigValidation {
     set displayLanguage(displayLanguage: TypeDisplayLanguage);
     /** ***************************************************************************************************************************
      * Validate basemap options.
-     * @param {TypeProjectionCodes} projection The projection code of the basemap.
+     * @param {TypeValidMapProjectionCodes} projection The projection code of the basemap.
      * @param {TypeBasemapOptions} basemapOptions The basemap options to validate.
      *
      * @returns {TypeBasemapOptions} A valid basemap options.
      */
-    validateBasemap(projection?: TypeProjectionCodes, basemapOptions?: TypeBasemapOptions): TypeBasemapOptions;
+    validateBasemap(projection?: TypeValidMapProjectionCodes, basemapOptions?: TypeBasemapOptions): TypeBasemapOptions;
     /** ***************************************************************************************************************************
      * Validate map version.
      * @param {TypeValidVersions} version The version to validate.
@@ -109,14 +109,14 @@ export declare class ConfigValidation {
     private validateMaxZoom;
     /** ***************************************************************************************************************************
      * Validate projection.
-     * @param {TypeProjectionCodes} projection The projection to validate.
+     * @param {TypeValidMapProjectionCodes} projection The projection to validate.
      *
-     * @returns {TypeProjectionCodes} A valid projection.
+     * @returns {TypeValidMapProjectionCodes} A valid projection.
      */
     private validateProjection;
     /** ***************************************************************************************************************************
      * Validate the center.
-     * @param {TypeProjectionCodes} projection The projection used by the map.
+     * @param {TypeValidMapProjectionCodes} projection The projection used by the map.
      * @param {[number, number]} center The map center to valdate.
      *
      * @returns {[number, number]} A valid map center.
