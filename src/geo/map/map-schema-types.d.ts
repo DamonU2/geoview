@@ -26,6 +26,8 @@ export type TypeLayerInitialSettings = {
     opacity?: number;
     /** Initial visibility setting. Default = true. */
     visible?: boolean;
+    /** The bounding box that contains all the layer's features. */
+    bounds?: Extent;
     /** The extent that constrains the view. Called with [minX, minY, maxX, maxY] extent coordinates. */
     extent?: Extent;
     /** The minimum view zoom level (exclusive) above which this layer will be visible. */
@@ -46,13 +48,17 @@ export type TypeVectorSourceFormats = 'GeoJSON' | 'EsriJSON' | 'KML' | 'WFS' | '
 export type TypeSourceVectorClusterConfig = {
     /** Flag used to enable clustering. Default = false. */
     enable: boolean;
-    /** Distance in pixels within which features will be clustered together (deafult 20px). */
-    distance: number;
+    /** Distance in pixels within which features will be clustered together (default 20px). */
+    distance?: number;
     /** Minimum distance in pixels between clusters. Will be capped at the configured distance. By default no minimum distance is
      * guaranteed. This config can be used to avoid overlapping icons. As a tradoff, the cluster feature's position will no longer
      * be the center of all its features.
      */
-    minDistance: number;
+    minDistance?: number;
+    /** Color for the text showing the number of points in a cluster */
+    textColor?: string;
+    /** Color for the cluster symbol and clustered geometries */
+    color?: string;
 };
 /** ******************************************************************************************************************************
  * Type used to configure a custom parser.
@@ -95,6 +101,8 @@ export type TypeBaseSourceVectorInitialConfig = {
     dataProjection?: string;
     /** Definition of the feature information structure that will be used by the getFeatureInfo method. */
     featureInfo?: TypeFeatureInfoLayerConfig;
+    /** Vector source clustering configuration. */
+    cluster?: TypeSourceVectorClusterConfig;
 };
 /** ******************************************************************************************************************************
  * Initial settings to apply to the GeoView vector layer source at creation time.
@@ -504,7 +512,7 @@ export type TypeBaseSourceImageInitialConfig = {
      * */
     crossOrigin?: string;
     /** Spatial Reference EPSG code supported (https://epsg.io/). We support Web Mercator and Lambert Conical Conform Canada. */
-    projection?: TypeProjectionCodes;
+    projection?: TypeValidMapProjectionCodes;
     /** Definition of the feature information structure that will be used by the getFeatureInfo method. */
     featureInfo?: TypeFeatureInfoLayerConfig;
 };
@@ -562,7 +570,7 @@ export type TypeSourceTileInitialConfig = {
      */
     crossOrigin?: string;
     /** The source type for the tile layer. Default = XYZ. */
-    projection?: TypeProjectionCodes;
+    projection?: TypeValidMapProjectionCodes;
     /** Tile grid parameters to use. */
     tileGrid?: TypeTileGrid;
 };
@@ -682,7 +690,7 @@ export type TypeLayerEntryConfig = TypeLayerGroupEntryConfig | TypeBaseLayerEntr
  */
 export type TypeListOfLayerEntryConfig = TypeLayerEntryConfig[];
 /** ******************************************************************************************************************************
- *  Definition of the map feature configuration according to what is specified in the schema.
+ *  Definition of the map feature instance according to what is specified in the schema.
  */
 export type TypeMapFeaturesInstance = {
     /** map configuration. */
@@ -808,16 +816,16 @@ export type TypeViewSettings = {
      * Spatial Reference EPSG code supported (https://epsg.io/). We support Web Mercator and Lambert Conical Conform Canada.
      * Default = 3978.
      */
-    projection: TypeProjectionCodes;
+    projection: TypeValidMapProjectionCodes;
     /** Initial map zoom level. Zoom level are define by the basemap zoom levels. Domaine = [0..28], default = 12. */
     zoom: number;
 };
 /** ******************************************************************************************************************************
  *  Type used to define valid projection codes.
  */
-export type TypeProjectionCodes = 3978 | 3857;
+export type TypeValidMapProjectionCodes = 3978 | 3857;
 /** ******************************************************************************************************************************
- *  Constant mainly used to test if a TypeProjectionCodes variable is a valid projection codes.
+ *  Constant mainly used to test if a TypeValidMapProjectionCodes variable is a valid projection codes.
  */
 export declare const VALID_PROJECTION_CODES: number[];
 /** ******************************************************************************************************************************
