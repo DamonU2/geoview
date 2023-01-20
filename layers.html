@@ -352,7 +352,7 @@
     'corePackages': [],
     'theme': 'dark',
     'suportedLanguages': ['en']
-  }"></div><button class="Get-Geopackage-Legend">Get Legend</button><div id="geopackageLegendsId-table-div"></div><hr/><p>This map has a GeoPackage feature layer added from configuration.</p><button type="button" class="collapsible">Configuration Snippet</button><pre id="LYR9CS" class="panel"></pre><hr/><button type="button" class="collapsible">Code Snippet</button><pre id="codeSnippet" class="panel"></pre><script src="codedoc.js"></script><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
+  }"></div><button class="Get-Geopackage-Legend">Get Legend</button><div id="geopackageLegendsId-table-div"></div><button type="button" class="collapsible">Get Feature Info</button><pre style="height: 20pc; overflow-y: scroll" id="geopackageResultSetId" class="panel">Click on feature on the map</pre><hr/><p>This map has a GeoPackage feature layer added from configuration.</p><button type="button" class="collapsible">Configuration Snippet</button><pre id="LYR9CS" class="panel"></pre><hr/><button type="button" class="collapsible">Code Snippet</button><pre id="codeSnippet" class="panel"></pre><script src="codedoc.js"></script><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
       cgpv.init(function (mapId) {
         console.log(`api is ready for ${mapId}`);
 
@@ -608,6 +608,17 @@
       });
 
       // GeoPackage =============================================================================================================
+      const featureInfoGeopackageLayerSet = cgpv.api.createFeatureInfoLayerSet('LYR9', 'geopackageResultSetId');
+      cgpv.api.event.on(
+        cgpv.api.eventNames.GET_FEATURE_INFO.ALL_QUERIES_DONE,
+        (payload) => {
+          const { layerSetId, resultSets } = payload;
+          document.getElementById(layerSetId).textContent = JSON.stringify(resultSets, undefined, 2);
+        },
+        'LYR9',
+        'geopackageResultSetId'
+      );
+
       const LegendsGeopackageLayerSet = cgpv.api.createLegendsLayerSet('LYR9', 'geopackageLegendsId');
       cgpv.api.event.on(
         cgpv.api.eventNames.GET_LEGENDS.ALL_LEGENDS_DONE,
