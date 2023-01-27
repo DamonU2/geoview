@@ -94,9 +94,9 @@ export declare class GeoviewRenderer {
      * created.
      * @param {(value: TypeLayerStyle | PromiseLike<TypeLayerStyle>) => void} resolve The function that will resolve the promise
      */
-    private getStyleSubRoutine;
+    private getPointStyleSubRoutine;
     /** ***************************************************************************************************************************
-     * This method gets the style of the layer as specified by the style configuration.
+     * This method gets the point style of the layer as specified by the style configuration.
      *
      * @param {TypeStyleConfig} styleConfig The style configuration associated to the layer.
      *
@@ -114,6 +114,34 @@ export declare class GeoviewRenderer {
      * @returns {Style | undefined} The style applied to the feature or undefined if not found.
      */
     getFeatureStyle(feature: FeatureLike, layerEntryConfig: TypeBaseLayerEntryConfig | TypeVectorTileLayerEntryConfig | TypeVectorLayerEntryConfig): Style | undefined;
+    /** ***************************************************************************************************************************
+     * This method gets the style of the cluster feature using the layer entry config. If the style does not exist, create it using
+     * the default style strategy.
+     *
+     * @param {FeatureLike} feature The feature that need its style to be defined.
+     * @param {TypeBaseLayerEntryConfig | TypeVectorLayerEntryConfig} layerEntryConfig The layer
+     * entry config that may have a style configuration for the feature. If style does not exist for the geometryType, create it.
+     *
+     * @returns {Style | undefined} The style applied to the feature or undefined if not found.
+     */
+    getClusterStyle(feature: FeatureLike, layerEntryConfig: TypeVectorLayerEntryConfig): Style | undefined;
+    /** ***************************************************************************************************************************
+     * Create a default style to use with a cluster feature that has no style configuration.
+     *
+     * @param { TypeVectorLayerEntryConfig} layerEntryConfig The layer entry config that may have a style configuration for the
+     * feature. If style does not exist for the geometryType, create it.
+     *
+     * @returns {TypeStyleConfig} The style applied to the feature.
+     */
+    private createDefaultClusterStyle;
+    /** ***************************************************************************************************************************
+     * Set the color in the layer cluster settings for clustered elements.
+     *
+     * @param { TypeVectorLayerEntryConfig} layerEntryConfig The layer entry config for the layer.
+     * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The settings to use for the circle Style creation.
+     *
+     */
+    private setClusterColor;
     /** ***************************************************************************************************************************
      * Increment the default color index.
      */
@@ -228,6 +256,16 @@ export declare class GeoviewRenderer {
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
     private processIconSymbol;
+    /** ***************************************************************************************************************************
+     * Process a cluster circle symbol using the settings.
+     *
+     * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The settings to use for the circle Style creation.
+     * @param {FeatureLike} feature The feature that need its style to be defined.
+     * @param {string} textColor The color to use for the cluster feature count.
+     *
+     * @returns {Style | undefined} The Style created. Undefined if unable to create it.
+     */
+    private processClusterSymbol;
     /** ***************************************************************************************************************************
      * Process a simple point symbol using the settings. Simple point symbol may be an icon or a vector symbol.
      *
@@ -370,7 +408,7 @@ export declare class GeoviewRenderer {
      * Search the class breakentry using the field value stored in the feature.
      *
      * @param {string[]} field The field involved in the class break definition.
-     * @param {TypeClassBreakStyleInfo[]} classBreakStyleInfos The class break configuration.
+     * @param {TypeClassBreakStyleInfo[]} classBreakStyleInfo The class break configuration.
      * @param {FeatureLike} feature The feature used to test the class break conditions.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
@@ -406,7 +444,7 @@ export declare class GeoviewRenderer {
     /** ***************************************************************************************************************************
      * Create a default style to use with a vector feature that has no style configuration.
      *
-     * @param {TypeStyleConfigKey} geometryType The type of geometry (Point, LineString, Polygon).
+     * @param {TypeStyleGeometry} geometryType The type of geometry (Point, LineString, Polygon).
      * @param {TypeVectorTileLayerEntryConfig | TypeVectorLayerEntryConfig} layerEntryConfig the layer entry config to configure.
      *
      * @returns {TypeStyleConfig | undefined} The Style configurationcreated. Undefined if unable to create it.

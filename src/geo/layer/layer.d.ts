@@ -31,7 +31,7 @@ export declare class Layer {
      *
      * @returns {TypeGeoviewLayerConfig} The new configuration with duplicate entries eliminated.
      */
-    private validateGeoviewLayerConfig;
+    private deleteDuplicatGeoviewLayerConfig;
     /**
      * Print an error message for the duplicate geoview layer configuration.
      * @param {TypeGeoviewLayerConfig} geoviewLayerConfig The geoview layer configuration in error.
