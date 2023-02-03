@@ -2,7 +2,7 @@ import BaseLayer from 'ol/layer/Base';
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
 import { Extent } from 'ol/extent';
-import { TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeLocalizedString, TypeLayerEntryConfig, TypeBaseLayerEntryConfig, TypeStyleConfig, TypeStyleConfigKey } from '../../map/map-schema-types';
+import { TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeLocalizedString, TypeLayerEntryConfig, TypeBaseLayerEntryConfig, TypeStyleConfig, TypeStyleGeometry } from '../../map/map-schema-types';
 import { TypeArrayOfFeatureInfoEntries, TypeQueryType } from '../../../api/events/payloads/get-feature-info-payload';
 import { TypeJsonObject } from '../../../core/types/global-types';
 export type TypeLegend = {
@@ -44,12 +44,12 @@ export type TypeStyleRepresentation = {
     /** The arrayOfCanvas property is used by unique value and class break styles. */
     arrayOfCanvas?: (HTMLCanvasElement | null)[];
 };
-export type TypeLayerStyle = Partial<Record<TypeStyleConfigKey, TypeStyleRepresentation>>;
-type LayerTypesKey = 'ESRI_DYNAMIC' | 'ESRI_FEATURE' | 'GEOJSON' | 'GEOCORE' | 'XYZ_TILES' | 'OGC_FEATURE' | 'WFS' | 'WMS';
+export type TypeLayerStyle = Partial<Record<TypeStyleGeometry, TypeStyleRepresentation>>;
+type LayerTypesKey = 'ESRI_DYNAMIC' | 'ESRI_FEATURE' | 'GEOJSON' | 'GEOCORE' | 'GEOPACKAGE' | 'XYZ_TILES' | 'OGC_FEATURE' | 'WFS' | 'WMS';
 /**
  * Type of GeoView layers
  */
-export type TypeGeoviewLayerType = 'esriDynamic' | 'esriFeature' | 'GeoJSON' | 'geoCore' | 'xyzTiles' | 'ogcFeature' | 'ogcWfs' | 'ogcWms';
+export type TypeGeoviewLayerType = 'esriDynamic' | 'esriFeature' | 'GeoJSON' | 'geoCore' | 'GeoPackage' | 'xyzTiles' | 'ogcFeature' | 'ogcWfs' | 'ogcWms';
 /**
  * Definition of the GeoView layer constants
  */
@@ -191,7 +191,7 @@ export declare abstract class AbstractGeoViewLayer {
      */
     protected abstract processOneLayerEntry(layerEntryConfig: TypeBaseLayerEntryConfig): Promise<BaseLayer | null>;
     /** ***************************************************************************************************************************
-     * Return feature information for the layer specified. If layerId is undefined, this.activeLayer is used.
+     * Return feature information for the layer specified. If layerPathOrConfig is undefined, this.activeLayer is used.
      *
      * @param {Pixel | Coordinate | Coordinate[]} location A pixel, a coordinate or a polygon that will be used by the query.
      * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
@@ -274,15 +274,30 @@ export declare abstract class AbstractGeoViewLayer {
      */
     getLayerConfig(layerPath?: string): TypeLayerEntryConfig | null | undefined;
     /** ***************************************************************************************************************************
+     * Returns the layer bounds or undefined if not defined in the layer configuration or the metadata. If layerPathOrConfig is
+     * undefined, the active layer is used. If projectionCode is defined, returns the bounds in the specified projection otherwise
+     * use the map projection. The bounds are different from the extent. They are mainly used for display purposes to show the
+     * bounding box in which the data resides and to zoom in on the entire layer data. It is not used by openlayer to limit the
+     * display of data on the map.
+     *
+     * @param {string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null} layerPathOrConfig Optional layer path or
+     * configuration.
+     * @param {string | number | undefined} projectionCode Optional projection code to use for the returned bounds.
+     *
+     * @returns {Extent} The layer bounding box.
+     */
+    getMetadataBounds(layerPathOrConfig?: string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null, projectionCode?: string | number | undefined): Extent | undefined;
+    /** ***************************************************************************************************************************
      * Return the extent of the layer or undefined if it will be visible regardless of extent. The layer extent is an array of
      * numbers representing an extent: [minx, miny, maxx, maxy]. If layerPathOrConfig is undefined, the activeLayer of the class
-     * will be used. This routine return undefined when no layerPathOrConfig is specified and the active layer is null.
+     * will be used. This routine return undefined when no layerPathOrConfig is specified and the active layer is null. The extent
+     * is used to clip the data displayed on the map.
      *
      * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
      *
      * @returns {Extent} The layer extent.
      */
-    getBounds(layerPathOrConfig?: string | TypeLayerEntryConfig | null): Extent | undefined;
+    getExtent(layerPathOrConfig?: string | TypeLayerEntryConfig | null): Extent | undefined;
     /** ***************************************************************************************************************************
      * set the extent of the layer. Use undefined if it will be visible regardless of extent. The layer extent is an array of
      * numbers representing an extent: [minx, miny, maxx, maxy]. If layerPathOrConfig is undefined, the activeLayer of the class
@@ -291,7 +306,7 @@ export declare abstract class AbstractGeoViewLayer {
      * @param {Extent} layerExtent The extent to assign to the layer.
      * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
      */
-    setBounds(layerExtent: Extent, layerPathOrConfig?: string | TypeLayerEntryConfig | null): void;
+    setExtent(layerExtent: Extent, layerPathOrConfig?: string | TypeLayerEntryConfig | null): void;
     /** ***************************************************************************************************************************
      * Return the opacity of the layer (between 0 and 1). When layerPathOrConfig is undefined, the activeLayer of the class is
      * used. This routine return undefined when the layerPath specified is not found or when the layerPathOrConfig is undefined and

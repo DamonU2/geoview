@@ -1,6 +1,7 @@
 import { Style } from 'ol/style';
 import { FeatureLike } from 'ol/Feature';
 import { TypeVectorLayerEntryConfig, TypeVectorTileLayerEntryConfig, TypeBaseLayerEntryConfig, TypeStyleConfig } from '../map/map-schema-types';
+import { FilterNodeArrayType } from './geoview-renderer-types';
 import { TypeLayerStyle } from '../layer/geoview-layers/abstract-geoview-layers';
 /** *****************************************************************************************************************************
  * A class to define the GeoView renderers.
@@ -83,7 +84,7 @@ export declare class GeoviewRenderer {
      */
     private processArrayOfPointStyleConfig;
     /** ***************************************************************************************************************************
-     * This method is a private sub routine used by the getStyle method to gets the style of the layer as specified by the style
+     * This method is a private sub routine used by the getLegendStyles method to gets the style of the layer as specified by the style
      * configuration.
      *
      * @param {TypeLayerStyle} layerStyle The object that will receive the created canvas.
@@ -94,15 +95,15 @@ export declare class GeoviewRenderer {
      * created.
      * @param {(value: TypeLayerStyle | PromiseLike<TypeLayerStyle>) => void} resolve The function that will resolve the promise
      */
-    private getStyleSubRoutine;
+    private getPointStyleSubRoutine;
     /** ***************************************************************************************************************************
-     * This method gets the style of the layer as specified by the style configuration.
+     * This method gets the legend styles used by the the layer as specified by the style configuration.
      *
      * @param {TypeStyleConfig} styleConfig The style configuration associated to the layer.
      *
      * @returns {Promise<TypeLayerStyle>} A promise that the layer style is processed.
      */
-    getStyle(styleConfig: TypeStyleConfig): Promise<TypeLayerStyle>;
+    getLegendStyles(styleConfig: TypeStyleConfig): Promise<TypeLayerStyle>;
     /** ***************************************************************************************************************************
      * This method gets the style of the feature using the layer entry config. If the style does not exist for the geometryType,
      * create it using the default style strategy.
@@ -114,6 +115,34 @@ export declare class GeoviewRenderer {
      * @returns {Style | undefined} The style applied to the feature or undefined if not found.
      */
     getFeatureStyle(feature: FeatureLike, layerEntryConfig: TypeBaseLayerEntryConfig | TypeVectorTileLayerEntryConfig | TypeVectorLayerEntryConfig): Style | undefined;
+    /** ***************************************************************************************************************************
+     * This method gets the style of the cluster feature using the layer entry config. If the style does not exist, create it using
+     * the default style strategy.
+     *
+     * @param {FeatureLike} feature The feature that need its style to be defined.
+     * @param {TypeBaseLayerEntryConfig | TypeVectorLayerEntryConfig} layerEntryConfig The layer
+     * entry config that may have a style configuration for the feature. If style does not exist for the geometryType, create it.
+     *
+     * @returns {Style | undefined} The style applied to the feature or undefined if not found.
+     */
+    getClusterStyle(feature: FeatureLike, layerEntryConfig: TypeVectorLayerEntryConfig): Style | undefined;
+    /** ***************************************************************************************************************************
+     * Create a default style to use with a cluster feature that has no style configuration.
+     *
+     * @param { TypeVectorLayerEntryConfig} layerEntryConfig The layer entry config that may have a style configuration for the
+     * feature. If style does not exist for the geometryType, create it.
+     *
+     * @returns {TypeStyleConfig} The style applied to the feature.
+     */
+    private createDefaultClusterStyle;
+    /** ***************************************************************************************************************************
+     * Set the color in the layer cluster settings for clustered elements.
+     *
+     * @param { TypeVectorLayerEntryConfig} layerEntryConfig The layer entry config for the layer.
+     * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The settings to use for the circle Style creation.
+     *
+     */
+    private setClusterColor;
     /** ***************************************************************************************************************************
      * Increment the default color index.
      */
@@ -229,10 +258,21 @@ export declare class GeoviewRenderer {
      */
     private processIconSymbol;
     /** ***************************************************************************************************************************
+     * Process a cluster circle symbol using the settings.
+     *
+     * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The settings to use for the circle Style creation.
+     * @param {FeatureLike} feature The feature that need its style to be defined.
+     * @param {string} textColor The color to use for the cluster feature count.
+     *
+     * @returns {Style | undefined} The Style created. Undefined if unable to create it.
+     */
+    private processClusterSymbol;
+    /** ***************************************************************************************************************************
      * Process a simple point symbol using the settings. Simple point symbol may be an icon or a vector symbol.
      *
      * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The settings to use for the Style creation.
      * @param {FeatureLike} feature Optional feature. This method does not use it, it is there to have a homogeneous signature.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -242,6 +282,7 @@ export declare class GeoviewRenderer {
      *
      * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The settings to use for the Style creation.
      * @param {FeatureLike} feature Optional feature. This method does not use it, it is there to have a homogeneous signature.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -322,9 +363,9 @@ export declare class GeoviewRenderer {
     /** ***************************************************************************************************************************
      * Process a simple polygon using the settings.
      *
-     * @param {TypePolTypeStyleSettings | TypeKindOfVectorSettingsygonVectorConfig} styleSettings The settings to use for the
-     * Style creation.
+     * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The settings to use for the Style creation.
      * @param {FeatureLike} feature Optional feature. This method does not use it, it is there to have a homogeneous signature.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -344,6 +385,8 @@ export declare class GeoviewRenderer {
      *
      * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The style settings to use.
      * @param {FeatureLike} feature the feature used to test the unique value conditions.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
+     * @param {boolean} legendFilterIsOff when true, do not apply legend filter.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -353,6 +396,8 @@ export declare class GeoviewRenderer {
      *
      * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The style settings to use.
      * @param {FeatureLike} feature the feature used to test the unique value conditions.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
+     * @param {boolean} legendFilterIsOff when true, do not apply legend filter.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -362,6 +407,8 @@ export declare class GeoviewRenderer {
      *
      * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The style settings to use.
      * @param {FeatureLike} feature the feature used to test the unique value conditions.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
+     * @param {boolean} legendFilterIsOff when true, do not apply legend filter.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -370,7 +417,7 @@ export declare class GeoviewRenderer {
      * Search the class breakentry using the field value stored in the feature.
      *
      * @param {string[]} field The field involved in the class break definition.
-     * @param {TypeClassBreakStyleInfo[]} classBreakStyleInfos The class break configuration.
+     * @param {TypeClassBreakStyleInfo[]} classBreakStyleInfo The class break configuration.
      * @param {FeatureLike} feature The feature used to test the class break conditions.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
@@ -381,6 +428,8 @@ export declare class GeoviewRenderer {
      *
      * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The style settings to use.
      * @param {FeatureLike} feature the feature used to test the unique value conditions.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
+     * @param {boolean} legendFilterIsOff when true, do not apply legend filter.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -390,6 +439,8 @@ export declare class GeoviewRenderer {
      *
      * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The style settings to use.
      * @param {FeatureLike} feature the feature used to test the unique value conditions.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
+     * @param {boolean} legendFilterIsOff when true, do not apply legend filter.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -399,6 +450,8 @@ export declare class GeoviewRenderer {
      *
      * @param {TypeStyleSettings | TypeKindOfVectorSettings} styleSettings The style settings to use.
      * @param {FeatureLike} feature the feature used to test the unique value conditions.
+     * @param {FilterNodeArrayType} filterEquation The filter equation associated to the layer.
+     * @param {boolean} legendFilterIsOff when true, do not apply legend filter.
      *
      * @returns {Style | undefined} The Style created. Undefined if unable to create it.
      */
@@ -406,10 +459,67 @@ export declare class GeoviewRenderer {
     /** ***************************************************************************************************************************
      * Create a default style to use with a vector feature that has no style configuration.
      *
-     * @param {TypeStyleConfigKey} geometryType The type of geometry (Point, LineString, Polygon).
+     * @param {TypeStyleGeometry} geometryType The type of geometry (Point, LineString, Polygon).
      * @param {TypeVectorTileLayerEntryConfig | TypeVectorLayerEntryConfig} layerEntryConfig the layer entry config to configure.
      *
      * @returns {TypeStyleConfig | undefined} The Style configurationcreated. Undefined if unable to create it.
      */
     private createDefaultStyle;
+    /** ***************************************************************************************************************************
+     * Use the filter equation and the feature fields to determine if the feature is visible.
+     *
+     * @param {FeatureLike} feature the feature used to find the visibility value to return.
+     * @param {FilterNodeArrayType} filterEquation the filter used to find the visibility value to return.
+     *
+     * @returns {boolean | undefined} The visibility flag for the feature specified.
+     */
+    private featureIsNotVisible;
+    /** ***************************************************************************************************************************
+     * Execute an operator using the nodes on the data stack. The filter equation is evaluated using a postfix notation. The result
+     * is pushed back on the data stack. If a problem is detected, an error object is thrown with an explanatory message.
+     *
+     * @param {FilterNodeType} operator the operator to execute.
+     * @param {FilterNodeArrayType} dataStack The data stack to use for the operator execution.
+     */
+    private executeOperator;
+    /** ***************************************************************************************************************************
+     * Analyse the filter and split it in syntaxique nodes.  If a problem is detected, an error object is thrown with an
+     * explanatory message.
+     *
+     * @param {FilterNodeArrayType} filterNodeArrayType the node array to analyse.
+     *
+     * @returns {FilterNodeArrayType} The new node array with all nodes classified.
+     */
+    analyzeLayerFilter(filterNodeArrayType: FilterNodeArrayType): FilterNodeArrayType;
+    /** ***************************************************************************************************************************
+     * Extract the specified keyword and associate a node type their nodes. In some cases, the extraction uses an optionally
+     * regular expression.
+     *
+     * @param {FilterNodeArrayType} FilterNodeArrayType the array of keywords to process.
+     * @param {string} keyword the keyword to extract.
+     * @param {RegExp} regExp an optional regular expression to use for the extraction.
+     *
+     * @returns {FilterNodeArrayType} The new keywords array.
+     */
+    private extractKeyword;
+    /** ***************************************************************************************************************************
+     * Extract the string nodes from the keyword array. This operation is done at the beginning of the classification. This allows
+     * to considere Keywords in a string as a normal word. If a problem is detected, an error object is thrown with an explanatory
+     * message.
+     *
+     * @param {FilterNodeArrayType} keywordArray the array of keywords to process.
+     *
+     * @returns {FilterNodeArrayType} The new keywords array with all string nodes classified.
+     */
+    private extractStrings;
+    /** ***************************************************************************************************************************
+     * Classify the remaining nodes to complete the classification. The plus and minus can be a unary or a binary operator. It is
+     * only at the end that we can determine there node type. Nodes that start with a number are numbers, otherwise they are
+     * variables. If a problem is detected, an error object is thrown with an explanatory message.
+     *
+     * @param {FilterNodeArrayType} keywordArray the array of keywords to process.
+     *
+     * @returns {FilterNodeArrayType} The new keywords array with all nodes classified.
+     */
+    private classifyUnprocessedNodes;
 }
