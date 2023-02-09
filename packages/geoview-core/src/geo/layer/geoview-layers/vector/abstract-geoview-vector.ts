@@ -486,4 +486,21 @@ export abstract class AbstractGeoViewVector extends AbstractGeoViewLayer {
     if (layerEntryConfig) return layerEntryConfig.gvLayer?.get('layerFilter');
     return undefined;
   }
+
+  /** ***************************************************************************************************************************
+   * Toggle cluster status.
+   */
+  toggleCluster() {
+    const config = this.activeLayer as TypeVectorLayerEntryConfig;
+    config.source!.cluster!.enable = !config.source!.cluster!.enable;
+  }
+
+  /** ***************************************************************************************************************************
+   * Generate cluster source.
+   */
+  generateClusterSource(vectorSource: VectorSource) {
+    const config = this.activeLayer as TypeVectorLayerEntryConfig;
+    const layer = this.createVectorLayer(config, vectorSource);
+    return layer.getSource();
+  }
 }
