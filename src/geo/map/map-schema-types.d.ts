@@ -26,6 +26,8 @@ export type TypeLayerInitialSettings = {
     opacity?: number;
     /** Initial visibility setting. Default = true. */
     visible?: boolean;
+    /** The bounding box that contains all the layer's features. */
+    bounds?: Extent;
     /** The extent that constrains the view. Called with [minX, minY, maxX, maxY] extent coordinates. */
     extent?: Extent;
     /** The minimum view zoom level (exclusive) above which this layer will be visible. */
@@ -38,7 +40,7 @@ export type TypeLayerInitialSettings = {
 /** ******************************************************************************************************************************
  * Type that defines the vector layer source formats.
  */
-export type TypeVectorSourceFormats = 'GeoJSON' | 'EsriJSON' | 'KML' | 'WFS' | 'featureAPI';
+export type TypeVectorSourceFormats = 'GeoJSON' | 'EsriJSON' | 'KML' | 'WFS' | 'featureAPI' | 'GeoPackage';
 /** ******************************************************************************************************************************
  * Type used to configure the cluster feature of a vector layer. Works out of the box with point geometries. If another geometry is
  * provided, it will be converted to points geometry.
@@ -46,13 +48,17 @@ export type TypeVectorSourceFormats = 'GeoJSON' | 'EsriJSON' | 'KML' | 'WFS' | '
 export type TypeSourceVectorClusterConfig = {
     /** Flag used to enable clustering. Default = false. */
     enable: boolean;
-    /** Distance in pixels within which features will be clustered together (deafult 20px). */
-    distance: number;
+    /** Distance in pixels within which features will be clustered together (default 20px). */
+    distance?: number;
     /** Minimum distance in pixels between clusters. Will be capped at the configured distance. By default no minimum distance is
      * guaranteed. This config can be used to avoid overlapping icons. As a tradoff, the cluster feature's position will no longer
      * be the center of all its features.
      */
-    minDistance: number;
+    minDistance?: number;
+    /** Color for the text showing the number of points in a cluster */
+    textColor?: string;
+    /** Color for the cluster symbol and clustered geometries */
+    color?: string;
 };
 /** ******************************************************************************************************************************
  * Type used to configure a custom parser.
@@ -95,6 +101,8 @@ export type TypeBaseSourceVectorInitialConfig = {
     dataProjection?: string;
     /** Definition of the feature information structure that will be used by the getFeatureInfo method. */
     featureInfo?: TypeFeatureInfoLayerConfig;
+    /** Vector source clustering configuration. */
+    cluster?: TypeSourceVectorClusterConfig;
 };
 /** ******************************************************************************************************************************
  * Initial settings to apply to the GeoView vector layer source at creation time.
@@ -266,7 +274,8 @@ export type TypeBaseStyleConfig = {
  * verifyIfConfig parameter is 'simple'. The type ascention applies only to the true block of the if clause that use
  * this function.
  *
- * @param {TypeStyleSettings | TypeKindOfVectorSettings} verifyIfConfig Polymorphic object to test in order to determine if the type ascention is valid.
+ * @param {TypeStyleSettings | TypeKindOfVectorSettings} verifyIfConfig Polymorphic object to test in order to determine if
+ * the type ascention is valid.
  *
  * @returns {boolean} true if the type ascention is valid.
  */
@@ -291,16 +300,19 @@ export type TypeUniqueValueStyleInfo = {
     /** Label used by the style. */
     label: string;
     /** Values associated to the style. */
+    visible?: 'yes' | 'no' | 'always';
+    /** Flag used to show/hide features associated to the label (default: yes). */
     values: string[];
     /** options associated to the style. */
     settings: TypeKindOfVectorSettings;
 };
 /** ******************************************************************************************************************************
- * type guard function that redefines a TypeBaseStyleConfig as a TypeUniqueValueStyleConfig if the type attribute of the
- * verifyIfConfig parameter is 'uniqueValue'. The type ascention applies only to the true block of the if clause that use
- * this function.
+ * type guard function that redefines a TypeStyleSettings | TypeKindOfVectorSettings as a TypeUniqueValueStyleConfig if the
+ * styleType attribute of the verifyIfConfig parameter is 'uniqueValue'. The type ascention applies only to the true block of the
+ * if clause that use this function.
  *
- * @param {TypeStyleSettings | TypeKindOfVectorSettings} verifyIfConfig Polymorphic object to test in order to determine if the type ascention is valid.
+ * @param {TypeStyleSettings | TypeKindOfVectorSettings} verifyIfConfig Polymorphic object to test in order to determine if the
+ * type ascention is valid.
  *
  * @returns {boolean} true if the type ascention is valid.
  */
@@ -316,6 +328,8 @@ export interface TypeUniqueValueStyleConfig extends TypeBaseStyleConfig {
     /** Label used if field/value association is not found. */
     defaultLabel?: string;
     /** Options used if field/value association is not found. */
+    defaultVisible?: 'yes' | 'no' | 'always';
+    /** Flag used to show/hide features associated to the default label (default: yes). */
     defaultSettings?: TypeKindOfVectorSettings;
     /** Fields used by the style. */
     fields: string[];
@@ -329,6 +343,8 @@ export type TypeClassBreakStyleInfo = {
     /** Label used by the style. */
     label: string;
     /** Minimum values associated to the style. */
+    visible?: 'yes' | 'no' | 'always';
+    /** Flag used to show/hide features associated to the label (default: yes). */
     minValue: number | undefined | null;
     /** Maximum values associated to the style. */
     maxValue: number;
@@ -336,11 +352,12 @@ export type TypeClassBreakStyleInfo = {
     settings: TypeKindOfVectorSettings;
 };
 /** ******************************************************************************************************************************
- * type guard function that redefines a TypeBaseStyleConfig as a TypeClassBreakStyleConfig if the type attribute of the
- * verifyIfConfig parameter is 'classBreaks'. The type ascention applies only to the true block of the if clause that use
- * this function.
+ * type guard function that redefines a TypeStyleSettings | TypeKindOfVectorSettings as a TypeClassBreakStyleConfig if the
+ * styleType attribute of the verifyIfConfig parameter is 'classBreaks'. The type ascention applies only to the true block of the
+ * if clause that use this function.
  *
- * @param {TypeStyleSettings | TypeKindOfVectorSettings} verifyIfConfig Polymorphic object to test in order to determine if the type ascention is valid.
+ * @param {TypeStyleSettings | TypeKindOfVectorSettings} verifyIfConfig Polymorphic object to test in order to determine if the
+ * type ascention is valid.
  *
  * @returns {boolean} true if the type ascention is valid.
  */
@@ -356,11 +373,13 @@ export interface TypeClassBreakStyleConfig extends TypeBaseStyleConfig {
     /** Label used if field/value association is not found. */
     defaultLabel?: string;
     /** Options used if field/value association is not found. */
+    defaultVisible?: 'yes' | 'no' | 'always';
+    /** Flag used to show/hide features associated to the default label (default: yes). */
     defaultSettings?: TypeKindOfVectorSettings;
     /** Field used by the style. */
     field: string;
     /** Class break style information configuration. */
-    classBreakStyleInfos: TypeClassBreakStyleInfo[];
+    classBreakStyleInfo: TypeClassBreakStyleInfo[];
 }
 /** ******************************************************************************************************************************
  * Type of Style to apply to the GeoView vector layer source at creation time.
@@ -369,11 +388,11 @@ export type TypeStyleSettings = TypeBaseStyleConfig | TypeSimpleStyleConfig | Ty
 /** ******************************************************************************************************************************
  * Valid keys for the TypeStyleConfig object.
  */
-export type TypeStyleConfigKey = 'Point' | 'LineString' | 'Polygon';
+export type TypeStyleGeometry = 'Point' | 'LineString' | 'Polygon';
 /** ******************************************************************************************************************************
  * Type of Style to apply to the GeoView vector layer based on geometry types.
  */
-export type TypeStyleConfig = Partial<Record<TypeStyleConfigKey, TypeStyleSettings>>;
+export type TypeStyleConfig = Partial<Record<TypeStyleGeometry, TypeStyleSettings>>;
 /** ******************************************************************************************************************************
  * Type of Style to apply to the GeoView vector layer source at creation time.
  */
@@ -452,6 +471,8 @@ export type TypeBaseLayerEntryConfig = {
     isMetadataLayerGroup?: boolean;
     /** Layer entry data type. */
     entryType?: 'vector' | 'vectorTile' | 'vectorHeatmap' | 'raster' | 'group';
+    /** The ending element of the layer configuration path. */
+    layerPathEnding?: string;
     /** The id of the layer to display on the map. */
     layerId: string;
     /** The display name of the layer (English/French). */
@@ -463,7 +484,7 @@ export type TypeBaseLayerEntryConfig = {
     initialSettings?: TypeLayerInitialSettings;
     /** Source settings to apply to the GeoView vector layer source at creation time. */
     source?: TypeBaseSourceVectorInitialConfig | TypeSourceImageInitialConfig | TypeSourceTileInitialConfig;
-    /** The listOfLayerEntryConfig attribute is used only on group entry and on GeoView layer configurations. */
+    /** The listOfLayerEntryConfig attribute is not used by child of TypeBaseLayerEntryConfig. */
     listOfLayerEntryConfig?: never;
 };
 /** ******************************************************************************************************************************
@@ -472,6 +493,8 @@ export type TypeBaseLayerEntryConfig = {
 export interface TypeVectorLayerEntryConfig extends TypeBaseLayerEntryConfig {
     /** Layer entry data type. */
     entryType?: 'vector';
+    /** Filter to apply on feature of this layer. */
+    layerFilter?: string;
     /** Initial settings to apply to the GeoView vector layer source at creation time. */
     source?: TypeVectorSourceInitialConfig;
     /** Style to apply to the vector layer. */
@@ -504,7 +527,7 @@ export type TypeBaseSourceImageInitialConfig = {
      * */
     crossOrigin?: string;
     /** Spatial Reference EPSG code supported (https://epsg.io/). We support Web Mercator and Lambert Conical Conform Canada. */
-    projection?: TypeProjectionCodes;
+    projection?: TypeValidMapProjectionCodes;
     /** Definition of the feature information structure that will be used by the getFeatureInfo method. */
     featureInfo?: TypeFeatureInfoLayerConfig;
 };
@@ -555,14 +578,14 @@ export type TypeTileGrid = {
  * Initial settings for tile image sources.
  */
 export type TypeSourceTileInitialConfig = {
-    /** The service endpoint of the layer (English/French). */
+    /** The path (English/French) to reach the data to display. If not specified, metadatAccessPath will be assigne dto it. */
     dataAccessPath: TypeLocalizedString;
     /** The crossOrigin attribute for loaded images. Note that you must provide a crossOrigin value if you want to access pixel data
      * with the Canvas renderer.
      */
     crossOrigin?: string;
-    /** The source type for the tile layer. Default = XYZ. */
-    projection?: TypeProjectionCodes;
+    /** Spatial Reference EPSG code supported (https://epsg.io/). We support Web Mercator and Lambert Conical Conform Canada. */
+    projection?: TypeValidMapProjectionCodes;
     /** Tile grid parameters to use. */
     tileGrid?: TypeTileGrid;
 };
@@ -599,10 +622,9 @@ export interface TypeVectorTileSourceInitialConfig extends TypeBaseSourceVectorI
 export interface TypeVectorTileLayerEntryConfig extends TypeBaseLayerEntryConfig {
     /** Layer entry data type. */
     entryType?: 'vectorTile';
-    /**
-     * Initial settings to apply to the GeoView vector layer source at creation time. Layer sources providing vector data divided
-     * into a tile grid.
-     */
+    /** Filter to apply on feature of this layer. */
+    layerFilter?: string;
+    /** Source settings to apply to the GeoView vector layer source at creation time. */
     source?: TypeVectorTileSourceInitialConfig;
     /** Style to apply to the vector layer. */
     style?: TypeStyleConfig;
@@ -613,6 +635,9 @@ export interface TypeVectorTileLayerEntryConfig extends TypeBaseLayerEntryConfig
 export interface TypeImageLayerEntryConfig extends TypeBaseLayerEntryConfig {
     /** Layer entry data type. */
     entryType?: 'raster';
+    /** Filter to apply on feature of this layer. */
+    layerFilter?: string;
+    /** Source settings to apply to the GeoView image layer source at creation time. */
     source?: TypeSourceImageInitialConfig;
     /** Style to apply to the raster layer. */
     style?: TypeStyleConfig;
@@ -639,18 +664,23 @@ export type TypeGeocoreLayerEntryConfig = {
     gvLayer?: BaseLayer;
     /** Layer entry data type. */
     entryType?: 'geocore';
-    /** Basic information used to identify the GeoView layer. The GeoCore catalog uuid of the layer is stored in the layerId
-     * attribute. The id will have the language extension (id-'lang').
-     */
-    layerId: string;
+    /** The layerId is not used by geocore layers. */
+    layerId: never;
+    /** The layerPathEnding is not used by geocore layers. */
+    layerPathEnding: never;
+    /** The display name of a geocore layer is in geocoreLayerName. */
+    layerName?: never;
     /** The display name of the layer (English/French). */
-    layerName?: TypeLocalizedString;
+    geocoreLayerName?: TypeLocalizedString;
     /** The access path to the geoCore endpoint (optional, this value should be embeded in the GeoView API). */
     source?: TypeSourceGeocoreConfig;
-    /** Attribute initialSettings is never used by GeoCore layer entry. */
-    initialSettings?: never;
-    /** The listOfLayerEntryConfig attribute is used only on group entry and on GeoView layer configurations. */
-    listOfLayerEntryConfig?: never;
+    /**
+     * Initial settings to apply to the GeoView layer entry at creation time. Initial settings are inherited from the parent in the
+     * configuration tree.
+     */
+    initialSettings?: TypeLayerInitialSettings;
+    /** The list of layer entry configurations to use from the Geocore layer. */
+    listOfLayerEntryConfig?: TypeListOfLayerEntryConfig;
 };
 /** ******************************************************************************************************************************
  * Initial settings to apply to the GeoView vector layer source at creation time.
@@ -682,7 +712,7 @@ export type TypeLayerEntryConfig = TypeLayerGroupEntryConfig | TypeBaseLayerEntr
  */
 export type TypeListOfLayerEntryConfig = TypeLayerEntryConfig[];
 /** ******************************************************************************************************************************
- *  Definition of the map feature configuration according to what is specified in the schema.
+ *  Definition of the map feature instance according to what is specified in the schema.
  */
 export type TypeMapFeaturesInstance = {
     /** map configuration. */
@@ -808,16 +838,16 @@ export type TypeViewSettings = {
      * Spatial Reference EPSG code supported (https://epsg.io/). We support Web Mercator and Lambert Conical Conform Canada.
      * Default = 3978.
      */
-    projection: TypeProjectionCodes;
+    projection: TypeValidMapProjectionCodes;
     /** Initial map zoom level. Zoom level are define by the basemap zoom levels. Domaine = [0..28], default = 12. */
     zoom: number;
 };
 /** ******************************************************************************************************************************
  *  Type used to define valid projection codes.
  */
-export type TypeProjectionCodes = 3978 | 3857;
+export type TypeValidMapProjectionCodes = 3978 | 3857;
 /** ******************************************************************************************************************************
- *  Constant mainly used to test if a TypeProjectionCodes variable is a valid projection codes.
+ *  Constant mainly used to test if a TypeValidMapProjectionCodes variable is a valid projection codes.
  */
 export declare const VALID_PROJECTION_CODES: number[];
 /** ******************************************************************************************************************************
@@ -835,9 +865,9 @@ export type TypeAppBarProps = {
  */
 export type TypeNavBarProps = Array<'zoom' | 'fullscreen' | 'fullextent'>;
 /** ******************************************************************************************************************************
- * Core components to initialize on viewer load. Default = ['app-bar', 'nav-bar', 'north-arrow', 'overview-map'].
+ * Core components to initialize on viewer load. Default = ['app-bar', 'footer-bar', 'nav-bar', 'north-arrow', 'overview-map'].
  */
-export type TypeMapComponents = Array<'app-bar' | 'nav-bar' | 'north-arrow' | 'overview-map'>;
+export type TypeMapComponents = Array<'app-bar' | 'footer-bar' | 'nav-bar' | 'north-arrow' | 'overview-map'>;
 /** ******************************************************************************************************************************
  * Core packages to initialize on viewer load. The schema for those are on their own package. NOTE: config from packages are in
  * the same loaction as core config (<<core config name>>-<<package name>>.json).

@@ -4,8 +4,10 @@ import { AbstractGeoViewLayer, TypeLegend } from '../abstract-geoview-layers';
 import { AbstractGeoViewRaster, TypeBaseRasterLayer } from './abstract-geoview-raster';
 import { TypeImageLayerEntryConfig, TypeLayerEntryConfig, TypeSourceImageWmsInitialConfig, TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig } from '../../../map/map-schema-types';
 import { TypeArrayOfFeatureInfoEntries } from '../../../../api/events/payloads/get-feature-info-payload';
+import { TimeDimension } from '../../../../app';
 export interface TypeWmsLayerEntryConfig extends Omit<TypeImageLayerEntryConfig, 'source'> {
     source: TypeSourceImageWmsInitialConfig;
+    temporalDimension?: TimeDimension;
 }
 export interface TypeWMSLayerConfig extends Omit<TypeGeoviewLayerConfig, 'listOfLayerEntryConfig'> {
     geoviewLayerType: 'ogcWms';
@@ -61,14 +63,57 @@ export declare class WMS extends AbstractGeoViewRaster {
      */
     protected getServiceMetadata(): Promise<void>;
     /** ***************************************************************************************************************************
-     * This method reads the layer identifiers from the configuration to create a coma seperated string that will be used in the
-     * GetCapabilities.
+     * This method reads the service metadata using a GetCapabilities request.
+     *
+     * @param {string} metadataUrl The GetCapabilities query to execute
      *
      * @returns {Promise<void>} A promise that the execution is completed.
+     */
+    private fetchServiceMetadata;
+    /** ***************************************************************************************************************************
+     * This method reads the service metadata from a XML metadataAccessPath.
+     *
+     * @param {string} metadataUrl The localized value of the metadataAccessPath
+     *
+     * @returns {Promise<void>} A promise that the execution is completed.
+     */
+    private getXmlServiceMetadata;
+    /** ***************************************************************************************************************************
+     * This method find the layer path that lead to the layer identified by the layerName. Values stored in the array tell us which
+     * direction to use to get to the layer. A value of -1 tells us that the Layer property is an object. Other values tell us that
+     * the Layer property is an array and the value is the index to follow. If the layer can not be found, the returned value is
+     * an empty array.
+     *
+     * @param {string} layerName The layer name to be found
+     * @param {TypeJsonObject} layerProperty The layer property from the metadata
+     * @param {number[]} pathToTheLayerProperty The path leading to the parent of the layerProperty parameter
+     *
+     * @returns {number[]} An array containing the path to the layer or [] if not found.
+     */
+    private getMetadataLayerPath;
+    /** ***************************************************************************************************************************
+     * This method merge the layer identified by the path stored in the metadataLayerPathToAdd array to the metadata property of
+     * the WMS instance. Values stored in the path array tell us which direction to use to get to the layer. A value of -1 tells us
+     * that the Layer property is an object. In this case, it is assumed that the metadata objects at this level only differ by the
+     * layer property to add. Other values tell us that the Layer property is an array and the value is the index to follow. If at
+     * this level in the path the layers have the same name, we move to the next level. Otherwise, the layer can be added.
+     *
+     * @param {number[]} metadataLayerPathToAdd The layer name to be found
+     * @param {TypeJsonObject} metadataLayer The metadata layer that will receive the new layer
+     * @param {TypeJsonObject} layerToAdd The layer property to add
+     */
+    private addLayerToMetadataInstance;
+    /** ***************************************************************************************************************************
+     * This method reads the layer identifiers from the configuration to create an array that will be used in the GetCapabilities.
+     *
+     * @returns {string[]} The array of layer identifiers.
      */
     private getLayersToQuery;
     /** ***************************************************************************************************************************
      * This method propagate the WMS metadata inherited values.
+     *
+     * @param {TypeJsonObject} parentLayer The parent layer that contains the inherited values
+     * @param {TypeJsonObject} layer The layer property from the metadata that will inherit the values
      */
     private processMetadataInheritance;
     /** ***************************************************************************************************************************
@@ -112,6 +157,12 @@ export declare class WMS extends AbstractGeoViewRaster {
      * @returns {Promise<void>} A promise that the layer configuration has its metadata processed.
      */
     protected processLayerMetadata(layerEntryConfig: TypeLayerEntryConfig): Promise<void>;
+    /** ***************************************************************************************************************************
+     * This method will create a Geoview temporal dimension if ot exist in the service metadata
+     * @param {TypeJsonObject} wmsTimeDimension The WMS time dimension object
+     * @param {TypeLayerEntryConfig} layerEntryConfig The layer entry to configure
+     */
+    private processTemporalDimension;
     /** ***************************************************************************************************************************
      * Return feature information for all the features around the provided Pixel.
      *
@@ -160,7 +211,7 @@ export declare class WMS extends AbstractGeoViewRaster {
     /** ***************************************************************************************************************************
      * Get the legend image URL of a layer from the capabilities. Return null if it does not exist.
      *
-     * @param {string} layerId The layer identifier for which we are looking for the legend URL.
+     * @param {TypeWmsLayerEntryConfig} layerConfig layer configuration.
      *
      * @returns {TypeJsonObject | null} URL of a Legend image in png format or null
      */
@@ -168,7 +219,7 @@ export declare class WMS extends AbstractGeoViewRaster {
     /** ***************************************************************************************************************************
      * Get the legend image of a layer.
      *
-     * @param {string} layerId The layer identifier for which we are looking for the legend.
+     * @param {TypeWmsLayerEntryConfig} layerConfig layer configuration.
      *
      * @returns {blob} image blob
      */

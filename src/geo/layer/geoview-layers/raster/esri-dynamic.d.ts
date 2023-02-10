@@ -5,8 +5,10 @@ import { AbstractGeoViewLayer } from '../abstract-geoview-layers';
 import { AbstractGeoViewRaster, TypeBaseRasterLayer } from './abstract-geoview-raster';
 import { TypeImageLayerEntryConfig, TypeLayerEntryConfig, TypeSourceImageEsriInitialConfig, TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig } from '../../../map/map-schema-types';
 import { TypeArrayOfFeatureInfoEntries } from '../../../../api/events/payloads/get-feature-info-payload';
+import { TimeDimension } from '../../../../core/utils/date-mgt';
 export interface TypeEsriDynamicLayerEntryConfig extends Omit<TypeImageLayerEntryConfig, 'source'> {
     source: TypeSourceImageEsriInitialConfig;
+    temporalDimension?: TimeDimension;
 }
 export interface TypeEsriDynamicLayerConfig extends Omit<TypeGeoviewLayerConfig, 'listOfLayerEntryConfig'> {
     geoviewLayerType: 'esriDynamic';
@@ -52,6 +54,8 @@ export declare const geoviewEntryIsEsriDynamic: (verifyIfGeoViewEntry: TypeLayer
 export declare class EsriDynamic extends AbstractGeoViewRaster {
     /** Service metadata */
     metadata: TypeJsonObject;
+    /** Layer metadata */
+    layerMetadata: Record<string, TypeJsonObject>;
     /** ****************************************************************************************************************************
      * Initialize layer.
      * @param {string} mapId The id of the map.
@@ -102,6 +106,12 @@ export declare class EsriDynamic extends AbstractGeoViewRaster {
      * @param {TypeEsriDynamicLayerEntryConfig} layerEntryConfig The vector layer entry to configure.
      */
     private processFeatureInfoConfig;
+    /** ***************************************************************************************************************************
+     * This method will create a Geoview temporal dimension if it exist in the service metadata
+     * @param {TypeJsonObject} esriTimeDimension The ESRI time dimension object
+     * @param {TypeEsriDynamicLayerEntryConfig} layerEntryConfig The layer entry to configure
+     */
+    private processTemporalDimension;
     /** ****************************************************************************************************************************
      * This method creates a GeoView EsriDynamic layer using the definition provided in the layerEntryConfig parameter.
      *
@@ -164,4 +174,41 @@ export declare class EsriDynamic extends AbstractGeoViewRaster {
      * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
      */
     protected getFeatureInfoUsingPolygon(location: Coordinate[], layerConfig: TypeEsriDynamicLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    /** ***************************************************************************************************************************
+     * Get the layer view filter. The filter is derived fron the uniqueValue or the classBreak visibility flags and an layerFilter
+     * associated to the layer.
+     *
+     * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
+     *
+     * @returns {string} the filter associated to the layerPath
+     */
+    getViewFilter(layerPathOrConfig?: string | TypeLayerEntryConfig | null): string;
+    /** ***************************************************************************************************************************
+     * Apply a view filter to the layer. When the filter parameter is not empty (''), the view filter does not use the legend
+     * filter. Otherwise, the getViewFilter method is used to define the view filter and the resulting filter is
+     * (legend filters) and (layerFilter). The legend filters are derived from the uniqueValue or classBreaks style of the layer.
+     * When the layer config is invalid, nothing is done.
+     *
+     * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
+     * @param {string} filter An optional filter to be used in place of the getViewFilter value.
+     */
+    applyViewFilter(layerPathOrConfig?: string | TypeLayerEntryConfig | null, filter?: string): void;
+    /** ***************************************************************************************************************************
+     * Set the layerFilter that will be applied with the legend filters derived from the uniqueValue or classBreabs style of
+     * the layer. The resulting filter will be (legend filters) and (layerFilter). When the layer config is invalid, nothing is
+     * done.
+     *
+     * @param {string} filterValue The filter to associate to the layer.
+     * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
+     */
+    setLayerFilter(filterValue: string, layerPathOrConfig?: string | TypeLayerEntryConfig | null): void;
+    /** ***************************************************************************************************************************
+     * Get the layerFilter that is associated to the layer. Returns undefined when the layer config is invalid.
+     * If layerPathOrConfig is undefined, this.activeLayer is used.
+     *
+     * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
+     *
+     * @returns {string | undefined} The filter associated to the layer or undefined.
+     */
+    getLayerFilter(layerPathOrConfig?: string | TypeLayerEntryConfig | null): string | undefined;
 }
