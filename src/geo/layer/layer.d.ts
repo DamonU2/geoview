@@ -31,7 +31,7 @@ export declare class Layer {
      *
      * @returns {TypeGeoviewLayerConfig} The new configuration with duplicate entries eliminated.
      */
-    private validateGeoviewLayerConfig;
+    private deleteDuplicatGeoviewLayerConfig;
     /**
      * Print an error message for the duplicate geoview layer configuration.
      * @param {TypeGeoviewLayerConfig} geoviewLayerConfig The geoview layer configuration in error.
@@ -40,6 +40,7 @@ export declare class Layer {
     /**
      * Get the layer Path of the layer configuration parameter.
      * @param {TypeLayerEntryConfig} layerEntryConfig The layer configuration for wich we want to get the layer path.
+     * @param {string} layerPath Internal parameter used to build the layer path (should not be used by the user).
      *
      * @returns {string} Returns the layer path.
      */
