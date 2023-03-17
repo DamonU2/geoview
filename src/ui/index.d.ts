@@ -1,3 +1,4 @@
+export * from './accordion/accordion';
 export * from './autocomplete/autocomplete';
 export * from './avatar/avatar';
 export * from './button';
@@ -16,6 +17,7 @@ export * from './modal';
 export * from './panel';
 export * from './select/select';
 export * from './slider/slider';
+export * from './slider/slider-base';
 export * from './snackbar/snackbar';
 export * from './stepper/stepper';
 export * from './switch/switch';

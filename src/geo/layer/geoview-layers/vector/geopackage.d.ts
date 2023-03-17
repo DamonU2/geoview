@@ -6,38 +6,40 @@ import { AbstractGeoViewLayer } from '../abstract-geoview-layers';
 import { AbstractGeoViewVector } from './abstract-geoview-vector';
 import { TypeLayerEntryConfig, TypeVectorLayerEntryConfig, TypeVectorSourceInitialConfig, TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeBaseLayerEntryConfig } from '../../../map/map-schema-types';
 import { codedValueType, rangeDomainType } from '../../../../api/events/payloads/get-feature-info-payload';
-export interface TypeSourceWFSVectorInitialConfig extends TypeVectorSourceInitialConfig {
-    format: 'WFS';
+export interface TypeSourceGeoPackageInitialConfig extends TypeVectorSourceInitialConfig {
+    format: 'GeoPackage';
 }
-export interface TypeWfsLayerEntryConfig extends Omit<TypeVectorLayerEntryConfig, 'source'> {
-    source: TypeSourceWFSVectorInitialConfig;
+export interface TypeGeoPackageLayerEntryConfig extends Omit<TypeVectorLayerEntryConfig, 'source'> {
+    source: TypeSourceGeoPackageInitialConfig;
 }
-export interface TypeWFSLayerConfig extends Omit<TypeGeoviewLayerConfig, 'geoviewLayerType' | 'geoviewLayerType'> {
-    geoviewLayerType: 'ogcWfs';
-    listOfLayerEntryConfig: TypeWfsLayerEntryConfig[];
+export interface TypeGeoPackageLayerConfig extends Omit<TypeGeoviewLayerConfig, 'listOfLayerEntryConfig' | 'geoviewLayerType'> {
+    geoviewLayerType: 'GeoPackage';
+    listOfLayerEntryConfig: TypeGeoPackageLayerEntryConfig[];
 }
 /** *****************************************************************************************************************************
- * type guard function that redefines a TypeGeoviewLayerConfig as a TypeWFSLayerConfig if the geoviewLayerType attribute of the
- * verifyIfLayer parameter is WFS. The type ascention applies only to the true block of the if clause that use this function.
+ * type guard function that redefines a TypeGeoviewLayerConfig as a TypeGeoPackageFeatureLayerConfig if the geoviewLayerType attribute of
+ * the verifyIfLayer parameter is GEOPACKAGE. The type ascention applies only to the true block of the if clause that use this
+ * function.
  *
  * @param {TypeGeoviewLayerConfig} verifyIfLayer Polymorphic object to test in order to determine if the type ascention is valid.
  *
  * @returns {boolean} true if the type ascention is valid.
  */
-export declare const layerConfigIsWFS: (verifyIfLayer: TypeGeoviewLayerConfig) => verifyIfLayer is TypeWFSLayerConfig;
+export declare const layerConfigIsGeoPackage: (verifyIfLayer: TypeGeoviewLayerConfig) => verifyIfLayer is TypeGeoPackageLayerConfig;
 /** *****************************************************************************************************************************
- * type guard function that redefines an AbstractGeoViewLayer as a WFS if the type attribute of the verifyIfGeoViewLayer parameter
- * is WFS. The type ascention applies only to the true block of the if clause that use this function.
+ * type guard function that redefines an AbstractGeoViewLayer as a GeoPackage
+ * if the type attribute of the verifyIfGeoViewLayer parameter is GEOPACKAGE. The type ascention
+ * applies only to the true block of the if clause that use this function.
  *
  * @param {AbstractGeoViewLayer} verifyIfGeoViewLayer Polymorphic object to test in order to determine if the type ascention is
  * valid.
  *
  * @returns {boolean} true if the type ascention is valid.
  */
-export declare const geoviewLayerIsWFS: (verifyIfGeoViewLayer: AbstractGeoViewLayer) => verifyIfGeoViewLayer is WFS;
+export declare const geoviewLayerIsGeoPackage: (verifyIfGeoViewLayer: AbstractGeoViewLayer) => verifyIfGeoViewLayer is GeoPackage;
 /** *****************************************************************************************************************************
- * type guard function that redefines a TypeLayerEntryConfig as a TypeWfsLayerEntryConfig if the geoviewLayerType attribute of the
- * verifyIfGeoViewEntry.geoviewRootLayer attribute is WFS. The type ascention applies only to the true block of
+ * type guard function that redefines a TypeLayerEntryConfig as a TypeGeoPackageLayerEntryConfig if the geoviewLayerType attribute
+ * of the verifyIfGeoViewEntry.geoviewRootLayer attribute is GEOPACKAGE. The type ascention applies only to the true block of
  * the if clause that use this function.
  *
  * @param {TypeLayerEntryConfig} verifyIfGeoViewEntry Polymorphic object to test in order to determine if the type ascention is
@@ -45,22 +47,21 @@ export declare const geoviewLayerIsWFS: (verifyIfGeoViewLayer: AbstractGeoViewLa
  *
  * @returns {boolean} true if the type ascention is valid.
  */
-export declare const geoviewEntryIsWFS: (verifyIfGeoViewEntry: TypeLayerEntryConfig) => verifyIfGeoViewEntry is TypeWfsLayerEntryConfig;
-/** *****************************************************************************************************************************
- * A class to add WFS layer.
+export declare const geoviewEntryIsGeoPackage: (verifyIfGeoViewEntry: TypeLayerEntryConfig) => verifyIfGeoViewEntry is TypeGeoPackageLayerEntryConfig;
+/** ******************************************************************************************************************************
+ * A class to add GeoPackage api feature layer.
  *
  * @exports
- * @class WFS
+ * @class GeoPackage
  */
-export declare class WFS extends AbstractGeoViewVector {
-    /** private varibale holding wfs version. */
-    private version;
+export declare class GeoPackage extends AbstractGeoViewVector {
     /** ***************************************************************************************************************************
      * Initialize layer
+     *
      * @param {string} mapId the id of the map
-     * @param {TypeWFSLayerConfig} layerConfig the layer configuration
+     * @param {TypeGeoPackageFeatureLayerConfig} layerConfig the layer configuration
      */
-    constructor(mapId: string, layerConfig: TypeWFSLayerConfig);
+    constructor(mapId: string, layerConfig: TypeGeoPackageLayerConfig);
     /** ***************************************************************************************************************************
      * Extract the type of the specified field from the metadata. If the type can not be found, return 'string'.
      *
@@ -71,7 +72,7 @@ export declare class WFS extends AbstractGeoViewVector {
      */
     protected getFieldType(fieldName: string, layerConfig: TypeLayerEntryConfig): 'string' | 'date' | 'number';
     /** ***************************************************************************************************************************
-     * Returns null. WFS services don't have domains.
+     * Returns null. Geo package services don't have domains.
      *
      * @param {string} fieldName field name for which we want to get the domain.
      * @param {TypeLayerEntryConfig} layeConfig layer configuration.
@@ -86,12 +87,12 @@ export declare class WFS extends AbstractGeoViewVector {
      */
     protected getServiceMetadata(): Promise<void>;
     /** ***************************************************************************************************************************
-     * This method recursively validates the configuration of the layer entries to ensure that each layer is correctly defined. If
-     * necessary, additional code can be executed in the child method to complete the layer configuration.
+     * This method validates recursively the configuration of the layer entries to ensure that it is a feature layer identified
+     * with a numeric layerId and creates a group entry when a layer is a group.
      *
      * @param {TypeListOfLayerEntryConfig} listOfLayerEntryConfig The list of layer entries configuration to validate.
      *
-     * @returns {TypeListOfLayerEntryConfig} A new layer configuration list with layers in error removed.
+     * @returns {TypeListOfLayerEntryConfig} A new list of layer entries configuration with deleted error layers.
      */
     protected validateListOfLayerEntryConfig(listOfLayerEntryConfig: TypeListOfLayerEntryConfig): TypeListOfLayerEntryConfig;
     /** ***************************************************************************************************************************
@@ -104,13 +105,6 @@ export declare class WFS extends AbstractGeoViewVector {
      */
     protected processLayerMetadata(layerEntryConfig: TypeVectorLayerEntryConfig): Promise<void>;
     /** ***************************************************************************************************************************
-     * This method sets the outfields and aliasFields of the source feature info.
-     *
-     * @param {TypeJsonArray} fields An array of field names and its aliases.
-     * @param {TypeVectorLayerEntryConfig} layerEntryConfig The vector layer entry to configure.
-     */
-    private processFeatureInfoConfig;
-    /** ***************************************************************************************************************************
      * Create a source configuration for the vector layer.
      *
      * @param {TypeBaseLayerEntryConfig} layerEntryConfig The layer entry configuration.
@@ -118,4 +112,12 @@ export declare class WFS extends AbstractGeoViewVector {
      * @returns {VectorSource<Geometry>} The source configuration that will be used to create the vector layer.
      */
     protected createVectorSource(layerEntryConfig: TypeBaseLayerEntryConfig, sourceOptions?: SourceOptions, readOptions?: ReadOptions): VectorSource<Geometry>;
+    /** ***************************************************************************************************************************
+     * Create a source configuration for the vector layer.
+     *
+     * @param {Uint8Array} gpkgBinGeom Binary geometry array to be parsed.
+     *
+     * @returns {Uint8Array} Uint8Array Subarray of inputted binary geoametry array.
+     */
+    protected parseGpkgGeom(gpkgBinGeom: Uint8Array): Uint8Array;
 }

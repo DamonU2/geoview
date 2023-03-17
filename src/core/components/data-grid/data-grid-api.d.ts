@@ -1,5 +1,5 @@
 import { ReactElement } from 'react';
-import { TypeDisplayLanguage } from '../../../geo/map/map-schema-types';
+import { TypeDisplayLanguage } from '../../../app';
 export interface TypeLayerDataGridProps {
     layerId: string;
 }
@@ -25,5 +25,5 @@ export declare class DataGridAPI {
      * @return {ReactElement} the data grid react element
      *
      */
-    createDataGrid: (props: TypeLayerDataGridProps) => ReactElement;
+    createDataGrid: (layerDataGridProps: TypeLayerDataGridProps) => ReactElement;
 }

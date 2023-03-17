@@ -2,15 +2,18 @@ import BaseLayer from 'ol/layer/Base';
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
 import { Extent } from 'ol/extent';
-import { TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeLocalizedString, TypeLayerEntryConfig, TypeBaseLayerEntryConfig, TypeStyleConfig, TypeStyleConfigKey } from '../../map/map-schema-types';
-import { TypeArrayOfFeatureInfoEntries, TypeQueryType } from '../../../api/events/payloads/get-feature-info-payload';
+import Feature from 'ol/Feature';
+import Geometry from 'ol/geom/Geometry';
+import { TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeLocalizedString, TypeLayerEntryConfig, TypeBaseLayerEntryConfig, TypeStyleConfig, TypeVectorLayerEntryConfig, TypeImageLayerEntryConfig } from '../../map/map-schema-types';
+import { codedValueType, rangeDomainType, TypeArrayOfFeatureInfoEntries, TypeQueryType } from '../../../api/events/payloads/get-feature-info-payload';
 import { TypeJsonObject } from '../../../core/types/global-types';
+import { TimeDimension } from '../../../core/utils/date-mgt';
 export type TypeLegend = {
     layerPath: string;
     layerName?: TypeLocalizedString;
     type: TypeGeoviewLayerType;
     styleConfig?: TypeStyleConfig;
-    legend: TypeLayerStyle | HTMLCanvasElement;
+    legend: TypeLayerStyles | HTMLCanvasElement | null;
 };
 /**
  * type guard function that redefines a TypeLegend as a TypeWmsLegend
@@ -34,22 +37,28 @@ export interface TypeWmsLegend extends Omit<TypeLegend, 'styleConfig'> {
  */
 export declare const isVectorLegend: (verifyIfLegend: TypeLegend) => verifyIfLegend is TypeVectorLegend;
 export interface TypeVectorLegend extends TypeLegend {
-    legend: TypeLayerStyle;
+    legend: TypeLayerStyles;
 }
 export type TypeStyleRepresentation = {
     /** The defaultCanvas property is used by WMS legends, Simple styles and default styles when defined in unique value and class
      * break styles.
      */
     defaultCanvas?: HTMLCanvasElement | null;
+    /** The clusterCanvas property is used when the layer clustering is active (layerConfig.source.cluster.enable = true). */
+    clusterCanvas?: HTMLCanvasElement | null;
     /** The arrayOfCanvas property is used by unique value and class break styles. */
     arrayOfCanvas?: (HTMLCanvasElement | null)[];
 };
-export type TypeLayerStyle = Partial<Record<TypeStyleConfigKey, TypeStyleRepresentation>>;
-type LayerTypesKey = 'ESRI_DYNAMIC' | 'ESRI_FEATURE' | 'GEOJSON' | 'GEOCORE' | 'XYZ_TILES' | 'OGC_FEATURE' | 'WFS' | 'WMS';
+export type TypeLayerStyles = {
+    Point?: TypeStyleRepresentation;
+    LineString?: TypeStyleRepresentation;
+    Polygon?: TypeStyleRepresentation;
+};
+type LayerTypesKey = 'ESRI_DYNAMIC' | 'ESRI_FEATURE' | 'GEOJSON' | 'GEOCORE' | 'GEOPACKAGE' | 'XYZ_TILES' | 'OGC_FEATURE' | 'WFS' | 'WMS';
 /**
  * Type of GeoView layers
  */
-export type TypeGeoviewLayerType = 'esriDynamic' | 'esriFeature' | 'GeoJSON' | 'geoCore' | 'xyzTiles' | 'ogcFeature' | 'ogcWfs' | 'ogcWms';
+export type TypeGeoviewLayerType = 'esriDynamic' | 'esriFeature' | 'GeoJSON' | 'geoCore' | 'GeoPackage' | 'xyzTiles' | 'ogcFeature' | 'ogcWfs' | 'ogcWms';
 /**
  * Definition of the GeoView layer constants
  */
@@ -80,6 +89,7 @@ export declare abstract class AbstractGeoViewLayer {
     geoviewLayerName: TypeLocalizedString;
     /** The GeoView layer metadataAccessPath. The name attribute is optional */
     metadataAccessPath: TypeLocalizedString;
+    layerOrder: string[];
     /**
      * An array of layer settings. In the schema, this attribute is optional. However, we define it as mandatory and if the
      * configuration does not provide a value, we use an empty array instead of an undefined attribute.
@@ -98,6 +108,10 @@ export declare abstract class AbstractGeoViewLayer {
     /** The layer Identifier that is used to get and set layer's settings. */
     activeLayer: TypeLayerEntryConfig | null;
     metadata: TypeJsonObject | null;
+    /** Layer metadata */
+    layerMetadata: Record<string, TypeJsonObject>;
+    /** Layer temporal dimension */
+    layerTemporalDimension: Record<string, TimeDimension>;
     /** Attribution used in the OpenLayer source. */
     attributions: string[];
     /** ***************************************************************************************************************************
@@ -191,7 +205,7 @@ export declare abstract class AbstractGeoViewLayer {
      */
     protected abstract processOneLayerEntry(layerEntryConfig: TypeBaseLayerEntryConfig): Promise<BaseLayer | null>;
     /** ***************************************************************************************************************************
-     * Return feature information for the layer specified. If layerId is undefined, this.activeLayer is used.
+     * Return feature information for the layer specified. If layerPathOrConfig is undefined, this.activeLayer is used.
      *
      * @param {Pixel | Coordinate | Coordinate[]} location A pixel, a coordinate or a polygon that will be used by the query.
      * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
@@ -274,15 +288,48 @@ export declare abstract class AbstractGeoViewLayer {
      */
     getLayerConfig(layerPath?: string): TypeLayerEntryConfig | null | undefined;
     /** ***************************************************************************************************************************
+     * Returns the layer bounds or undefined if not defined in the layer configuration or the metadata. If layerPathOrConfig is
+     * undefined, the active layer is used. If projectionCode is defined, returns the bounds in the specified projection otherwise
+     * use the map projection. The bounds are different from the extent. They are mainly used for display purposes to show the
+     * bounding box in which the data resides and to zoom in on the entire layer data. It is not used by openlayer to limit the
+     * display of data on the map.
+     *
+     * @param {string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null} layerPathOrConfig Optional layer path or
+     * configuration.
+     * @param {string | number | undefined} projectionCode Optional projection code to use for the returned bounds.
+     *
+     * @returns {Extent} The layer bounding box.
+     */
+    getMetadataBounds(layerPathOrConfig?: string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null, projectionCode?: string | number | undefined): Extent | undefined;
+    /** ***************************************************************************************************************************
      * Return the extent of the layer or undefined if it will be visible regardless of extent. The layer extent is an array of
      * numbers representing an extent: [minx, miny, maxx, maxy]. If layerPathOrConfig is undefined, the activeLayer of the class
-     * will be used. This routine return undefined when no layerPathOrConfig is specified and the active layer is null.
+     * will be used. This routine return undefined when no layerPathOrConfig is specified and the active layer is null. The extent
+     * is used to clip the data displayed on the map.
      *
      * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
      *
      * @returns {Extent} The layer extent.
      */
-    getBounds(layerPathOrConfig?: string | TypeLayerEntryConfig | null): Extent | undefined;
+    getExtent(layerPathOrConfig?: string | TypeLayerEntryConfig | null): Extent | undefined;
+    /** ***************************************************************************************************************************
+     * Return the type of the specified field.
+     *
+     * @param {string} fieldName field name for which we want to get the type.
+     * @param {TypeLayerEntryConfig} layeConfig layer configuration.
+     *
+     * @returns {null | codedValueType | rangeDomainType} The domain of the field.
+     */
+    protected abstract getFieldDomain(fieldName: string, layerConfig: TypeLayerEntryConfig): null | codedValueType | rangeDomainType;
+    /** ***************************************************************************************************************************
+     * Return the domain of the specified field. If the type can not be found, return 'string'.
+     *
+     * @param {string} fieldName field name for which we want to get the domain.
+     * @param {TypeLayerEntryConfig} layeConfig layer configuration.
+     *
+     * @returns {'string' | 'date' | 'number'} The type of the field.
+     */
+    protected abstract getFieldType(fieldName: string, layerConfig: TypeLayerEntryConfig): 'string' | 'date' | 'number';
     /** ***************************************************************************************************************************
      * set the extent of the layer. Use undefined if it will be visible regardless of extent. The layer extent is an array of
      * numbers representing an extent: [minx, miny, maxx, maxy]. If layerPathOrConfig is undefined, the activeLayer of the class
@@ -291,7 +338,7 @@ export declare abstract class AbstractGeoViewLayer {
      * @param {Extent} layerExtent The extent to assign to the layer.
      * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
      */
-    setBounds(layerExtent: Extent, layerPathOrConfig?: string | TypeLayerEntryConfig | null): void;
+    setExtent(layerExtent: Extent, layerPathOrConfig?: string | TypeLayerEntryConfig | null): void;
     /** ***************************************************************************************************************************
      * Return the opacity of the layer (between 0 and 1). When layerPathOrConfig is undefined, the activeLayer of the class is
      * used. This routine return undefined when the layerPath specified is not found or when the layerPathOrConfig is undefined and
@@ -380,13 +427,13 @@ export declare abstract class AbstractGeoViewLayer {
      */
     getLegend(layerPathOrConfig?: string | TypeLayerEntryConfig | null): Promise<TypeLegend | null>;
     /** ***************************************************************************************************************************
-     * Utility method use to add an entry to the outfields or aliasFields attribute of the layerEntryConfig.source.featureInfo.
+     * Convert the feature information to an array of TypeArrayOfFeatureInfoEntries.
      *
-     * @param {TypeLayerEntryConfig} layerEntryConfig The layer entry configuration that contains the source.featureInfo.
-     * @param {outfields' | 'aliasFields} fieldName The field name to update.
-     * @param {string} fieldValue The value to append to the field name.
-     * @param {number} prefixEntryWithComa flag (0 = false) indicating that we must prefix the entry with a ','
+     * @param {Feature<Geometry>[]} features The array of features to convert.
+     * @param {TypeImageLayerEntryConfig | TypeVectorLayerEntryConfig} layerEntryConfig The layer configuration.
+     *
+     * @returns {TypeArrayOfFeatureInfoEntries} The Array of feature information.
      */
-    protected addFieldEntryToSourceFeatureInfo: (layerEntryConfig: TypeLayerEntryConfig, fieldName: 'outfields' | 'aliasFields', fieldValue: string, prefixEntryWithComa: number) => void;
+    protected formatFeatureInfoResult(features: Feature<Geometry>[], layerEntryConfig: TypeImageLayerEntryConfig | TypeVectorLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
 }
 export {};
