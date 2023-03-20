@@ -1,7 +1,6 @@
 import { ReactElement } from 'react';
-export interface TypeLayerDetailsProps {
-    layerId: string;
-}
+import { FeatureInfoLayerSet } from '../../../geo/utils/feature-info-layer-set';
+import { TypeArrayOfLayerData, DetailsProps } from './details';
 /**
  * API to manage details component
  *
@@ -10,6 +9,7 @@ export interface TypeLayerDetailsProps {
  */
 export declare class DetailsAPI {
     mapId: string;
+    featureInfoLayerSet: FeatureInfoLayerSet;
     /**
      * initialize the details api
      *
@@ -17,11 +17,14 @@ export declare class DetailsAPI {
      */
     constructor(mapId: string);
     /**
-     * Create a data grid
+     * Create a details as as an element
      *
-     * @param {TypeLayerDetailsProps} layerDetailsProps the properties of the details to be created
+     * @param {TypeLayerDetailsProps} mapId the map identifier
+     * @param {TypeArrayOfLayerData} detailsElements the data to display in the Details element
+     * @param {detailsSettings} DetailsProps the properties of the details to be created
+     *
      * @return {ReactElement} the details react element
      *
      */
-    createDetails: (props: TypeLayerDetailsProps) => ReactElement;
+    createDetails: (mapId: string, detailsElements: TypeArrayOfLayerData, detailsSettings: DetailsProps) => ReactElement;
 }
