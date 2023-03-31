@@ -5,9 +5,10 @@ import { Plugin } from './plugin/plugin';
 import { GeoUtilities } from '../geo/utils/utilities';
 import { DateMgt } from '../core/utils/date-mgt';
 import * as MarkerDefinitions from '../core/types/marker-definitions';
-import { generateId, addUiComponent } from '../core/utils/utilities';
+import { generateId, addUiComponent, showMessage } from '../core/utils/utilities';
 import { FeatureInfoLayerSet } from '../geo/utils/feature-info-layer-set';
-import { LegendsLayerSet } from '../geo/utils/legend-layer-set';
+import { LegendsLayerSet } from '../geo/utils/legends-layer-set';
+import { createMapFromConfig } from '../core/utils/create-map-from-config';
 /**
  * Class used to handle api calls (events, functions etc...)
  *
@@ -42,7 +43,7 @@ export declare class API {
     projectNames: {
         LCC: string;
         WM: string;
-        LATLNG: string;
+        LNGLAT: string;
     };
     layerTypes: Record<"ESRI_DYNAMIC" | "ESRI_FEATURE" | "GEOJSON" | "GEOCORE" | "GEOPACKAGE" | "XYZ_TILES" | "OGC_FEATURE" | "WFS" | "WMS", import("../geo/layer/geoview-layers/abstract-geoview-layers").TypeGeoviewLayerType>;
     maps: Record<string, MapViewer>;
@@ -53,7 +54,9 @@ export declare class API {
     dateUtilities: DateMgt;
     markerDefinitions: typeof MarkerDefinitions;
     generateId: typeof generateId;
+    createMapFromConfig: typeof createMapFromConfig;
     addUiComponent: typeof addUiComponent;
+    showMessage: typeof showMessage;
     createFeatureInfoLayerSet: typeof FeatureInfoLayerSet.create;
     createLegendsLayerSet: typeof LegendsLayerSet.create;
     /**
