@@ -3,7 +3,7 @@ import VectorSource, { Options as VectorSourceOptions } from 'ol/source/Vector';
 import { Feature } from 'ol';
 import { Coordinate } from 'ol/coordinate';
 import { Options as VectorLayerOptions } from 'ol/layer/BaseVector';
-import { TypeFeatureCircleStyle, TypeFeatureStyle } from './vector-types';
+import { TypeFeatureCircleStyle, TypeFeatureStyle, TypeIconStyle } from './vector-types';
 /**
  * Store a group of features
  */
@@ -60,32 +60,17 @@ export declare class Vector {
      * Create a new circle
      *
      * @param {Coordinate} coordinate long lat coordinate of the circle
-     * @param {number} radius an optional radius
      * @param options circle options including styling
      * @param {string} optionalFeatureId an optional id to be used to manage this geometry
      *
      * @returns {Feature} a geometry containing the id and the created geometry
      */
-    addCircle: (coordinate: Coordinate, radius?: number, options?: {
+    addCircle: (coordinate: Coordinate, options?: {
         geometryLayout?: 'XY' | 'XYZ' | 'XYM' | 'XYZM';
         style?: TypeFeatureCircleStyle;
     }, optionalFeatureId?: string) => Feature;
     /**
-     * Create a new circle marker
-     *
-     * @param {Coordinate} coordinate long lat coordinate of the circle marker
-     * @param {number} radius optional circle marker radius
-     * @param options circle marker options including styling
-     * @param {string} optionalFeatureId an optional id to be used to manage this geometry
-     *
-     * @returns {Feature} a geometry containing the id and the created geometry
-     */
-    addCircleMarker: (coordinate: Coordinate, radius?: number, options?: {
-        geometryLayout?: 'XY' | 'XYZ' | 'XYM' | 'XYZM';
-        style?: TypeFeatureCircleStyle;
-    }, optionalFeatureId?: string) => Feature;
-    /**
-     * Create a new marker
+     * Create a new marker icon
      *
      * @param {Coordinate} coordinate the long lat position of the marker
      * @param options marker options including styling
@@ -93,9 +78,9 @@ export declare class Vector {
      *
      * @returns {Feature} a geometry containing the id and the created geometry
      */
-    addMarker: (coordinate: Coordinate, options?: {
+    addMarkerIcon: (coordinate: Coordinate, options?: {
         geometryLayout?: 'XY' | 'XYZ' | 'XYM' | 'XYZM';
-        style?: TypeFeatureStyle;
+        style?: TypeIconStyle;
     }, optionalFeatureId?: string) => Feature;
     /**
      * Find a feature using it's id
