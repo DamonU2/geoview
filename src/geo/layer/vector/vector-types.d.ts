@@ -1,11 +1,11 @@
 /** ******************************************************************************************************************************
  * interface used to define the vector types.
  */
-export type TypeOfVector = 'polyline' | 'polygon' | 'circle' | 'circle_marker' | 'marker';
+export type TypeOfVector = 'polyline' | 'polygon' | 'circle' | 'marker';
 /** ******************************************************************************************************************************
  * interface used to define the vector type keys.
  */
-export type TypeVectorKeys = 'POLYLINE' | 'POLYGON' | 'CIRCLE' | 'CIRCLE_MARKER' | 'MARKER';
+export type TypeVectorKeys = 'POLYLINE' | 'POLYGON' | 'CIRCLE' | 'MARKER';
 /** ******************************************************************************************************************************
  * constant used to specify available vectors to draw.
  */
@@ -19,6 +19,17 @@ export type TypeFeatureStyle = {
     strokeOpacity?: number;
     fillColor?: string;
     fillOpacity?: number;
+};
+/** ******************************************************************************************************************************
+ * Marker icon styles.
+ */
+export type TypeIconStyle = {
+    anchor?: number[];
+    size?: number[];
+    scale?: number;
+    anchorXUnits?: string;
+    anchorYUnits?: string;
+    src: string;
 };
 /** ******************************************************************************************************************************
  * Circle and Circle marker styles.
