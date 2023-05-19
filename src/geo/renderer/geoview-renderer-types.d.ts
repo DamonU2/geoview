@@ -17,7 +17,7 @@ export declare enum NodeType {
 }
 export type FilterNodeType = {
     nodeType: NodeType;
-    nodeValue: string | number | boolean | string[] | number[];
+    nodeValue: null | string | number | boolean | string[] | number[];
 };
 export type FilterNodeArrayType = FilterNodeType[];
 export declare const binaryKeywors: string[];

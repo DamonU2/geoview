@@ -1,5 +1,26 @@
+import { Geometry } from 'ol/geom';
+import { Style } from 'ol/style';
+import { Color } from 'ol/color';
 import { TypeJsonObject } from '../../core/types/global-types';
+import { TypeFeatureStyle } from '../layer/vector/vector-types';
 export declare class GeoUtilities {
+    /**
+     * Returns the WKT representation of a given geoemtry
+     * @function geometryToWKT
+     * @param {string} geometry the geometry
+     * @returns {string | null} the WKT representation of the geometry
+     */
+    geometryToWKT: (geometry: Geometry) => string | null;
+    /**
+     * Default drawing style for GeoView
+     * @returns an Open Layers styling for drawing on a map
+     */
+    defaultDrawingStyle: (strokeColor?: Color | string, strokeWidth?: number, fillColor?: Color | string) => Style;
+    /**
+     * Converts a TypeFeatureStyle to an Open Layers Style object.
+     * @returns an Open Layers styling for drawing on a map or undefined
+     */
+    convertTypeFeatureStyleToOpenLayersStyle: (style?: TypeFeatureStyle) => Style;
     /**
      * Fetch the json response from the ESRI map server to get REST endpoint metadata
      * @function getESRIServiceMetadata

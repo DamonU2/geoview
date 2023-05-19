@@ -1,11 +1,9 @@
 import TileLayer from 'ol/layer/Tile';
 import XYZ from 'ol/source/XYZ';
-import { Coordinate } from 'ol/coordinate';
-import { Pixel } from 'ol/pixel';
+import { Extent } from 'ol/extent';
 import { AbstractGeoViewLayer } from '../abstract-geoview-layers';
 import { AbstractGeoViewRaster, TypeBaseRasterLayer } from './abstract-geoview-raster';
 import { TypeLayerEntryConfig, TypeSourceTileInitialConfig, TypeTileLayerEntryConfig, TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig } from '../../../map/map-schema-types';
-import { codedValueType, rangeDomainType, TypeArrayOfFeatureInfoEntries } from '../../../../api/events/payloads/get-feature-info-payload';
 export type TypeSourceImageXYZTilesInitialConfig = TypeSourceTileInitialConfig;
 export interface TypeXYZTilesLayerEntryConfig extends Omit<TypeTileLayerEntryConfig, 'source'> {
     source: TypeSourceImageXYZTilesInitialConfig;
@@ -64,20 +62,11 @@ export declare class XYZTiles extends AbstractGeoViewRaster {
      * Extract the type of the specified field from the metadata. If the type can not be found, return 'string'.
      *
      * @param {string} fieldName field name for which we want to get the type.
-     * @param {TypeLayerEntryConfig} layeConfig layer configuration.
+     * @param {TypeLayerEntryConfig} layerConfig layer configuration.
      *
      * @returns {'string' | 'date' | 'number'} The type of the field.
      */
     protected getFieldType(fieldName: string, layerConfig: TypeLayerEntryConfig): 'string' | 'date' | 'number';
-    /** ***************************************************************************************************************************
-     * Returns null. XYZ services don't have domains.
-     *
-     * @param {string} fieldName field name for which we want to get the domain.
-     * @param {TypeLayerEntryConfig} layeConfig layer configuration.
-     *
-     * @returns {null | codedValueType | rangeDomainType} The domain of the field.
-     */
-    protected getFieldDomain(fieldName: string, layerConfig: TypeLayerEntryConfig): null | codedValueType | rangeDomainType;
     /** ***************************************************************************************************************************
      * This method reads the service metadata from the metadataAccessPath.
      *
@@ -105,59 +94,18 @@ export declare class XYZTiles extends AbstractGeoViewRaster {
      * This method is used to process the layer's metadata. It will fill the empty fields of the layer's configuration (renderer,
      * initial settings, fields and aliases).
      *
-     * @param {TypeVectorLayerEntryConfig} layerEntryConfig The layer entry configuration to process.
+     * @param {TypeVectorLaTypeLayerEntryConfigyerEntryConfig} layerEntryConfig The layer entry configuration to process.
      *
      * @returns {Promise<void>} A promise that the vector layer configuration has its metadata processed.
      */
-    protected processLayerMetadata(layerEntryConfig: TypeXYZTilesLayerEntryConfig): Promise<void>;
+    protected processLayerMetadata(layerEntryConfig: TypeLayerEntryConfig): Promise<void>;
     /** ***************************************************************************************************************************
-     * XYZ tiles return null because these services do not support getFeatureInfo queries. When getFeatureInfo is supported this
-     * method returns feature information for all the features around the provided Pixel.
+     * Get the bounds of the layer represented in the layerConfig, returns updated bounds
      *
-     * @param {Coordinate} location The pixel coordinate that will be used by the query.
-     * @param {TypeXYZTilesLayerEntryConfig} layerConfig The layer configuration.
+     * @param {TypeLayerEntryConfig} layerConfig Layer config to get bounds from.
+     * @param {Extent | undefined} bounds The current bounding box to be adjusted.
      *
-     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
+     * @returns {Extent} The layer bounding box.
      */
-    protected getFeatureInfoAtPixel(location: Pixel, layerConfig: TypeXYZTilesLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
-    /** ***************************************************************************************************************************
-     * XYZ tiles return null because these services do not support getFeatureInfo queries. When getFeatureInfo is supported this
-     * method returns information for all the features around the provided coordinate.
-     *
-     * @param {Coordinate} location The coordinate that will be used by the query.
-     * @param {TypeXYZTilesLayerEntryConfig} layerConfig The layer configuration.
-     *
-     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
-     */
-    protected getFeatureInfoAtCoordinate(location: Coordinate, layerConfig: TypeXYZTilesLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
-    /** ***************************************************************************************************************************
-     * XYZ tiles return null because these services do not support getFeatureInfo queries. When getFeatureInfo is supported this
-     * method returns feature information for all the features around the provided longitude latitude.
-     *
-     * @param {Coordinate} location The coordinate that will be used by the query.
-     * @param {TypeXYZTilesLayerEntryConfig} layerConfig The layer configuration.
-     *
-     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
-     */
-    protected getFeatureInfoAtLongLat(location: Coordinate, layerConfig: TypeXYZTilesLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
-    /** ***************************************************************************************************************************
-     * XYZ tiles return null because these services do not support getFeatureInfo queries. When getFeatureInfo is supported this
-     * method returns feature information for all the features in the provided bounding box.
-     *
-     * @param {Coordinate} location The coordinate that will be used by the query.
-     * @param {TypeXYZTilesLayerEntryConfig} layerConfig The layer configuration.
-     *
-     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
-     */
-    protected getFeatureInfoUsingBBox(location: Coordinate[], layerConfig: TypeXYZTilesLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
-    /** ***************************************************************************************************************************
-     * XYZ tiles return null because these services do not support getFeatureInfo queries. When getFeatureInfo is supported this
-     * method returns feature information for all the features in the provided polygon.
-     *
-     * @param {Coordinate} location The coordinate that will be used by the query.
-     * @param {TypeXYZTilesLayerEntryConfig} layerConfig The layer configuration.
-     *
-     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
-     */
-    protected getFeatureInfoUsingPolygon(location: Coordinate[], layerConfig: TypeXYZTilesLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    getBounds(layerConfig: TypeLayerEntryConfig, bounds: Extent | undefined): Extent | undefined;
 }

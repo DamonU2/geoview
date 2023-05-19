@@ -5,7 +5,6 @@ import { Geometry } from 'ol/geom';
 import { AbstractGeoViewLayer } from '../abstract-geoview-layers';
 import { AbstractGeoViewVector } from './abstract-geoview-vector';
 import { TypeLayerEntryConfig, TypeVectorLayerEntryConfig, TypeVectorSourceInitialConfig, TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeBaseLayerEntryConfig } from '../../../map/map-schema-types';
-import { codedValueType, rangeDomainType } from '../../../../api/events/payloads/get-feature-info-payload';
 export interface TypeSourceGeoPackageInitialConfig extends TypeVectorSourceInitialConfig {
     format: 'GeoPackage';
 }
@@ -63,24 +62,6 @@ export declare class GeoPackage extends AbstractGeoViewVector {
      */
     constructor(mapId: string, layerConfig: TypeGeoPackageLayerConfig);
     /** ***************************************************************************************************************************
-     * Extract the type of the specified field from the metadata. If the type can not be found, return 'string'.
-     *
-     * @param {string} fieldName field name for which we want to get the type.
-     * @param {TypeLayerEntryConfig} layeConfig layer configuration.
-     *
-     * @returns {'string' | 'date' | 'number'} The type of the field.
-     */
-    protected getFieldType(fieldName: string, layerConfig: TypeLayerEntryConfig): 'string' | 'date' | 'number';
-    /** ***************************************************************************************************************************
-     * Returns null. Geo package services don't have domains.
-     *
-     * @param {string} fieldName field name for which we want to get the domain.
-     * @param {TypeLayerEntryConfig} layeConfig layer configuration.
-     *
-     * @returns {null | codedValueType | rangeDomainType} The domain of the field.
-     */
-    protected getFieldDomain(fieldName: string, layerConfig: TypeLayerEntryConfig): null | codedValueType | rangeDomainType;
-    /** ***************************************************************************************************************************
      * This method reads the service metadata from the metadataAccessPath.
      *
      * @returns {Promise<void>} A promise that the execution is completed.
@@ -96,18 +77,11 @@ export declare class GeoPackage extends AbstractGeoViewVector {
      */
     protected validateListOfLayerEntryConfig(listOfLayerEntryConfig: TypeListOfLayerEntryConfig): TypeListOfLayerEntryConfig;
     /** ***************************************************************************************************************************
-     * This method is used to process the layer's metadata. It will fill the empty outfields and aliasFields properties of the
-     * layer's configuration.
-     *
-     * @param {TypeVectorLayerEntryConfig} layerEntryConfig The layer entry configuration to process.
-     *
-     * @returns {Promise<void>} A promise that the vector layer configuration has its metadata processed.
-     */
-    protected processLayerMetadata(layerEntryConfig: TypeVectorLayerEntryConfig): Promise<void>;
-    /** ***************************************************************************************************************************
      * Create a source configuration for the vector layer.
      *
      * @param {TypeBaseLayerEntryConfig} layerEntryConfig The layer entry configuration.
+     * @param {SourceOptions} sourceOptions The source options (default: {}).
+     * @param {ReadOptions} readOptions The read options (default: {}).
      *
      * @returns {VectorSource<Geometry>} The source configuration that will be used to create the vector layer.
      */

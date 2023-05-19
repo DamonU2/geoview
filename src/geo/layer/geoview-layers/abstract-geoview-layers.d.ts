@@ -2,12 +2,14 @@ import BaseLayer from 'ol/layer/Base';
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
 import { Extent } from 'ol/extent';
+import LayerGroup from 'ol/layer/Group';
 import Feature from 'ol/Feature';
 import Geometry from 'ol/geom/Geometry';
-import { TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeLocalizedString, TypeLayerEntryConfig, TypeBaseLayerEntryConfig, TypeStyleConfig, TypeVectorLayerEntryConfig, TypeImageLayerEntryConfig } from '../../map/map-schema-types';
+import { TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeLocalizedString, TypeLayerEntryConfig, TypeBaseLayerEntryConfig, TypeStyleConfig, TypeVectorLayerEntryConfig, TypeLayerEntryType, TypeOgcWmsLayerEntryConfig, TypeEsriDynamicLayerEntryConfig, TypeLayerInitialSettings } from '../../map/map-schema-types';
 import { codedValueType, rangeDomainType, TypeArrayOfFeatureInfoEntries, TypeQueryType } from '../../../api/events/payloads/get-feature-info-payload';
 import { TypeJsonObject } from '../../../core/types/global-types';
-import { TimeDimension } from '../../../core/utils/date-mgt';
+import { TimeDimension, TypeDateFragments } from '../../../core/utils/date-mgt';
+import { TypeEventHandlerFunction } from '../../../api/events/event';
 export type TypeLegend = {
     layerPath: string;
     layerName?: TypeLocalizedString;
@@ -25,6 +27,18 @@ export type TypeLegend = {
  */
 export declare const isWmsLegend: (verifyIfLegend: TypeLegend) => verifyIfLegend is TypeWmsLegend;
 export interface TypeWmsLegend extends Omit<TypeLegend, 'styleConfig'> {
+    legend: HTMLCanvasElement;
+}
+/**
+ * type guard function that redefines a TypeLegend as a TypeWmsLegend
+ * if the event attribute of the verifyIfPayload parameter is valid. The type ascention
+ * applies only to the true block of the if clause.
+ *
+ * @param {TypeLegend} verifyIfLegend object to test in order to determine if the type ascention is valid
+ * @returns {boolean} returns true if the payload is valid
+ */
+export declare const isImageStaticLegend: (verifyIfLegend: TypeLegend) => verifyIfLegend is TypeImageStaticLegend;
+export interface TypeImageStaticLegend extends Omit<TypeLegend, 'styleConfig'> {
     legend: HTMLCanvasElement;
 }
 /**
@@ -54,15 +68,28 @@ export type TypeLayerStyles = {
     LineString?: TypeStyleRepresentation;
     Polygon?: TypeStyleRepresentation;
 };
-type LayerTypesKey = 'ESRI_DYNAMIC' | 'ESRI_FEATURE' | 'GEOJSON' | 'GEOCORE' | 'GEOPACKAGE' | 'XYZ_TILES' | 'OGC_FEATURE' | 'WFS' | 'WMS';
+type LayerTypesKey = 'ESRI_DYNAMIC' | 'ESRI_FEATURE' | 'IMAGE_STATIC' | 'GEOJSON' | 'GEOCORE' | 'GEOPACKAGE' | 'XYZ_TILES' | 'OGC_FEATURE' | 'WFS' | 'WMS';
 /**
  * Type of GeoView layers
  */
-export type TypeGeoviewLayerType = 'esriDynamic' | 'esriFeature' | 'GeoJSON' | 'geoCore' | 'GeoPackage' | 'xyzTiles' | 'ogcFeature' | 'ogcWfs' | 'ogcWms';
+export type TypeGeoviewLayerType = 'esriDynamic' | 'esriFeature' | 'imageStatic' | 'GeoJSON' | 'geoCore' | 'GeoPackage' | 'xyzTiles' | 'ogcFeature' | 'ogcWfs' | 'ogcWms';
 /**
  * Definition of the GeoView layer constants
  */
 export declare const CONST_LAYER_TYPES: Record<LayerTypesKey, TypeGeoviewLayerType>;
+/**
+ * Definition of the GeoView layer entry types for each type of Geoview layer
+ */
+export declare const CONST_LAYER_ENTRY_TYPE: Record<TypeGeoviewLayerType, TypeLayerEntryType>;
+/**
+ * Definition of the sub schema to use for each type of Geoview layer
+ */
+export declare const CONST_GEOVIEW_SCHEMA_BY_TYPE: Record<TypeGeoviewLayerType, string>;
+type TypeLayerSetHandlerFunctions = {
+    requestLayerInventory?: TypeEventHandlerFunction;
+    queryLegend?: TypeEventHandlerFunction;
+    queryLayer?: TypeEventHandlerFunction;
+};
 /** ******************************************************************************************************************************
  * The AbstractGeoViewLayer class is normally used for creating subclasses and is not instantiated (using the new operator) in the
  * app. It registers the configuration options and defines the methods shared by all its descendant. The class constructor has
@@ -95,7 +122,11 @@ export declare abstract class AbstractGeoViewLayer {
      * configuration does not provide a value, we use an empty array instead of an undefined attribute.
      */
     listOfLayerEntryConfig: TypeListOfLayerEntryConfig;
-    /** Name of listOfLayerEntryConfig that did not load. */
+    /**
+     * Initial settings to apply to the GeoView layer at creation time. This attribute is allowed only if listOfLayerEntryConfig.length > 1.
+     */
+    initialSettings?: TypeLayerInitialSettings;
+    /** layers of listOfLayerEntryConfig that did not load. */
     layerLoadError: {
         layer: string;
         consoleMessage: string;
@@ -110,10 +141,16 @@ export declare abstract class AbstractGeoViewLayer {
     metadata: TypeJsonObject | null;
     /** Layer metadata */
     layerMetadata: Record<string, TypeJsonObject>;
-    /** Layer temporal dimension */
+    /** Layer temporal dimension indexed by layerPath. */
     layerTemporalDimension: Record<string, TimeDimension>;
     /** Attribution used in the OpenLayer source. */
     attributions: string[];
+    /** LayerSet handler functions indexed by layerPath. This property is used to deactivate (off) events attached to a layer. */
+    registerToLayerSetListenerFunctions: Record<string, TypeLayerSetHandlerFunctions>;
+    /** Date format object used to translate server to ISO format and ISO to server format */
+    serverDateFragmentsOrder?: TypeDateFragments;
+    /** Date format object used to translate internal UTC ISO format to the external format, the one used by the user */
+    externalFragmentsOrder: TypeDateFragments;
     /** ***************************************************************************************************************************
      * The class constructor saves parameters and common configuration parameters in attributes.
      *
@@ -147,11 +184,11 @@ export declare abstract class AbstractGeoViewLayer {
      */
     protected getAdditionalServiceDefinition(): Promise<void>;
     /** ***************************************************************************************************************************
-     * This method reads the service metadata from the metadataAccessPath.
+     * This method reads the service metadata from the metadataAccessPath. It does nothing if the layer has no metadata.
      *
-     * @returns {Promise<void>} A promise that the execution is done.
+     * @returns {Promise<void>} A promise that the execution is completed.
      */
-    protected abstract getServiceMetadata(): Promise<void>;
+    protected getServiceMetadata(): Promise<void>;
     /** ***************************************************************************************************************************
      * This method recursively validates the configuration of the layer entries to ensure that each layer is correctly defined. If
      * necessary, additional code can be executed in the child method to complete the layer configuration.
@@ -180,22 +217,24 @@ export declare abstract class AbstractGeoViewLayer {
      */
     private processMetadataGroupLayer;
     /** ***************************************************************************************************************************
-     * This method is used to process the layer's metadata. It will fill the empty fields of the layer's configuration (renderer,
-     * initial settings, fields and aliases).
+     * This method is used to process the layer's metadata. It will fill the empty outfields and aliasFields properties of the
+     * layer's configuration when applicable.
      *
      * @param {TypeLayerEntryConfig} layerEntryConfig The layer entry configuration to process.
      *
-     * @returns {Promise<void>} A promise that the layer configuration has its metadata processed.
+     * @returns {Promise<void>} A promise that the vector layer configuration has its metadata processed.
      */
-    protected abstract processLayerMetadata(layerEntryConfig: TypeLayerEntryConfig): Promise<void>;
+    protected processLayerMetadata(layerEntryConfig: TypeLayerEntryConfig): Promise<void>;
     /** ***************************************************************************************************************************
      * Process recursively the list of layer Entries to create the layers and the layer groups.
      *
      * @param {TypeListOfLayerEntryConfig} listOfLayerEntryConfig The list of layer entries to process.
+     * @param {LayerGroup} layerGroup Optional layer group to use when we have many layers. The very first call to
+     *  processListOfLayerEntryConfig must not provide a value for this parameter. It is defined for internal use.
      *
      * @returns {Promise<BaseLayer | null>} The promise that the layers were processed.
      */
-    protected processListOfLayerEntryConfig(listOfLayerEntryConfig: TypeListOfLayerEntryConfig): Promise<BaseLayer | null>;
+    protected processListOfLayerEntryConfig(listOfLayerEntryConfig: TypeListOfLayerEntryConfig, layerGroup?: LayerGroup): Promise<BaseLayer | null>;
     /** ***************************************************************************************************************************
      * This method creates a GeoView layer using the definition provided in the layerEntryConfig parameter.
      *
@@ -215,50 +254,55 @@ export declare abstract class AbstractGeoViewLayer {
      */
     getFeatureInfo(location: Pixel | Coordinate | Coordinate[], layerPathOrConfig?: string | TypeLayerEntryConfig | null, queryType?: TypeQueryType): Promise<TypeArrayOfFeatureInfoEntries>;
     /** ***************************************************************************************************************************
-     * Return feature information for all the features around the provided Pixel.
+     * Return feature information for all the features around the provided Pixel. Returns an empty array [] when the layer is
+     * not queryable.
      *
      * @param {Coordinate} location The pixel coordinate that will be used by the query.
      * @param {TypeLayerEntryConfig} layerConfig The layer configuration.
      *
-     * @returns {Promise<TypeFeatureInfoResult>} The feature info table.
+     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
      */
-    protected abstract getFeatureInfoAtPixel(location: Pixel, layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    protected getFeatureInfoAtPixel(location: Pixel, layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
     /** ***************************************************************************************************************************
-     * Return feature information for all the features around the provided coordinate.
+     * Return feature information for all the features around the provided coordinate. Returns an empty array [] when the layer is
+     * not queryable.
      *
      * @param {Coordinate} location The coordinate that will be used by the query.
      * @param {TypeLayerEntryConfig} layerConfig The layer configuration.
      *
-     * @returns {Promise<TypeFeatureInfoResult>} The feature info table.
+     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
      */
-    protected abstract getFeatureInfoAtCoordinate(location: Coordinate, layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    protected getFeatureInfoAtCoordinate(location: Coordinate, layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
     /** ***************************************************************************************************************************
-     * Return feature information for all the features around the provided longitude latitude.
+     * Return feature information for all the features around the provided longitude latitude. Returns an empty array [] when the
+     * layer is not queryable.
      *
      * @param {Coordinate} location The coordinate that will be used by the query.
      * @param {TypeLayerEntryConfig} layerConfig The layer configuration.
      *
-     * @returns {Promise<TypeFeatureInfoResult>} The feature info table.
+     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
      */
-    protected abstract getFeatureInfoAtLongLat(location: Coordinate, layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    protected getFeatureInfoAtLongLat(location: Coordinate, layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
     /** ***************************************************************************************************************************
-     * Return feature information for all the features in the provided bounding box.
+     * Return feature information for all the features in the provided bounding box. Returns an empty array [] when the layer is
+     * not queryable.
      *
      * @param {Coordinate} location The coordinate that will be used by the query.
      * @param {TypeLayerEntryConfig} layerConfig The layer configuration.
      *
-     * @returns {Promise<TypeFeatureInfoResult>} The feature info table.
+     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
      */
-    protected abstract getFeatureInfoUsingBBox(location: Coordinate[], layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    protected getFeatureInfoUsingBBox(location: Coordinate[], layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
     /** ***************************************************************************************************************************
-     * Return feature information for all the features in the provided polygon.
+     * Return feature information for all the features in the provided polygon. Returns an empty array [] when the layer is
+     * not queryable.
      *
      * @param {Coordinate} location The coordinate that will be used by the query.
      * @param {TypeLayerEntryConfig} layerConfig The layer configuration.
      *
-     * @returns {Promise<TypeFeatureInfoResult>} The feature info table.
+     * @returns {Promise<TypeArrayOfFeatureInfoEntries>} The feature info table.
      */
-    protected abstract getFeatureInfoUsingPolygon(location: Coordinate[], layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    protected getFeatureInfoUsingPolygon(location: Coordinate[], layerConfig: TypeLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
     /** ***************************************************************************************************************************
      * This method register the layer entry to layer sets.
      *
@@ -266,8 +310,14 @@ export declare abstract class AbstractGeoViewLayer {
      */
     protected registerToLayerSets(layerEntryConfig: TypeBaseLayerEntryConfig): void;
     /** ***************************************************************************************************************************
-     * This method create a layer group. it uses the layer initial settings of the GeoView layer configuration.
+     * This method unregisters the layer from the layer sets.
      *
+     * @param {TypeBaseLayerEntryConfig} layerEntryConfig The layer entry to register.
+     */
+    unregisterFromLayerSets(layerEntryConfig: TypeBaseLayerEntryConfig): void;
+    /** ***************************************************************************************************************************
+     * This method create a layer group.
+     * @param {TypeLayerEntryConfig | TypeGeoviewLayerConfig} layerEntryConfig The layer configuration.
      * @returns {LayerGroup} A new layer group.
      */
     private createLayerGroup;
@@ -302,6 +352,24 @@ export declare abstract class AbstractGeoViewLayer {
      */
     getMetadataBounds(layerPathOrConfig?: string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null, projectionCode?: string | number | undefined): Extent | undefined;
     /** ***************************************************************************************************************************
+     * Returns the domaine of the specified field or null if the field has no domain.
+     *
+     * @param {string} fieldName field name for which we want to get the domaine.
+     * @param {TypeLayerEntryConfig} layerConfig layer configuration.
+     *
+     * @returns {null | codedValueType | rangeDomainType} The domain of the field.
+     */
+    protected getFieldDomain(fieldName: string, layerConfig: TypeLayerEntryConfig): null | codedValueType | rangeDomainType;
+    /** ***************************************************************************************************************************
+     * Extract the type of the specified field from the metadata. If the type can not be found, return 'string'.
+     *
+     * @param {string} fieldName field name for which we want to get the type.
+     * @param {TypeLayerEntryConfig} layerConfig layer configuration.
+     *
+     * @returns {'string' | 'date' | 'number'} The type of the field.
+     */
+    protected getFieldType(fieldName: string, layerConfig: TypeLayerEntryConfig): 'string' | 'date' | 'number';
+    /** ***************************************************************************************************************************
      * Return the extent of the layer or undefined if it will be visible regardless of extent. The layer extent is an array of
      * numbers representing an extent: [minx, miny, maxx, maxy]. If layerPathOrConfig is undefined, the activeLayer of the class
      * will be used. This routine return undefined when no layerPathOrConfig is specified and the active layer is null. The extent
@@ -312,24 +380,6 @@ export declare abstract class AbstractGeoViewLayer {
      * @returns {Extent} The layer extent.
      */
     getExtent(layerPathOrConfig?: string | TypeLayerEntryConfig | null): Extent | undefined;
-    /** ***************************************************************************************************************************
-     * Return the type of the specified field.
-     *
-     * @param {string} fieldName field name for which we want to get the type.
-     * @param {TypeLayerEntryConfig} layeConfig layer configuration.
-     *
-     * @returns {null | codedValueType | rangeDomainType} The domain of the field.
-     */
-    protected abstract getFieldDomain(fieldName: string, layerConfig: TypeLayerEntryConfig): null | codedValueType | rangeDomainType;
-    /** ***************************************************************************************************************************
-     * Return the domain of the specified field. If the type can not be found, return 'string'.
-     *
-     * @param {string} fieldName field name for which we want to get the domain.
-     * @param {TypeLayerEntryConfig} layeConfig layer configuration.
-     *
-     * @returns {'string' | 'date' | 'number'} The type of the field.
-     */
-    protected abstract getFieldType(fieldName: string, layerConfig: TypeLayerEntryConfig): 'string' | 'date' | 'number';
     /** ***************************************************************************************************************************
      * set the extent of the layer. Use undefined if it will be visible regardless of extent. The layer extent is an array of
      * numbers representing an extent: [minx, miny, maxx, maxy]. If layerPathOrConfig is undefined, the activeLayer of the class
@@ -427,6 +477,17 @@ export declare abstract class AbstractGeoViewLayer {
      */
     getLegend(layerPathOrConfig?: string | TypeLayerEntryConfig | null): Promise<TypeLegend | null>;
     /** ***************************************************************************************************************************
+     * Get and format the value of the field with the name passed in parameter. Vector GeoView layers convert dates to milliseconds
+     * since the base date. Vector feature dates must be in ISO format.
+     *
+     * @param {Feature<Geometry>} features The features that hold the field values.
+     * @param {string} fieldName The field name.
+     * @param {'number' | 'string' | 'date'} fieldType The field type.
+     *
+     * @returns {string | number | Date} The formatted value of the field.
+     */
+    protected getFieldValue(feature: Feature<Geometry>, fieldName: string, fieldType: 'number' | 'string' | 'date'): string | number | Date;
+    /** ***************************************************************************************************************************
      * Convert the feature information to an array of TypeArrayOfFeatureInfoEntries.
      *
      * @param {Feature<Geometry>[]} features The array of features to convert.
@@ -434,6 +495,38 @@ export declare abstract class AbstractGeoViewLayer {
      *
      * @returns {TypeArrayOfFeatureInfoEntries} The Array of feature information.
      */
-    protected formatFeatureInfoResult(features: Feature<Geometry>[], layerEntryConfig: TypeImageLayerEntryConfig | TypeVectorLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    protected formatFeatureInfoResult(features: Feature<Geometry>[], layerEntryConfig: TypeOgcWmsLayerEntryConfig | TypeEsriDynamicLayerEntryConfig | TypeVectorLayerEntryConfig): Promise<TypeArrayOfFeatureInfoEntries>;
+    /** ***************************************************************************************************************************
+     * Get the layerFilter that is associated to the layer. Returns undefined when the layer config is invalid.
+     * If layerPathOrConfig is undefined, this.activeLayer is used.
+     *
+     * @param {string | TypeLayerEntryConfig | null} layerPathOrConfig Optional layer path or configuration.
+     *
+     * @returns {string | undefined} The filter associated to the layer or undefined.
+     */
+    getLayerFilter(layerPathOrConfig?: string | TypeLayerEntryConfig | null): string | undefined;
+    /** ***************************************************************************************************************************
+     * Get the bounds of the layer represented in the layerConfig, returns updated bounds
+     *
+     * @param {TypeLayerEntryConfig} layerConfig Layer config to get bounds from.
+     * @param {Extent | undefined} bounds The current bounding box to be adjusted.
+     *
+     * @returns {Extent} The layer bounding box.
+     */
+    getBounds(layerConfig: TypeLayerEntryConfig, bounds: Extent | undefined): Extent | undefined;
+    /** ***************************************************************************************************************************
+     * Compute the layer bounds or undefined if the result can not be obtained from the feature extents that compose the layer. If
+     * layerPathOrConfig is undefined, the active layer is used. If projectionCode is defined, returns the bounds in the specified
+     * projection otherwise use the map projection. The bounds are different from the extent. They are mainly used for display
+     * purposes to show the bounding box in which the data resides and to zoom in on the entire layer data. It is not used by
+     * openlayer to limit the display of data on the map.
+     *
+     * @param {string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null} layerPathOrConfig Optional layer path or
+     * configuration.
+     * @param {string | number | undefined} projectionCode Optional projection code to use for the returned bounds.
+     *
+     * @returns {Extent} The layer bounding box.
+     */
+    calculateBounds(layerPathOrConfig?: string | TypeLayerEntryConfig | TypeListOfLayerEntryConfig | null, projectionCode?: string | number): Extent | undefined;
 }
 export {};
