@@ -15,7 +15,7 @@
       'viewSettings': {
         'zoom': 4,
         'center': [-100, 60],
-        'projection': 3978
+        'projection': 3857
       },
       'basemapOptions': {
         'basemapId': 'transport',
@@ -407,7 +407,7 @@
           });
         });
       }</script><script>// GeoJson ==================================================================================================================
-    const featureInfoGeoJsonLayerSet = cgpv.api.createFeatureInfoLayerSet('LYR5', 'geoJsonResultSetId');
+    const featureInfoGeoJsonLayerSet = cgpv.api.getFeatureInfoLayerSet('LYR5', 'geoJsonResultSetId');
     cgpv.api.event.on(
       cgpv.api.eventNames.GET_FEATURE_INFO.ALL_QUERIES_DONE,
       (payload) => {
@@ -417,7 +417,7 @@
       'LYR5/geoJsonResultSetId'
     );
 
-    const LegendsGeoJsonLayerSet = cgpv.api.createLegendsLayerSet('LYR5', 'geojsonLegendsId');
+    const LegendsGeoJsonLayerSet = cgpv.api.getLegendsLayerSet('LYR5', 'geojsonLegendsId');
     cgpv.api.event.on(
       cgpv.api.eventNames.GET_LEGENDS.ALL_LEGENDS_DONE,
       (payload) => {
