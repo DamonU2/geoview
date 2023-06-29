@@ -1,4 +1,4 @@
-/*! Package:geoview-basemap-panel: 0.1.0 - "36709c223ce9f1ea53fa7bdb908f63f5552048a4" - 2023-06-29T16:52:26.220Z */
+/*! Package:geoview-basemap-panel: 0.1.0 - "5f8d5f04458b12be06b9ac1599b3f0b7b6e81b02" - 2023-06-29T17:22:41.300Z */
 (self.webpackChunkgeoview_core=self.webpackChunkgeoview_core||[]).push([[286],{28954:e=>{"use strict";
 /*
 object-assign
