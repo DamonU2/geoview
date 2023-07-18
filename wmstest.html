@@ -1,0 +1,53 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link href="https://fonts.googleapis.com/css?family=Roboto|Montserrat:200,300,400,900|Merriweather" rel="stylesheet"/><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/><link rel="stylesheet" href="css/style.css"/><style>table.info, th.info, td.info, th.infoCol1, td.infoCol1 {
+        border: 1px solid black;
+      }
+      th.info, td.info, th.infoCol1, td.infoCol1 {
+        padding: 15px;
+        width: 15%;
+      }
+      th.info, th.infoCol1, td.infoCol1 {
+        text-align: left;
+        font-weight: bold;
+        font-size: 15px;
+      }</style><script src="cgpv-main.js"></script></head><body><div class="header-table"><table><tbody><tr><td><img class="header-logo" alt="logo" src="./img/Logo.png"/></td><td class="header-title"><h1><strong>WMS Layers</strong></h1></td></tr></tbody></table><table><tbody><tr><td><a href="./index.html">Main</a><br/>&nbsp;&nbsp;&nbsp;&nbsp;<a href="./type-of-layers.html">Type Of Layers</a><br/></td></tr><tr><td><p>This page is used to showcase how the viewer may show WMS layer types</p></td></tr><tr><td><a href="#HLYR2">2. All Styles of a WMS Layer</a><br/></td></tr></tbody></table></div><div class="map-title-holder"><h4 id="HLYR2">2. All Styles of a WMS Layer</h4>&nbsp;<h5 id="HLYR2-state">(undefined)</h5><a class="ref-link" href="#top">Top</a></div><div id="LYR2" class="llwp-map" data-lang="en" data-config="{
+      'map': {
+        'interaction': 'dynamic',
+        'viewSettings': {
+          'zoom': 4,
+          'center': [-100, 60],
+          'projection': 3978
+        },
+        'basemapOptions': {
+          'basemapId': 'transport',
+          'shaded': false,
+          'labeled': true
+        },
+        'listOfGeoviewLayerConfig': [
+          {
+            'geoviewLayerId': 'wmsLYR2-Root',
+            'geoviewLayerName': { 'en': 'QGis Test' },
+            'metadataAccessPath': { 'en': 'https://qgis-stage.services.geo.ca/dev/nrcan/landcover_2010_15_20_en' },
+            'geoviewLayerType': 'ogcWms',
+            'listOfLayerEntryConfig': [
+              {
+                'layerId': 'landcover_2015_19classes',
+                'source': {
+                  'style': ['default', '1', '2'],
+                  'serverType': 'qgis'
+                }
+              }
+            ]
+          }
+        ]
+      },
+      'components': ['overview-map', 'nav-bar', 'footer-bar', 'app-bar'],
+      'corePackages': ['layers-panel'],
+      'theme': 'dark',
+      'suportedLanguages': ['en']
+    }"></div><p>This map has a wms layer added from configuration.</p><button type="button" class="collapsible">Configuration Snippet</button><pre id="LYR2CS" class="panel"></pre><hr/><script src="codedoc.js"></script><script src="layerlib.js"></script><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
+      cgpv.init(function (mapId) {
+        console.log(`api is ready for ${mapId}`);
+
+          createCodeSnippet();
+          createConfigSnippet();
+      });</script></body></html>
