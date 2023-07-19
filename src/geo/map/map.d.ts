@@ -1,4 +1,3 @@
-/// <reference types="node" />
 /// <reference types="react" />
 import { i18n } from 'i18next';
 import OLMap from 'ol/Map';
@@ -14,6 +13,7 @@ import { NavbarButtons } from '../../core/components/nav-bar/nav-bar-buttons';
 import { FooterTabsApi } from '../../core/components/footer-tabs/footer-tabs-api';
 import { LegendApi } from '../../core/components/legend/legend-api';
 import { DetailsAPI } from '../../core/components/details/details-api';
+import { FeatureInfoAPI } from '../../core/components/feature-info/feature-info.api';
 import { DataGridAPI } from '../../core/components/data-grid/data-grid-api';
 import { GeoviewRenderer } from '../renderer/geoview-renderer';
 import { Select } from '../interaction/select';
@@ -24,7 +24,7 @@ import { Translate } from '../interaction/translate';
 import { ModalApi } from '../../ui';
 import { TypeListOfGeoviewLayerConfig, TypeDisplayLanguage, TypeViewSettings } from './map-schema-types';
 import { TypeMapFeaturesConfig, TypeHTMLElement } from '../../core/types/global-types';
-import { TypeMapSingleClick } from '../../api/events/payloads/map-slingle-click-payload';
+import { TypeMapMouseInfo } from '../../api/events/payloads/map-mouse-event-payload';
 /**
  * Class used to manage created maps
  *
@@ -40,20 +40,21 @@ export declare class MapViewer {
     footerTabs: FooterTabsApi;
     legend: LegendApi;
     details: DetailsAPI;
+    featureInfo: FeatureInfoAPI;
     dataGrid: DataGridAPI;
     basemap: Basemap;
     layer: Layer;
     displayLanguage: TypeDisplayLanguage;
     currentProjection: number;
     currentZoom: number;
-    currentPosition: Coordinate;
-    singleClickedPosition: TypeMapSingleClick;
+    currentMapCenterPosition: Coordinate;
+    singleClickedPosition: TypeMapMouseInfo;
+    pointerPosition: TypeMapMouseInfo;
     i18nInstance: i18n;
     modal: ModalApi;
     geoviewRenderer: GeoviewRenderer;
     remainingLayersThatNeedToBeLoaded: number;
     readyCallbackHasRun: boolean;
-    layerLoadedTimeoutId: Record<string, NodeJS.Timeout>;
     /**
      * Add the map instance to the maps array in the api
      *
@@ -73,7 +74,7 @@ export declare class MapViewer {
      *
      * @param {TypeListOfGeoviewLayerConfig} listOfGeoviewLayerConfig The list of geoview layer configurations.
      */
-    setEventListenerAndTimeout4ThisListOfLayer(listOfGeoviewLayerConfig: TypeListOfGeoviewLayerConfig): void;
+    setLayerAddedListener4ThisListOfLayer(listOfGeoviewLayerConfig: TypeListOfGeoviewLayerConfig): void;
     /**
      * Method used to test all geoview layers ready flag to determine if a map is ready.
      *
@@ -126,7 +127,7 @@ export declare class MapViewer {
      * Zoom to the specified extent.
      *
      * @param {Extent} extent The extent to zoom to.
-     * @param {FitOptions} zoomOptions The options to configure the zoomToExtent (default: { padding: [100, 100, 100, 100], maxZoom: 11 }).
+     * @param {FitOptions} options The options to configure the zoomToExtent (default: { padding: [100, 100, 100, 100], maxZoom: 11 }).
      */
     zoomToExtent(extent: Extent, options?: FitOptions): void;
     /**
@@ -137,7 +138,7 @@ export declare class MapViewer {
      * Change the display language of the map
      *
      * @param {TypeDisplayLanguage} displayLanguage the language to use (en, fr)
-     * @param {TypeListOfGeoviewLayerConfig} geoviewLayerConfi optional new set of layers to apply (will override origional set of layers)
+     * @param {TypeListOfGeoviewLayerConfig} listOfGeoviewLayerConfig optional new set of layers to apply (will override original set of layers)
      */
     changeLanguage: (displayLanguage: TypeDisplayLanguage, listOfGeoviewLayerConfig?: TypeListOfGeoviewLayerConfig) => void;
     /**

@@ -31,6 +31,7 @@ export declare class API {
         LAYER: Record<import("../app").LayerEventKey, import("./events/event-types").EventStringId>;
         MAP: Record<import("../app").MapEventKey, import("./events/event-types").EventStringId>;
         MARKER_ICON: Record<import("../app").MarkerIconEventKey, import("./events/event-types").EventStringId>;
+        FEATURE_HIGHLIGHT: Record<import("./events/constants/feature-highlight").FeatureHighlightEventKey, import("./events/event-types").EventStringId>;
         MODAL: Record<import("../app").ModalEventKey, import("./events/event-types").EventStringId>;
         NAVBAR: Record<import("../app").NavbarEventKey, import("./events/event-types").EventStringId>;
         OVERVIEW_MAP: Record<"EVENT_OVERVIEW_MAP_TOGGLE", import("./events/event-types").EventStringId>;
@@ -45,7 +46,7 @@ export declare class API {
         WM: string;
         LNGLAT: string;
     };
-    layerTypes: Record<"ESRI_DYNAMIC" | "ESRI_FEATURE" | "IMAGE_STATIC" | "GEOJSON" | "GEOCORE" | "GEOPACKAGE" | "XYZ_TILES" | "OGC_FEATURE" | "WFS" | "WMS", import("../geo/layer/geoview-layers/abstract-geoview-layers").TypeGeoviewLayerType>;
+    layerTypes: Record<"ESRI_DYNAMIC" | "ESRI_FEATURE" | "IMAGE_STATIC" | "GEOJSON" | "GEOCORE" | "GEOPACKAGE" | "XYZ_TILES" | "VECTOR_TILES" | "OGC_FEATURE" | "WFS" | "WMS", import("../geo/layer/geoview-layers/abstract-geoview-layers").TypeGeoviewLayerType>;
     maps: Record<string, MapViewer>;
     isReady: number;
     readyCallback?: (mapId?: string) => void;
