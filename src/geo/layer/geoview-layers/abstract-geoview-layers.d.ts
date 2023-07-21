@@ -26,8 +26,13 @@ export type TypeLegend = {
  * @returns {boolean} returns true if the payload is valid
  */
 export declare const isWmsLegend: (verifyIfLegend: TypeLegend) => verifyIfLegend is TypeWmsLegend;
+export interface TypeWmsLegendStyle {
+    name: string;
+    legend: HTMLCanvasElement | null;
+}
 export interface TypeWmsLegend extends Omit<TypeLegend, 'styleConfig'> {
-    legend: HTMLCanvasElement;
+    legend: HTMLCanvasElement | null;
+    styles?: TypeWmsLegendStyle[];
 }
 /**
  * type guard function that redefines a TypeLegend as a TypeImageStaticLegend

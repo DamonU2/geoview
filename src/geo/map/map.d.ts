@@ -15,6 +15,7 @@ import { LegendApi } from '../../core/components/legend/legend-api';
 import { DetailsAPI } from '../../core/components/details/details-api';
 import { FeatureInfoAPI } from '../../core/components/feature-info/feature-info.api';
 import { DataGridAPI } from '../../core/components/data-grid/data-grid-api';
+import { DataTableApi } from '../../core/components/data-table/data-table-api';
 import { GeoviewRenderer } from '../renderer/geoview-renderer';
 import { Select } from '../interaction/select';
 import { Draw } from '../interaction/draw';
@@ -42,6 +43,7 @@ export declare class MapViewer {
     details: DetailsAPI;
     featureInfo: FeatureInfoAPI;
     dataGrid: DataGridAPI;
+    dataTable: DataTableApi;
     basemap: Basemap;
     layer: Layer;
     displayLanguage: TypeDisplayLanguage;
