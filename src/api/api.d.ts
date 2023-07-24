@@ -26,6 +26,7 @@ export declare class API {
         FOOTER_TABS: Record<import("../app").FooterTabsEventKey, import("./events/event-types").EventStringId>;
         GET_FEATURE_INFO: Record<import("../app").GetFeatureInfoEventKey, import("./events/event-types").EventStringId>;
         GET_LEGENDS: Record<import("../app").GetLegendsEventKey, import("./events/event-types").EventStringId>;
+        GEOLOCATOR: Record<"EVENT_GEOLOCATOR_TOGGLE", import("./events/event-types").EventStringId>;
         INTERACTION: Record<import("./events/constants/interaction").InteractionEventKey, import("./events/event-types").EventStringId>;
         LAYER_SET: Record<import("../app").LayerSetEventKey, import("./events/event-types").EventStringId>;
         LAYER: Record<import("../app").LayerEventKey, import("./events/event-types").EventStringId>;
