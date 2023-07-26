@@ -1,4 +1,4 @@
-/*! Package:geoview-footer-panel: 0.1.0 - "591787879bf3ca2417e28bb4526cb36b64448b47" - 2023-07-26T17:02:25.037Z */
+/*! Package:geoview-footer-panel: 0.1.0 - "963bd5e128de8cfaee7febdc82d5e43611822468" - 2023-07-26T18:20:30.079Z */
 "use strict";(self.webpackChunkgeoview_core=self.webpackChunkgeoview_core||[]).push([[435],{28954:e=>{
 /*
 object-assign
