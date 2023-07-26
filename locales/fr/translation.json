@@ -36,11 +36,14 @@
   "appbar": {
     "export": "Exporter",
     "geolocator": "Géolocalisation",
+    "notifications": "Avis",
+    "no_notifications_available": "Aucune notification disponible",
     "fullscreen": "Plein écran",
     "help": "Aide",
     "layers": "Couches",
     "share": "Partager",
-    "version": "Accéder au repo sur GitHub"
+    "version": "À propos de GéoView",
+    "repoLink": "Lien repo"
   },
   "legend": {
     "unknown": "Titre de légende inconnu",
@@ -98,5 +101,10 @@
   },
   "hovertooltip": {
     "alticon": "Symbol de l'élément sélectionné"
+  },
+  "dataTable": {
+    "icon": "ICÔNE",
+    "zoom": "ZOOM",
+    "exportBtn": "Exporter"
   }
 }
