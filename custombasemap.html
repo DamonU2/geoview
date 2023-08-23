@@ -1,8 +1,8 @@
-<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link href="https://fonts.googleapis.com/css?family=Roboto|Montserrat:200,300,400,900|Merriweather" rel="stylesheet"/><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/><link rel="stylesheet" href="css/style.css"/><script src="cgpv-main.js"></script></head><body><div class="header-table"><table><tbody><tr><td><img class="header-logo" alt="logo" src="./img/Logo.png"/></td><td class="header-title"><h1><strong>Theme Switching</strong></h1></td></tr><tr><td><a href="./index.html">Main</a><br/></td></tr></tbody></table><table><tbody><tr><td>This page is used to showcase different theme of the components and can be done by below selector.</td></tr></tbody></table></div><div class="theme-selector"><select name="Switch Theme" id="switchTheme"><option value="dark">Dark</option><option value="light">Light</option></select></div><div id="mapWM1" class="llwp-map" data-lang="en"></div><script src="codedoc.js"></script><script>const config = {
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link href="https://fonts.googleapis.com/css?family=Roboto|Montserrat:200,300,400,900|Merriweather" rel="stylesheet"/><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/><link rel="stylesheet" href="css/style.css"/><script src="cgpv-main.js"></script></head><body><div class="header-table"><table><tbody><tr><td><img class="header-logo" alt="logo" src="./img/Logo.png"/></td><td class="header-title"><h1><strong>Theme Switching</strong></h1></td></tr><tr><td><a href="./index.html">Main</a><br/></td></tr></tbody></table><table><tbody><tr><td>This page is used to showcase different theme of the components and can be done by below selector.</td></tr></tbody></table></div><div class="theme-selector"><select name="Switch Theme" id="switchTheme"><option value="dark">Dark</option><option value="light">Light</option></select></div><div id="mapWM1" class="llwp-map" data-lang="fr"></div><script src="codedoc.js"></script><script>const config = {
         map: {
           interaction: 'dynamic',
           viewSettings: {
-            zoom: 4,
+            zoom: 4.5,
             center: [-100, 60],
             projection: 3978,
           },
@@ -14,9 +14,10 @@
           listOfGeoviewLayerConfig: [
             {
               geoviewLayerId: 'esriFeatureLYR4',
-              geoviewLayerName: { en: 'Water quality at monitoring sites' },
+              geoviewLayerName: { en: 'Water quality at monitoring sites', fr: 'Water quality at monitoring sites' },
               metadataAccessPath: {
                 en: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/DMS/DEU_CSO_Volume/MapServer',
+                fr: 'https://maps-cartes.ec.gc.ca/arcgis/rest/services/DMS/DEU_CSO_Volume/MapServer',
               },
               geoviewLayerType: 'esriFeature',
               listOfLayerEntryConfig: [{ layerId: '8' }],
@@ -24,12 +25,12 @@
           ],
         },
         theme: 'dark',
-        navBar: ['zoom', 'fullscreen', 'home', 'location', 'export'],
-        appBar: ['geolocator', 'export'],
+        navBar: ['zoom', 'fullscreen', 'home', 'location'],
+        appBar: ['geolocator'],
         components: ['north-arrow', 'overview-map'],
-        corePackages: ['basemap-panel', 'layers-panel', 'details-panel', 'footer-panel'],
+        corePackages: ['basemap-panel', 'layers-panel', 'footer-panel', 'details-panel'],
         externalPackages: [],
-        suportedLanguages: ['en'],
+        suportedLanguages: ['en', 'fr'],
       };
 
       function reloadMap(theme) {
@@ -39,10 +40,7 @@
       // initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
       cgpv.init(function () {
         console.log('api is ready');
-        // !put a timeout to show the problem.... map is loaded with default config then the function trigger
-        // !basemap good, one secondlater bad basemap. After using the dropdown to set, everything is good
-        // TODO: Refactor loading, related to language as well #1118
-        setTimeout(() => cgpv.api.map('mapWM1').loadMapConfig(JSON.stringify(config)), 2000);
+        cgpv.api.map('mapWM1').loadMapConfig(JSON.stringify(config));
 
         //create snippets
         createConfigSnippet();
