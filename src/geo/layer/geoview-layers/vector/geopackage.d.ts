@@ -7,7 +7,7 @@ import LayerGroup from 'ol/layer/Group';
 import initSqlJs from 'sql.js';
 import { AbstractGeoViewLayer } from '../abstract-geoview-layers';
 import { AbstractGeoViewVector } from './abstract-geoview-vector';
-import { TypeLayerEntryConfig, TypeVectorLayerEntryConfig, TypeVectorSourceInitialConfig, TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeBaseLayerEntryConfig } from '../../../map/map-schema-types';
+import { TypeLayerEntryConfig, TypeVectorLayerEntryConfig, TypeVectorSourceInitialConfig, TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeBaseLayerEntryConfig } from '@/geo/map/map-schema-types';
 export interface TypeSourceGeoPackageInitialConfig extends TypeVectorSourceInitialConfig {
     format: 'GeoPackage';
 }
@@ -73,14 +73,18 @@ export declare class GeoPackage extends AbstractGeoViewVector {
      */
     constructor(mapId: string, layerConfig: TypeGeoPackageLayerConfig);
     /** ***************************************************************************************************************************
+     * Geopackages have no metadata.
+     *
+     * @returns {Promise<void>} A promise that the execution is completed.
+     */
+    protected getServiceMetadata(): Promise<void>;
+    /** ***************************************************************************************************************************
      * This method validates recursively the configuration of the layer entries to ensure that it is a feature layer identified
      * with a numeric layerId and creates a group entry when a layer is a group.
      *
      * @param {TypeListOfLayerEntryConfig} listOfLayerEntryConfig The list of layer entries configuration to validate.
-     *
-     * @returns {TypeListOfLayerEntryConfig} A new list of layer entries configuration with deleted error layers.
      */
-    protected validateListOfLayerEntryConfig(listOfLayerEntryConfig: TypeListOfLayerEntryConfig): TypeListOfLayerEntryConfig;
+    protected validateListOfLayerEntryConfig(listOfLayerEntryConfig: TypeListOfLayerEntryConfig): void;
     /** ***************************************************************************************************************************
      * Process recursively the list of layer Entries to create the layers and the layer groups.
      *
