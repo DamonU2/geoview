@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
-import { TypeWmsLegendStyle } from '../../../geo/layer/geoview-layers/abstract-geoview-layers';
+import { TypeWmsLegendStyle } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
 export interface TypeWMSStyleProps {
     layerId: string;
     mapId: string;

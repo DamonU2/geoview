@@ -1,7 +1,8 @@
 import { MutableRefObject } from 'react';
+import { Root } from 'react-dom/client';
 import { Extent } from 'ol/extent';
-import { AbstractGeoViewLayer } from '../../app';
-import { TypeLocalizedString } from '../../geo/map/map-schema-types';
+import { AbstractGeoViewLayer } from '@/app';
+import { TypeLocalizedString } from '@/geo/map/map-schema-types';
 import { TypeJsonObject } from '../types/global-types';
 /**
  * Get the string associated to the current display language.
@@ -78,8 +79,10 @@ export declare function getXMLHttpRequest(url: string): Promise<string>;
  *
  * @param {React.ReactElement} component the UI react component
  * @param {string} targetDivId the div id to insert the component in
+ *
+ * @return {Root} the React root element
  */
-export declare function addUiComponent(targetDivId: string, component: React.ReactElement): void;
+export declare function addUiComponent(targetDivId: string, component: React.ReactElement): Root;
 /**
  * Sanitize HTML to remove threat
  *
@@ -152,3 +155,22 @@ export declare function isImage(item: string): boolean;
  * @return {unknown|String} returns the original object if it can be converted to a string; '' otherwise
  */
 export declare function stringify(str: unknown): unknown | string;
+/**
+ * This generic function checks for a validity of something via the checkCallback() until it's found or until the timer runs out.
+ * When the check callback returns true (or some found object), the doCallback() function is called with the found information.
+ * If checkCallback wasn't found and timer expired, the failCallback() function is called.
+ * @param checkCallback the function executed to verify a particular condition until it's passed
+ * @param doCallback the function executed when checkCallback returns true or some object
+ * @param failCallback the function executed when checkCallback has failed for too long (went over the timeout)
+ * @param checkFrequency the frequency in milliseconds to callback for a check (defaults to 100 milliseconds)
+ * @param timeout the duration in milliseconds until the task is aborted (defaults to 10 seconds)
+ */
+export declare function whenThisThenThat<T>(checkCallback: () => T, doCallback: (value: T) => void, failCallback: (reason?: any) => void, checkFrequency?: number, timeout?: number): void;
+/**
+ * This asynchronous generic function checks for a validity of something via the checkCallback() until it's found or until the timer runs out.
+ * This method returns a Promise which the developper can use to await or use .then().catch().finally() principles.
+ * @param checkCallback the function executed to verify a particular condition until it's passed
+ * @param checkFrequency the frequency in milliseconds to check for an update (defaults to 100 milliseconds)
+ * @param timeout the duration in milliseconds until the task is aborted (defaults to 10 seconds)
+ */
+export declare function whenThisThenAsync<T>(checkCallback: () => T, checkFrequency?: number, timeout?: number): Promise<T>;
