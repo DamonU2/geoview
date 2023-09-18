@@ -3,7 +3,10 @@
     "interaction": "dynamic",
     "viewSettings": {
       "zoom": 3,
-      "center": [-100, 50],
+      "center": [
+        -100,
+        50
+      ],
       "projection": 3978
     },
     "basemapOptions": {
@@ -32,7 +35,14 @@
   },
   "theme": "dark",
   "navBar": ["zoom", "fullscreen", "home", "location", "export"],
-  "components": ["north-arrow", "overview-map"],
-  "corePackages": ["footer-panel"],
-  "suportedLanguages": ["en"]
+  "components": [
+    "north-arrow",
+    "overview-map"
+  ],
+  "corePackages": [
+    "footer-panel"
+  ],
+  "suportedLanguages": [
+    "en"
+  ]
 }
