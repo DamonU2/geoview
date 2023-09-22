@@ -3,7 +3,7 @@ import { Root } from 'react-dom/client';
 import { Extent } from 'ol/extent';
 import { AbstractGeoViewLayer } from '@/app';
 import { TypeLocalizedString } from '@/geo/map/map-schema-types';
-import { TypeJsonObject } from '../types/global-types';
+import { TypeJsonArray, TypeJsonObject, TypeJsonValue, TypeMapFeaturesConfig } from '@/core/types/global-types';
 /**
  * Get the string associated to the current display language.
  *
@@ -14,33 +14,76 @@ import { TypeJsonObject } from '../types/global-types';
  */
 export declare function getLocalizedValue(localizedString: TypeLocalizedString | undefined, mapId: string): string | undefined;
 /**
- * Display a message in the snackbar
+ * Add a notification message
  *
  * @param {string} mapId the map to show the message for
  * @param {string} message the message string
  */
-export declare function showMessage(mapId: string, message: string): void;
+export declare function addNotificationMessage(mapId: string, message: string): void;
+/**
+ * Add a notification success
+ *
+ * @param {string} mapId the map to show the message for
+ * @param {string} message the message string
+ */
+export declare function addNotificationSuccess(mapId: string, message: string): void;
+/**
+ * Add a notification warning
+ *
+ * @param {string} mapId the map to show the message for
+ * @param {string} message the message string
+ */
+export declare function addNotificationWarning(mapId: string, message: string): void;
+/**
+ * Add a notification error
+ *
+ * @param {string} mapId the map to show the message for
+ * @param {string} message the message string
+ */
+export declare function addNotificationError(mapId: string, message: string): void;
+/**
+ * Display a message in the snackbar
+ *
+ * @param {string} mapId the map to show the message for
+ * @param {string} message the message string
+ * @param {string} withNotification optional, indicates if the message should also be added as a notification, default true
+ * @param {TypeJsonObject} button optional snackbar button
+ */
+export declare function showMessage(mapId: string, message: string, withNotification?: boolean, button?: {}): void;
 /**
  * Display an success message in the snackbar
  *
  * @param {string} mapId the map to show the message for
  * @param {string} message the message string
+ * @param {string} withNotification optional, indicates if the message should also be added as a notification, default true
+ * @param {TypeJsonObject} button optional snackbar button
  */
-export declare function showSuccess(mapId: string, message: string): void;
+export declare function showSuccess(mapId: string, message: string, withNotification?: boolean, button?: {}): void;
 /**
  * Display an warning message in the snackbar
  *
  * @param {string} mapId the map to show the message for
  * @param {string} message the message string
+ * @param {string} withNotification optional, indicates if the message should also be added as a notification, default true
+ * @param {TypeJsonObject} button optional snackbar button
  */
-export declare function showWarning(mapId: string, message: string): void;
+export declare function showWarning(mapId: string, message: string, withNotification?: boolean, button?: {}): void;
 /**
  * Display an error message in the snackbar
  *
  * @param {string} mapId the map to show the message for
  * @param {string} message the message string
+ * @param {string} withNotification optional, indicates if the message should also be added as a notification, default true
+ * @param {TypeJsonObject} button optional snackbar button
  */
-export declare function showError(mapId: string, message: string): void;
+export declare function showError(mapId: string, message: string, withNotification?: boolean, button?: {}): void;
+/**
+ * Take string and replace parameters from array of values
+ * @param {string[]} params array of parameters to replace
+ * @param {string} message original message
+ * @returns {string} message with values replaced
+ */
+export declare function replaceParams(params: TypeJsonValue[] | TypeJsonArray | string[], message: string): string;
 /**
  * Generate a unique id if an id was not provided
  * @param {string} id an id to return if it was already passed
@@ -104,6 +147,13 @@ export declare function removeCommentsFromJSON(config: string): string;
  * @returns {any} cleaned and parsed config object
  */
 export declare function parseJSONConfig(configObjStr: string): any;
+/**
+ * Get a valid configuration from a string configuration
+ *
+ * @param {string} configString String configuration
+ * @returns {TypeMapFeaturesConfig} A valid configuration object
+ */
+export declare function getValidConfigFromString(configString: string, mapDiv: HTMLElement): TypeMapFeaturesConfig;
 /**
  * Export the map as a PNG
  * @param {string} mapId Id of map to export

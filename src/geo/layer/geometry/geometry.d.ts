@@ -3,7 +3,7 @@ import VectorSource, { Options as VectorSourceOptions } from 'ol/source/Vector';
 import { Feature } from 'ol';
 import { Coordinate } from 'ol/coordinate';
 import { Options as VectorLayerOptions } from 'ol/layer/BaseVector';
-import { TypeFeatureCircleStyle, TypeFeatureStyle, TypeIconStyle } from './vector-types';
+import { TypeFeatureCircleStyle, TypeFeatureStyle, TypeIconStyle } from './geometry-types';
 /**
  * Store a group of features
  */
@@ -16,16 +16,16 @@ interface FeatureCollection {
  * Class used to manage vector geometries (Polyline, Polygon, Circle, Marker...)
  *
  * @exports
- * @class Vector
+ * @class Geometry
  */
-export declare class Vector {
+export declare class Geometry {
     #private;
     geometryGroups: FeatureCollection[];
     geometries: Feature[];
     defaultGeometryGroupId: string;
     activeGeometryGroupIndex: number;
     /**
-     * Initialize map, vectors, and listen to add vector events
+     * Initialize map, vectors, and listen to add geometry events
      *
      * @param {string} mapId map id
      */
@@ -67,11 +67,11 @@ export declare class Vector {
      *
      * @returns {Feature} a geometry containing the id and the created geometry
      */
-    addCircle: (coordinate: Coordinate, options?: {
+    addCircle(coordinate: Coordinate, options?: {
         projection?: number;
         geometryLayout?: 'XY' | 'XYZ' | 'XYM' | 'XYZM';
         style?: TypeFeatureCircleStyle;
-    }, optionalFeatureId?: string) => Feature;
+    }, optionalFeatureId?: string): Feature;
     /**
      * Create a new marker icon
      *
@@ -107,10 +107,10 @@ export declare class Vector {
      * @param options an optional vector layer and vector source options
      * @returns {FeatureCollection} created geometry group
      */
-    createGeometryGroup: (geometryGroupId: string, options?: {
+    createGeometryGroup(geometryGroupId: string, options?: {
         vectorLayerOptions?: VectorLayerOptions<VectorSource>;
         vectorSourceOptions?: VectorSourceOptions;
-    }) => FeatureCollection;
+    }): FeatureCollection;
     /**
      * set the active geometry group (the geometry group used when adding geometries).
      * If id is not specified, use the default geometry group.
@@ -132,7 +132,7 @@ export declare class Vector {
      *
      * @returns the geomtry group
      */
-    getGeometryGroup: (geometryGroupId?: string) => FeatureCollection | undefined;
+    getGeometryGroup(geometryGroupId?: string): FeatureCollection | undefined;
     /**
      * Find the groups that contain the geometry using it's id
      *
