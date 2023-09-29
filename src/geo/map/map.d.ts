@@ -56,7 +56,7 @@ export declare class MapViewer {
     displayLanguage: TypeDisplayLanguage;
     currentProjection: number;
     currentZoom: number;
-    currentMapCenterCoordinates: Coordinate;
+    mapCenterCoordinates: Coordinate;
     singleClickedPosition: TypeMapMouseInfo;
     pointerPosition: TypeMapMouseInfo;
     i18nInstance: i18n;
