@@ -1,0 +1,8 @@
+{
+  "tabs": {
+    "defaultTabs": ["legend2", "details", "range-slider", "data-table"],
+    "customTabs": []
+  },
+  "suportedLanguages": ["en", "fr"],
+  "collapsed": false
+}
