@@ -1,6 +1,6 @@
 {
   "tabs": {
-    "defaultTabs": ["legend2", "details", "range-slider", "data-table"],
+    "defaultTabs": ["legend", "details", "range-slider"],
     "customTabs": []
   },
   "suportedLanguages": ["en", "fr"],
