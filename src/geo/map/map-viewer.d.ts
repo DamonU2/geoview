@@ -13,13 +13,12 @@ import { NavbarButtons } from '@/core/components/nav-bar/nav-bar-buttons';
 import { FooterTabsApi } from '@/core/components/footer-tabs/footer-tabs-api';
 import { LegendApi } from '@/core/components/legend/legend-api';
 import { Legend2Api } from '@/core/components/legend-2/legend-api';
-import { DetailsAPI } from '@/core/components/details/details-api';
-import { DetailsAPI as DetailsAPIFooter } from '@/core/components/details-1/details-api';
-import { FeatureInfoAPI } from '@/core/components/feature-info/feature-info.api';
+import { DetailsApi } from '@/core/components/details/details-api';
 import { DataTableApi } from '@/core/components/data-table/data-table-api';
 import { GeoviewRenderer } from '@/geo/renderer/geoview-renderer';
 import { Select } from '@/geo/interaction/select';
 import { Draw } from '@/geo/interaction/draw';
+import { Extent as ExtentInteraction } from '@/geo/interaction/extent';
 import { Modify } from '@/geo/interaction/modify';
 import { Snap } from '@/geo/interaction/snap';
 import { Translate } from '@/geo/interaction/translate';
@@ -43,9 +42,7 @@ export declare class MapViewer {
     footerTabs: FooterTabsApi;
     legend: LegendApi;
     legend2: Legend2Api;
-    details: DetailsAPI;
-    detailsFooter: DetailsAPIFooter;
-    featureInfo: FeatureInfoAPI;
+    details: DetailsApi;
     dataTable: DataTableApi;
     basemap: Basemap;
     layer: Layer;
@@ -193,6 +190,10 @@ export declare class MapViewer {
      * Initializes selection interactions
      */
     initSelectInteractions(): Select;
+    /**
+     * Initializes extent interactions
+     */
+    initExtentInteractions(): ExtentInteraction;
     /**
      * Initializes translation interactions
      */

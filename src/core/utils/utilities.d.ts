@@ -160,10 +160,9 @@ export declare function getValidConfigFromString(configString: string, mapDiv: H
  */
 export declare function exportPNG(mapId: string): void;
 /**
- * Disable scrolling, so that screen doesnt scroll down.
- *  when focus is set to map and
- * arrows and enter keys are used to navigate the map
- * @param {KeyboardEvent} e - keybaord event like, tab, space
+ * Disable scrolling on keydown space, so that screen doesnt scroll down.
+ * when focus is set to map and arrows and enter keys are used to navigate the map
+ * @param {KeyboardEvent} e - keyboard event like, tab, space
  * @param {MutableRefObject} elem - mutable reference object of html elements.
  */
 export declare const disableScrolling: (e: KeyboardEvent, elem: MutableRefObject<HTMLElement | undefined>) => void;
@@ -223,4 +222,4 @@ export declare function whenThisThenThat<T>(checkCallback: () => T, doCallback: 
  * @param checkFrequency the frequency in milliseconds to check for an update (defaults to 100 milliseconds)
  * @param timeout the duration in milliseconds until the task is aborted (defaults to 10 seconds)
  */
-export declare function whenThisThenAsync<T>(checkCallback: () => T, checkFrequency?: number, timeout?: number): Promise<T>;
+export declare function whenThisThen<T>(checkCallback: () => T, checkFrequency?: number, timeout?: number): Promise<T>;

@@ -1,8 +1,10 @@
+import { type MRT_ColumnFiltersState as MRTColumnFiltersState } from 'material-react-table';
 import { Map as OLMap, MapEvent } from 'ol';
 import { Coordinate } from 'ol/coordinate';
 import { ObjectEvent } from 'ol/Object';
 import { TypeMapFeaturesConfig, TypeValidMapProjectionCodes } from '@/core/types/global-types';
-import { TypeLegendItemProps } from '../components/legend-2/types';
+import { TypeArrayOfLayerData } from '../components/details/details';
+import { TypeLegendItemProps, TypeLegendLayer } from '../components/legend-2/types';
 import { TypeMapMouseInfo } from '@/api/events/payloads';
 import { TypeDisplayLanguage, TypeInteraction } from '@/geo/map/map-schema-types';
 import { NotificationDetailsType } from '@/core/types/cgpv-types';
@@ -37,10 +39,39 @@ export interface INotificationsState {
 }
 export interface ILegendState {
     selectedItem?: TypeLegendItemProps;
+    selectedIsVisible: boolean;
+    selectedLayers: Record<string, {
+        layer: string;
+        icon: string;
+    }[]>;
+    currentRightPanelDisplay: 'overview' | 'layer-details' | 'none';
+    legendLayers: TypeLegendLayer[];
+}
+export interface IMapDataTableState {
+    selectedLayerIndex: number;
+    isLoading: boolean;
+    isEnlargeDataTable: boolean;
+    FILTER_MAP_DELAY: number;
+    toolbarRowSelectedMessage: string;
+    storeColumnFilters: Record<string, MRTColumnFiltersState>;
+    storeRowSelections: Record<string, Record<number, boolean>>;
+    storeMapFiltered: Record<string, boolean>;
+    setStoreMapFiltered: (mapFiltered: boolean, layerKey: string) => void;
+    setStoreRowSelections: (rowSelection: Record<number, boolean>, layerKey: string) => void;
+    setStoreColumnFilters: (filtered: MRTColumnFiltersState, layerKey: string) => void;
+    setIsEnlargeDataTable: (isEnlarge: boolean) => void;
+    setIsLoading: (loading: boolean) => void;
+    setSelectedLayerIndex: (idx: number) => void;
+    setToolbarRowSelectedMessage: (message: string) => void;
+}
+export interface IDetailsState {
+    layerDataArray: TypeArrayOfLayerData;
+    selectedLayerPath: string;
 }
 export interface IGeoViewState {
     displayLanguage: TypeDisplayLanguage;
     isCrosshairsActive: boolean;
+    isFullScreen: boolean;
     mapId: string;
     mapConfig: TypeMapFeaturesConfig | undefined;
     appBarState: IAppBarState;
@@ -48,6 +79,8 @@ export interface IGeoViewState {
     legendState: ILegendState;
     mapState: IMapState;
     notificationState: INotificationsState;
+    detailsState: IDetailsState;
+    dataTableState: IMapDataTableState;
     setMapConfig: (config: TypeMapFeaturesConfig) => void;
     onMapLoaded: (mapElem: OLMap) => void;
 }
