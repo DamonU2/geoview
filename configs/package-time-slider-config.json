@@ -4,7 +4,7 @@
     "viewSettings": {
       "zoom": 4,
       "center": [-100, 60],
-      "projection": 3978
+      "projection": 3857
     },
     "basemapOptions": {
       "basemapId": "transport",
@@ -51,25 +51,7 @@
         "geoviewLayerType": "ogcWms",
         "listOfLayerEntryConfig": [
           {
-            "layerId": "msi-94-or-more",
-            "source": {
-              "featureInfo": {
-                "queryable": true,
-                "nameField": {
-                  "en": "band-0-pixel-value",
-                  "fr": "band-0-pixel-value"
-                },
-                "outfields": {
-                  "en": "band-0-pixel-value",
-                  "fr": "band-0-pixel-value"
-                },
-                "fieldTypes": "number",
-                "aliasFields": {
-                  "en": "Pixel value",
-                  "fr": "Valeur du pixel"
-                }
-              }
-            }
+            "layerId": "msi-94-or-more"
           }
         ]
       }
