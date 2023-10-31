@@ -11,15 +11,12 @@ export declare const sxClassesFooterBar: {
         backdropFilter: string;
         backgroundColor: string;
         pointerEvents: string;
-        position: string;
-        left: string;
-        bottom: number;
         gap: number;
+        order: number;
     };
     mouseScaleControlsContainer: {
         display: string;
         flexDirection: string;
-        gap: number;
         '& button': {
             cursor: string;
             margin: string;
