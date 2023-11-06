@@ -79,5 +79,6 @@ export declare const getSxClasses: (theme: Theme) => {
     };
     legendItemContainer: {
         border: string;
+        width: string;
     };
 };
