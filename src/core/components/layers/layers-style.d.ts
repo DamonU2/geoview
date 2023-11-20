@@ -2,9 +2,26 @@ import { Theme } from '@mui/material/styles';
 export declare const getSxClasses: (theme: Theme) => {
     list: {
         color: string;
-        marginLeft: string;
         width: string;
-        paddingRight: string;
+        '& .layerItemContainer': {
+            background: string;
+            borderRadius: string;
+            marginBottom: string;
+        };
+        '& .layerItemContainer.error': {
+            background: string;
+            '& .MuiListItemText-secondary': {
+                fontWeight: string;
+                color: string;
+            };
+        };
+        '& .layerItemContainer.loading': {
+            background: string;
+            '& .MuiListItemText-secondary': {
+                fontWeight: string;
+                color: string;
+            };
+        };
         '& .MuiListItemText-primary': {
             font: string;
         };
@@ -80,5 +97,57 @@ export declare const getSxClasses: (theme: Theme) => {
     legendItemContainer: {
         border: string;
         width: string;
+    };
+    layersList: {
+        layerItem: {
+            background: string;
+            borderRadius: string;
+            marginBottom: string;
+        };
+        selectedLayerItem: {
+            border: string;
+        };
+    };
+    rightPanel: {
+        layerDetails: {
+            border: string;
+            padding: string;
+        };
+        opacityMenu: {
+            display: string;
+            alignItems: string;
+            gap: string;
+            padding: string;
+            backgroundColor: string;
+        };
+        itemsGrid: {
+            width: string;
+            '& .MuiGrid-container': {
+                '&:first-child': {
+                    fontWeight: string;
+                    borderTop: string;
+                    borderBottom: string;
+                };
+                '& .MuiGrid-item': {
+                    padding: string;
+                    '&:first-child': {
+                        width: string;
+                    };
+                    '&:nth-child(2)': {
+                        flexGrow: number;
+                        textAlign: string;
+                        display: string;
+                        flexDirection: string;
+                        alignItems: string;
+                    };
+                };
+            };
+        };
+        tableIconLabel: {
+            color: string;
+            fontSize: number;
+            noWrap: boolean;
+            marginLeft: number;
+        };
     };
 };
