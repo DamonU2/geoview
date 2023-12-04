@@ -31,6 +31,8 @@ export declare const getSxClasses: () => {
     maxIconImg: {
         maxWidth: number;
         maxHeight: number;
+        width: number;
+        height: number;
     };
     legendIcon: {
         display: string;
@@ -42,13 +44,11 @@ export declare const getSxClasses: () => {
     };
     stackIconsBox: {
         position: string;
-        marginLeft: number;
         '&:focus': {
             outlineColor: string;
         };
     };
     iconPreview: {
-        marginLeft: number;
         padding: number;
         borderRadius: number;
         border: string;

@@ -1,5 +1,3 @@
-import { TypeLegendLayerIcon } from '../types';
-export declare function useLegendHelpers(mapId: string): {
+export declare function useLegendHelpers(): {
     populateLegendStoreWithFakeData: () => void;
-    getLayerIconImage: (path: string) => TypeLegendLayerIcon | undefined;
 };
