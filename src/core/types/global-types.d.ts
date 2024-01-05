@@ -1,7 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import { useTheme } from '@mui/material/styles';
-import { useTranslation } from 'react-i18next';
 import { useMediaQuery } from '@mui/material';
 import { API } from '@/api/api';
 import * as UI from '../../ui';
@@ -11,13 +10,14 @@ export * from 'zustand';
 export { getGeoViewStore } from '@/core/stores/stores-managers';
 export { isEqual } from 'lodash';
 export type { MutableRefObject, RefObject, Dispatch, SetStateAction } from 'react';
-export type { TypeArrayOfLayerData } from '@/api/events/payloads';
+export type { TypeArrayOfLayerData, TypeLayerData, TypeFeatureInfoEntry, TypeFeatureInfoEntryPartial } from '@/api/events/payloads';
+export type { TypeRegisteredLayers } from '@/geo/layer/layer';
 export type { ButtonPropsLayerPanel } from '@/ui/panel/panel-types';
 export type { AbstractGeoViewLayer } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
 export type { AbstractGeoViewRaster } from '@/geo/layer/geoview-layers/raster/abstract-geoview-raster';
 export type { AbstractGeoViewVector } from '@/geo/layer/geoview-layers/vector/abstract-geoview-vector';
 export type { TypeGeoviewLayerType } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
-export type { TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeLayerEntryConfig } from '@/geo/map/map-schema-types';
+export type { TypeGeoviewLayerConfig, TypeListOfLayerEntryConfig, TypeLayerEntryConfig, TypeDisplayLanguage, } from '@/geo/map/map-schema-types';
 export type { TypeValidMapProjectionCodes } from '@/geo/map/map-schema-types';
 export type { TypeBasemapOptions } from '@/geo/layer/basemap/basemap-types';
 export type { TypeViewSettings } from '@/geo/map/map-schema-types';
@@ -52,7 +52,7 @@ export interface TypeMapFeaturesConfig extends TypeMapFeaturesInstance {
 declare global {
     interface Window {
         cgpv: TypeCGPV;
-        plugins: Record<string, unknown>;
+        geoviewPlugins: Record<string, unknown>;
     }
 }
 /** ******************************************************************************************************************************
@@ -62,7 +62,7 @@ export interface TypeWindow extends Window {
     /** the core */
     cgpv: TypeCGPV;
     /** plugins added to the core */
-    plugins: {
+    geoviewPlugins: {
         [pluginId: string]: ((pluginId: string, props: TypeJsonValue) => TypeJsonValue) | AbstractPlugin | undefined;
     };
 }
@@ -75,7 +75,6 @@ export type TypeCGPV = {
     react: typeof React;
     createRoot: typeof createRoot;
     ui: TypeCGPVUI;
-    useTranslation: typeof useTranslation;
     types: typeof import('./cgpv-types');
 };
 /** ******************************************************************************************************************************
