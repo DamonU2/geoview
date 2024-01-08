@@ -1,8 +1,20 @@
 import { Extent } from 'ol/extent';
 import BaseLayer from 'ol/layer/Base';
 import LayerGroup from 'ol/layer/Group';
-import { TypeBasemapOptions } from '../layer/basemap/basemap-types';
-import { TypeGeoviewLayerType } from '../layer/geoview-layers/abstract-geoview-layers';
+import { Coordinate } from 'ol/coordinate';
+import { TypeBasemapOptions } from '@/geo/layer/basemap/basemap-types';
+import { TypeGeoviewLayerType } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
+import { TypeMapMouseInfo } from '@/api/events/payloads';
+/** ******************************************************************************************************************************
+ *  Definition of map state to attach to the map object for reference.
+ */
+export type TypeMapState = {
+    currentProjection: number;
+    currentZoom: number;
+    mapCenterCoordinates: Coordinate;
+    singleClickedPosition: TypeMapMouseInfo;
+    pointerPosition: TypeMapMouseInfo;
+};
 /** ******************************************************************************************************************************
  *  Definition of the post settings type needed when the GeoView GeoJSON layers need to use a POST instead of a GET.
  */
@@ -51,27 +63,6 @@ export type TypeLayerInitialSettings = {
  */
 export type TypeVectorSourceFormats = 'GeoJSON' | 'EsriJSON' | 'KML' | 'WFS' | 'featureAPI' | 'GeoPackage';
 /** ******************************************************************************************************************************
- * Type used to configure the cluster feature of a vector layer. Works out of the box with point geometries. If another geometry is
- * provided, it will be converted to points geometry.
- */
-export type TypeSourceVectorClusterConfig = {
-    /** Flag used to enable clustering. Default = false. */
-    enable: boolean;
-    /** Distance in pixels within which features will be clustered together (default 20px). */
-    distance?: number;
-    /** Minimum distance in pixels between clusters. Will be capped at the configured distance. By default no minimum distance is
-     * guaranteed. This config can be used to avoid overlapping icons. As a tradoff, the cluster feature's position will no longer
-     * be the center of all its features.
-     */
-    minDistance?: number;
-    /** Zoom level at which all clusters will split. Default = 7. */
-    splitZoom?: number;
-    /** Color for the text showing the number of points in a cluster */
-    textColor?: string;
-    /** settings for the cluster symbol and clustered geometries */
-    settings?: TypeSimpleSymbolVectorConfig;
-};
-/** ******************************************************************************************************************************
  * Type used to configure a custom parser.
  */
 export type TypeDetailsLayerConfig = {
@@ -116,8 +107,6 @@ export type TypeBaseSourceVectorInitialConfig = {
     dataProjection?: string;
     /** Definition of the feature information structure that will be used by the getFeatureInfo method. */
     featureInfo?: TypeFeatureInfoLayerConfig;
-    /** Vector source clustering configuration. */
-    cluster?: TypeSourceVectorClusterConfig;
     /** Loading strategy to use (all or bbox). */
     strategy?: 'all' | 'bbox';
 };
@@ -127,8 +116,6 @@ export type TypeBaseSourceVectorInitialConfig = {
 export interface TypeVectorSourceInitialConfig extends TypeBaseSourceVectorInitialConfig {
     /** The feature format used by the XHR feature loader when url is set. */
     format?: TypeVectorSourceFormats;
-    /** Vector source clustering configuration. */
-    cluster?: TypeSourceVectorClusterConfig;
 }
 /** ******************************************************************************************************************************
  * Kind of symbol vector settings.
@@ -301,8 +288,6 @@ export declare const isSimpleStyleConfig: (verifyIfConfig: TypeStyleSettings | T
  * Simple style configuration.
  */
 export interface TypeSimpleStyleConfig extends TypeBaseStyleConfig {
-    /** Style identifier. */
-    styleId?: string;
     /** Type of style. */
     styleType: 'simple';
     /** Label associated to the style */
@@ -338,8 +323,6 @@ export declare const isUniqueValueStyleConfig: (verifyIfConfig: TypeStyleSetting
  * Unique value style configuration.
  */
 export interface TypeUniqueValueStyleConfig extends TypeBaseStyleConfig {
-    /** Style identifier. */
-    styleId?: string;
     /** Type of style. */
     styleType: 'uniqueValue';
     /** Label used if field/value association is not found. */
@@ -384,8 +367,6 @@ export declare const isClassBreakStyleConfig: (verifyIfConfig: TypeStyleSettings
  * Class break style configuration.
  */
 export interface TypeClassBreakStyleConfig extends TypeBaseStyleConfig {
-    /** Style identifier. */
-    styleId?: string;
     /** Type of style. */
     styleType: 'classBreaks';
     /** Label used if field/value association is not found. */
@@ -526,7 +507,7 @@ export type TypeBaseLayerEntryConfig = {
      * metadata. */
     isMetadataLayerGroup?: boolean;
     /** Tag used to link the entry to a specific schema. */
-    schemaTag: TypeGeoviewLayerType;
+    schemaTag?: TypeGeoviewLayerType;
     /** Layer entry data type. */
     entryType?: 'vector' | 'vector-tile' | 'vector-heatmap' | 'raster-image' | 'raster-tile' | 'group';
     /** The ending element of the layer configuration path. */
@@ -799,14 +780,14 @@ export type TypeSourceGeocoreConfig = {
 /** ******************************************************************************************************************************
  * Type used to define a layer group.
  */
-export interface TypeLayerGroupEntryConfig extends Omit<TypeBaseLayerEntryConfig, 'layerStatus' | 'listOfLayerEntryConfig'> {
+export interface TypeLayerGroupEntryConfig extends Omit<TypeBaseLayerEntryConfig, 'source' | 'layerStatus' | 'listOfLayerEntryConfig'> {
     /** This attribute is not part of the schema. It is used internally to distinguish layer groups derived from the
      * metadata. */
     isMetadataLayerGroup?: boolean;
     /** Layer entry data type. */
     entryType: 'group';
     /** The source attribute does not exists on the layer group entry. */
-    source: never;
+    source?: never;
     /** The list of layer entry configurations to use from the GeoView layer group. */
     listOfLayerEntryConfig: TypeListOfLayerEntryConfig;
 }
@@ -819,13 +800,18 @@ export type TypeLayerEntryConfig = TypeLayerGroupEntryConfig | TypeBaseLayerEntr
  */
 export type TypeListOfLayerEntryConfig = TypeLayerEntryConfig[];
 /** ******************************************************************************************************************************
+ * List of supported geoview theme.
+ */
+export type TypeDisplayTheme = 'dark' | 'light' | 'geo.ca';
+export declare const VALID_DISPLAY_THEME: TypeDisplayTheme[];
+/** ******************************************************************************************************************************
  *  Definition of the map feature instance according to what is specified in the schema.
  */
 export type TypeMapFeaturesInstance = {
     /** map configuration. */
     map: TypeMapConfig;
-    /** Display theme, default = dark. */
-    theme?: 'dark' | 'light';
+    /** Display theme, default = geo.ca. */
+    theme?: TypeDisplayTheme;
     /** App bar properties. */
     appBar?: TypeAppBarProps;
     /** Nav bar properies. */
@@ -972,7 +958,7 @@ export type TypeAppBarProps = Array<'geolocator' | 'export'>;
 /** ******************************************************************************************************************************
  * Controls available on the navigation bar. Default = ['zoom', 'fullscreen', 'home'].
  */
-export type TypeNavBarProps = Array<'zoom' | 'fullscreen' | 'home' | 'location' | 'export' | 'focus'>;
+export type TypeNavBarProps = Array<'zoom' | 'fullscreen' | 'home' | 'location' | 'export'>;
 /** ******************************************************************************************************************************
  *  Overview map options. Default none.
  */
@@ -988,7 +974,7 @@ export type TypeMapComponents = Array<'north-arrow' | 'overview-map'>;
  * the same loaction as core config (<<core config name>>-<<package name>>.json).
  * Default = ['basemap-panel' | 'layers-panel' | 'details-panel' | 'geolocator-panel'].
  */
-export type TypeMapCorePackages = Array<'basemap-panel' | 'layers-panel' | 'details-panel' | 'geolocator-panel' | 'footer-panel'>;
+export type TypeMapCorePackages = Array<'basemap-panel' | 'layers-panel' | 'details-panel' | 'geolocator-panel' | 'footer-panel' | 'geochart' | 'time-slider'>;
 /** ******************************************************************************************************************************
  * List of external packages to initialize on viewer load. Default = [].
  */
