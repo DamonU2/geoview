@@ -31,7 +31,7 @@ export declare const layerConfigIsWMS: (verifyIfLayer: TypeGeoviewLayerConfig) =
 export declare const geoviewLayerIsWMS: (verifyIfGeoViewLayer: AbstractGeoViewLayer) => verifyIfGeoViewLayer is WMS;
 /** *****************************************************************************************************************************
  * type guard function that redefines a TypeLayerEntryConfig as a TypeOgcWmsLayerEntryConfig if the geoviewLayerType attribute of the
- * verifyIfGeoViewEntry.geoviewRootLayer attribute is WMS. The type ascention applies only to the true block of
+ * verifyIfGeoViewEntry.geoviewLayerConfig attribute is WMS. The type ascention applies only to the true block of
  * the if clause that use this function.
  *
  * @param {TypeLayerEntryConfig} verifyIfGeoViewEntry Polymorphic object to test in order to determine if the type ascention is
@@ -249,7 +249,7 @@ export declare class WMS extends AbstractGeoViewRaster {
      */
     setWmsStyle(wmsStyleId: string, layerPath: string): void;
     /** ***************************************************************************************************************************
-     * Apply a view filter to the layer identified by the path stored in the layerPathAssociatedToThegeoviewLayer property stored
+     * Apply a view filter to the layer identified by the path stored in the layerPathAssociatedToTheGeoviewLayer property stored
      * in the layer instance associated to the map. The legend filters are derived from the uniqueValue or classBreaks style of the
      * layer. When the layer config is invalid, nothing is done.
      *
@@ -257,9 +257,9 @@ export declare class WMS extends AbstractGeoViewRaster {
      * @param {never} notUsed1 This parameter must not be provided. It is there to allow overloading of the method signature.
      * @param {never} notUsed2 This parameter must not be provided. It is there to allow overloading of the method signature.
      */
-    applyViewFilter(filter: string, notUsed1?: never, notUsed2?: never): void;
+    applyViewFilter(filter: string, notUsed1?: never, notUsed2?: never): Promise<void>;
     /** ***************************************************************************************************************************
-     * Apply a view filter to the layer identified by the path stored in the layerPathAssociatedToThegeoviewLayer property stored
+     * Apply a view filter to the layer identified by the path stored in the layerPathAssociatedToTheGeoviewLayer property stored
      * in the layer instance associated to the map. When the CombineLegendFilter flag is false, the filter paramater is used alone
      * to display the features. Otherwise, the legend filter and the filter parameter are combined together to define the view
      * filter. The legend filters are derived from the uniqueValue or classBreaks style of the layer. When the layer config is
@@ -269,7 +269,7 @@ export declare class WMS extends AbstractGeoViewRaster {
      * @param {boolean} CombineLegendFilter Flag used to combine the legend filter and the filter together (default: true)
      * @param {never} notUsed This parameter must not be provided. It is there to allow overloading of the method signature.
      */
-    applyViewFilter(filter: string, CombineLegendFilter: boolean, notUsed?: never): void;
+    applyViewFilter(filter: string, CombineLegendFilter: boolean, notUsed?: never): Promise<void>;
     /** ***************************************************************************************************************************
      * Apply a view filter to the layer. When the CombineLegendFilter flag is false, the filter paramater is used alone to display
      * the features. Otherwise, the legend filter and the filter parameter are combined together to define the view filter. The
@@ -281,7 +281,7 @@ export declare class WMS extends AbstractGeoViewRaster {
      * @param {string} filter An optional filter to be used in place of the getViewFilter value.
      * @param {boolean} CombineLegendFilter Flag used to combine the legend filter and the filter together (default: true)
      */
-    applyViewFilter(layerPath: string, filter?: string, CombineLegendFilter?: boolean): void;
+    applyViewFilter(layerPath: string, filter?: string, CombineLegendFilter?: boolean): Promise<void>;
     /** ***************************************************************************************************************************
      * Get the bounds of the layer represented in the layerConfig pointed to by the cached layerPath, returns updated bounds
      *

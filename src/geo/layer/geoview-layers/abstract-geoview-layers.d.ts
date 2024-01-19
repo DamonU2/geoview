@@ -100,8 +100,6 @@ type TypeLayerSetHandlerFunctions = {
 export declare abstract class AbstractGeoViewLayer {
     /** The unique identifier of the map on which the GeoView layer will be drawn. */
     mapId: string;
-    /** Original map layer configuration */
-    originalMapLayerConfig: TypeGeoviewLayerConfig;
     /** Flag used to indicate the layer's phase */
     layerPhase: string;
     /** The type of GeoView layer that is instantiated. */
@@ -149,6 +147,7 @@ export declare abstract class AbstractGeoViewLayer {
     serverDateFragmentsOrder?: TypeDateFragments;
     /** Date format object used to translate internal UTC ISO format to the external format, the one used by the user */
     externalFragmentsOrder: TypeDateFragments;
+    layerPathAssociatedToTheGeoviewLayer: string;
     /** ***************************************************************************************************************************
      * The class constructor saves parameters and common configuration parameters in attributes.
      *
@@ -375,10 +374,10 @@ export declare abstract class AbstractGeoViewLayer {
     unregisterFromLayerSets(layerConfig: TypeBaseLayerEntryConfig): void;
     /** ***************************************************************************************************************************
      * This method create a layer group.
-     * @param {TypeLayerEntryConfig | TypeGeoviewLayerConfig} layerConfig The layer configuration.
+     * @param {TypeLayerEntryConfig} layerConfig The layer configuration.
      * @returns {LayerGroup} A new layer group.
      */
-    protected createLayerGroup(layerConfig: TypeLayerEntryConfig | TypeGeoviewLayerConfig): LayerGroup;
+    protected createLayerGroup(layerConfig: TypeLayerEntryConfig): LayerGroup;
     /** ***************************************************************************************************************************
      * Get the layer configuration of the specified layer path.
      *
@@ -387,6 +386,30 @@ export declare abstract class AbstractGeoViewLayer {
      * @returns {TypeLayerEntryConfig | undefined} The layer configuration or undefined if not found.
      */
     getLayerConfig(layerPath: string): TypeLayerEntryConfig | undefined;
+    /**
+     * Asynchronously gets the layer configuration of the specified layerPath.
+     * If the layer configuration we're searching for has to be loaded, set mustBeLoaded to true when awaiting on this method.
+     * This function waits the timeout period before abandonning (or uses the default timeout when not provided).
+     * Note this function uses the 'Async' suffix only to differentiate it from 'getLayerConfig'.
+     *
+     * @param {string} layerPath the layer path to look for
+     * @param {string} mustBeLoaded indicate if the layer we're searching for must be found only once loaded
+     * @param {string} timeout optionally indicate the timeout after which time to abandon the promise
+     * @param {string} checkFrequency optionally indicate the frequency at which to check for the condition on the layer
+     * @returns a promise with the TypeLayerEntryConfig or null when layer config was not found
+     * @throws an exception when the layer config for the layer path was found, but failed to become in loaded status before the timeout expired
+     */
+    getLayerConfigAsync(layerPath: string, mustBeLoaded: boolean, timeout?: number, checkFrequency?: number): Promise<TypeLayerEntryConfig | null>;
+    /**
+     * Returns a Promise that will be resolved once the given layer config is in a loaded status.
+     * This function waits the timeout period before abandonning (or uses the default timeout when not provided).
+     *
+     * @param {string} layerConfig the layer config
+     * @param {string} timeout optionally indicate the timeout after which time to abandon the promise
+     * @param {string} checkFrequency optionally indicate the frequency at which to check for the condition on the layer config
+     * @throws an exception when the layer failed to become in loaded status before the timeout expired
+     */
+    waitForLoadedStatus(layerConfig: TypeBaseLayerEntryConfig, timeout?: number, checkFrequency?: number): Promise<void>;
     /** ***************************************************************************************************************************
      * Returns the layer bounds or undefined if not defined in the layer configuration or the metadata. If projectionCode is
      * defined, returns the bounds in the specified projection otherwise use the map projection. The bounds are different from the
