@@ -4,8 +4,7 @@ export declare const getSxClasses: (theme: Theme) => {
         color: string;
         width: string;
         padding: string;
-        overflow: string;
-        maxHeight: string;
+        overflowY: string;
         '& .MuiListItemText-primary': {
             font: string;
             padding: string;
@@ -23,7 +22,9 @@ export declare const getSxClasses: (theme: Theme) => {
                 marginLeft: string;
             };
             '&.selectedLayer': {
-                border: string;
+                borderColor: string;
+                borderWidth: string;
+                borderStyle: string;
             };
             '&.dragging': {
                 backgroundColor: string;

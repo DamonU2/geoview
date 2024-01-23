@@ -2,8 +2,7 @@ import { Theme } from '@mui/material';
 export declare const getSxClasses: (theme: Theme) => {
     dataPanel: {
         background: string;
-        boxShadow: string;
-        padding: string;
+        paddingBottom: string;
     };
     gridContainer: {
         paddingLeft: string;

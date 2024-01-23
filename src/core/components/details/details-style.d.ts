@@ -2,8 +2,7 @@ import { Theme } from '@mui/material/styles';
 export declare const getSxClasses: (theme: Theme) => {
     detailsContainer: {
         background: string;
-        boxShadow: string;
-        padding: string;
+        paddingBottom: string;
     };
     detailsInstructionsTitle: {
         font: string;
@@ -25,17 +24,10 @@ export declare const getSxClasses: (theme: Theme) => {
         marginBottom: string;
         boxShadow: string;
     };
-    itemText: {
-        '& .MuiListItemText-primary': {
-            font: string;
-        };
-    };
     featureInfoListContainer: {
         paddingLeft: string;
         paddingRight: string;
         paddingBottom: string;
-        height: string;
-        maxHeight: string;
         overflowY: string;
         overflowX: string;
     };
@@ -66,5 +58,10 @@ export declare const getSxClasses: (theme: Theme) => {
         wordWrap: string;
         fontSize: string;
         lineHeight: string;
+    };
+    flexBoxAlignCenter: {
+        display: string;
+        flexDirection: string;
+        alignItems: string;
     };
 };
