@@ -58,7 +58,6 @@
     "removeLayer": "Remove Layer",
     "toggleOpacity": "Toggle Opacity DEPRECATED",
     "zoomTo": "Zoom to Layer",
-    "overviewTitle": "Legend Overview",
     "addLayer": "Add Layer",
     "sortLayers": "Sort Layers",
     "sort": "Sort",
@@ -167,7 +166,11 @@
   },
   "geolocator": {
     "search": "Search",
-    "errorMessage": "No matches found for"
+    "errorMessage": "No matches found for",
+    "province": "Province",
+    "category": "Category",
+    "clearFilters": "Clear Filters",
+    "noFilter": "No Filter"
   },
   "hovertooltip": {
     "alticon": "Selected feature icon"
