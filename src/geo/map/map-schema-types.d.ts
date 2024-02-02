@@ -456,6 +456,16 @@ export declare const layerEntryIsOgcWms: (verifyIfLayer: TypeLayerEntryConfig) =
  */
 export declare const layerEntryIsEsriDynamic: (verifyIfLayer: TypeLayerEntryConfig) => verifyIfLayer is TypeEsriDynamicLayerEntryConfig;
 /** ******************************************************************************************************************************
+ * type guard function that redefines a TypeLayerEntryConfig as a TypeEsriImageLayerEntryConfig if the schemaTag attribute of
+ * the verifyIfLayer parameter is 'ogcWms'. The type ascention applies only to the true block of the if clause that use this
+ * function.
+ *
+ * @param {TypeLayerEntryConfig} verifyIfLayer Polymorphic object to test in order to determine if the type ascention is valid.
+ *
+ * @returns {boolean} true if the type ascention is valid.
+ */
+export declare const layerEntryIsEsriimage: (verifyIfLayer: TypeLayerEntryConfig) => verifyIfLayer is TypeEsriImageLayerEntryConfig;
+/** ******************************************************************************************************************************
  * type guard function that redefines a TypeLayerEntryConfig as a TypeImageStaticLayerEntryConfig if the schemaTag attribute of
  * the verifyIfLayer parameter is 'ogcWms'. The type ascention applies only to the true block of the if clause that use this
  * function.
@@ -776,6 +786,26 @@ export declare class TypeEsriDynamicLayerEntryConfig extends TypeBaseLayerEntryC
 /** ******************************************************************************************************************************
  * Type used to define a GeoView image layer to display on the map.
  */
+export declare class TypeEsriImageLayerEntryConfig extends TypeBaseLayerEntryConfig {
+    /** Tag used to link the entry to a specific schema. */
+    schemaTag: TypeGeoviewLayerType;
+    /** Layer entry data type. */
+    entryType: TypeLayerEntryType;
+    /** Filter to apply on feature of this layer. */
+    layerFilter?: string;
+    /** Source settings to apply to the GeoView image layer source at creation time. */
+    source: TypeSourceImageEsriInitialConfig;
+    /** Style to apply to the raster layer. */
+    style?: TypeStyleConfig;
+    /**
+     * The class constructor.
+     * @param {TypeEsriImageLayerEntryConfig} layerConfig The layer configuration we want to instanciate.
+     */
+    constructor(layerConfig: TypeEsriImageLayerEntryConfig);
+}
+/** ******************************************************************************************************************************
+ * Type used to define a GeoView image layer to display on the map.
+ */
 export declare class TypeImageStaticLayerEntryConfig extends TypeBaseLayerEntryConfig {
     /** Tag used to link the entry to a specific schema. */
     schemaTag: TypeGeoviewLayerType;
@@ -892,7 +922,7 @@ export declare class TypeLayerGroupEntryConfig extends BaseLayerProperties {
 /** ******************************************************************************************************************************
  * Layer config type.
  */
-export type TypeLayerEntryConfig = TypeLayerGroupEntryConfig | TypeBaseLayerEntryConfig | TypeVectorHeatmapLayerEntryConfig | TypeVectorTileLayerEntryConfig | TypeVectorLayerEntryConfig | TypeOgcWmsLayerEntryConfig | TypeEsriDynamicLayerEntryConfig | TypeImageStaticLayerEntryConfig | TypeTileLayerEntryConfig | TypeGeocoreLayerEntryConfig;
+export type TypeLayerEntryConfig = TypeLayerGroupEntryConfig | TypeBaseLayerEntryConfig | TypeVectorHeatmapLayerEntryConfig | TypeVectorTileLayerEntryConfig | TypeVectorLayerEntryConfig | TypeOgcWmsLayerEntryConfig | TypeEsriDynamicLayerEntryConfig | TypeEsriImageLayerEntryConfig | TypeImageStaticLayerEntryConfig | TypeTileLayerEntryConfig | TypeGeocoreLayerEntryConfig;
 /** ******************************************************************************************************************************
  * List of layers. Corresponds to the layerList defined in the schema.
  */
