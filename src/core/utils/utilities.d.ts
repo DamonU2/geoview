@@ -238,3 +238,9 @@ export declare function whenThisThen<T>(checkCallback: () => T, timeout?: number
  * @returns Promise<void> resolves when the delay timeout expires.
  */
 export declare const delay: (ms: number) => Promise<void>;
+/**
+ * Excape special characters from string
+ * @param {string} text text to escape
+ * @returns {string} espaced string
+ */
+export declare function escapeRegExp(text: string): string;
