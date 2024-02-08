@@ -59,21 +59,24 @@
       },
       'theme': 'geo.ca',
       'navBar': ['zoom', 'fullscreen', 'home', 'location', 'export'],
-      'appBar': ['geolocator', 'export'],
+      'appBar': {
+        'tabs': {
+          'core': ['geolocator', 'export', 'basemap-panel']
+        }
+      },
       'components': ['north-arrow', 'overview-map'],
-      'footerTabs': {
+      'footerBar': {
         'tabs': {
           'core': ['legend', 'layers', 'details', 'data-table']
         }
       },
-      'corePackages': ['basemap-panel'],
+      'corePackages': [],
       'externalPackages': [],
       'suportedLanguages': ['en']
     }`;
-    // TODO: make this function async and launch when api is ready
-    setTimeout(() => {
-      cgpv.api.createMapFromConfig('mapWM1', config);
-    }, 1000);
+
+    // Create map from config
+    cgpv.api.createMapFromConfig('mapWM1', config);
 
     const switchThemeElem = document.getElementById("switchTheme");
     switchThemeElem.addEventListener("change", (e) => {
