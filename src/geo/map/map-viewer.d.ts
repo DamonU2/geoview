@@ -11,8 +11,7 @@ import { TypeClickMarker } from '@/app';
 import { TypeRecordOfPlugin } from '@/api/plugin/plugin-types';
 import { AppbarButtons } from '@/core/components/app-bar/app-bar-buttons';
 import { NavbarButtons } from '@/core/components/nav-bar/nav-bar-buttons';
-import { FooterTabsApi } from '@/core/components/footer-tabs/footer-tabs-api';
-import { DataTableApi } from '@/core/components/data-table/data-table-api';
+import { FooterBarApi } from '@/core/components/footer-bar/footer-bar-api';
 import { GeoviewRenderer } from '@/geo/renderer/geoview-renderer';
 import { Select } from '@/geo/interaction/select';
 import { Draw } from '@/geo/interaction/draw';
@@ -38,8 +37,7 @@ export declare class MapViewer {
     overviewRoot: Root | undefined;
     appBarButtons: AppbarButtons;
     navBarButtons: NavbarButtons;
-    footerTabs: FooterTabsApi;
-    dataTable: DataTableApi;
+    footerBar: FooterBarApi;
     basemap: Basemap;
     layer: Layer;
     modal: ModalApi;
@@ -60,7 +58,8 @@ export declare class MapViewer {
      */
     setLayerAddedListener4ThisListOfLayer(listOfGeoviewLayerConfig: TypeListOfGeoviewLayerConfig): void;
     /**
-     * Method used to test all geoview layers ready flag to determine if a map is ready.
+     * Method used to test all geoview layers status flags to determine if all the metadata of the map are loaded.
+     * This doesn't mean that all the layers are loaded on the map, Only the metadata are read and processed.
      *
      * @returns true if all geoview layers on the map are loaded or detected as a load error.
      */

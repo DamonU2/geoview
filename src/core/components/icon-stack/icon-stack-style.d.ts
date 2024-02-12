@@ -1,4 +1,5 @@
-export declare const getSxClasses: () => {
+import { Theme } from '@mui/material/styles';
+export declare const getSxClasses: (theme: Theme) => {
     legendIconTransparent: {
         display: string;
         justifyContent: string;
@@ -14,7 +15,7 @@ export declare const getSxClasses: () => {
         top: number;
         padding: number;
         borderRadius: number;
-        boxShadow: string;
+        boxShadow: number;
         transition: string;
         '&:hover': {
             transform: string;
@@ -27,8 +28,8 @@ export declare const getSxClasses: () => {
         borderRadius: number;
         border: string;
         borderColor: string;
-        boxShadow: string;
-        background: string;
+        boxShadow: number;
+        backgroundColor: string;
     };
     maxIconImg: {
         maxWidth: number;
@@ -40,7 +41,7 @@ export declare const getSxClasses: () => {
         alignItems: string;
         width: number;
         height: number;
-        background: string;
+        backgroundColor: string;
         border: string;
         borderColor: string;
     };
@@ -55,7 +56,7 @@ export declare const getSxClasses: () => {
     iconPreview: {
         padding: number;
         borderRadius: number;
-        boxShadow: string;
+        boxShadow: number;
         '&:focus': {
             border: string;
         };

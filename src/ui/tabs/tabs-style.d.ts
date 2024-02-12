@@ -1,6 +1,6 @@
-export declare const getSxClasses: () => {
+import { Theme } from '@mui/material';
+export declare const getSxClasses: (theme: Theme) => {
     rightIcons: {
-        background: string;
         marginTop: number;
         display: string;
         justifyContent: string;
@@ -13,7 +13,7 @@ export declare const getSxClasses: () => {
         height: string;
     };
     tab: {
-        fontSize: number;
+        fontSize: any;
         fontWeight: string;
         minWidth: string;
         padding: string;
@@ -24,6 +24,16 @@ export declare const getSxClasses: () => {
         '.MuiTab-iconWrapper': {
             marginRight: string;
             maxWidth: string;
+        };
+    };
+    mobileDropdown: {
+        maxWidth: string;
+        p: number;
+        '& .MuiInputBase-root': {
+            borderRadius: string;
+        };
+        '& .MuiSelect-select': {
+            padding: string;
         };
     };
 };
