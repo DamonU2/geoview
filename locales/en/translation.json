@@ -67,7 +67,8 @@
     "refreshLayer": "Refresh layer",
     "highlightLayer": "Highlight layer",
     "subLayersCount": "{count} sub-layers",
-    "itemsCount": "{count} of {totalCount} items"
+    "itemsCount": "{count} of {totalCount} items",
+    "legendInstructions": "Legend Instructions"
   },
   "layers": {
     "title": "Layers",
@@ -109,7 +110,10 @@
     "visibilityIsAlways": "Visibility is always enabled",
     "toggleVisibility": "Toggle visibility",
     "toggleCollapse": "Toggle collapse",
-    "querying": "Querying"
+    "querying": "Querying",
+    "layerAdded": "Layer __param__ added",
+    "instructionsNoLayersTitle": "No layers visible",
+    "instructionsNoLayersBody": "Add visible layers on the map."
   },
   "details": {
     "title": "Details",
@@ -125,7 +129,8 @@
     "clearAllfeatures": "Clear all feature highlights",
     "highlightFeaturesOnMap": "Highlight features on map",
     "keepFeatureSelected": "Keep feature highlighted",
-    "detailsInstructions": "Details Instructions"
+    "detailsInstructions": "Details Instructions",
+    "loadingUI": "Loading user interface"
   },
   "lightbox": {
     "next": "Next",
@@ -159,7 +164,8 @@
     "changeDisplayLanguageLayers": "Layers can not be relaoded because the configuration does not support this language",
     "changeDisplayLanguage": "Only 'en' and 'fr' are supported",
     "changeDisplayTheme": "Theme unsuported",
-    "changeDisplayProjection": "Projection unsuported"
+    "changeDisplayProjection": "Projection unsuported",
+    "invalidConfig": "Invalid JSON config, default configuration applied"
   },
   "exportModal": {
     "title": "Export Map as PNG",
@@ -194,6 +200,13 @@
     "featureFiltered": "features filtered",
     "images": "Images",
     "close": "Close"
+  },
+  "geoChart": {
+    "noChartAvailable": "Click on the map layer with chart"
+  },
+  "guide": {
+    "title": "Guide",
+    "errorMessage": "Sorry, unable to find the help document!"
   },
   "footerBar": {
     "focusToMap": "Focus to map",

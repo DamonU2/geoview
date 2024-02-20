@@ -67,7 +67,8 @@
     "refreshLayer": "Rafraîchir la couche",
     "highlightLayer": "Couche de mise en évidence",
     "subLayersCount": "{count} sous-couches",
-    "itemsCount": "{count} sur {totalCount} éléments"
+    "itemsCount": "{count} sur {totalCount} éléments",
+    "legendInstructions": "Legend Instructions"
   },
   "layers": {
     "title": "Couche",
@@ -109,7 +110,10 @@
     "visibilityIsAlways": "La visibilité est toujours activée",
     "toggleVisibility": "Basculer la visibilité",
     "toggleCollapse": "Basculer la fermeture",
-    "querying": "Requête en cours"
+    "querying": "Requête en cours",
+    "layerAdded": "Couche __param__  ajoutée",
+    "instructionsNoLayersTitle": "Aucune couche visible",
+    "instructionsNoLayersBody": "Ajoutez des couches visibles sur la carte."
   },
   "details": {
     "title": "Détails",
@@ -125,7 +129,8 @@
     "clearAllfeatures": "Déselctionner tout les items",
     "highlightFeaturesOnMap": "Déselctionner tout les items",
     "keepFeatureSelected": "Garder l'élément sélectionné",
-    "detailsInstructions": "Instructions détaillées"
+    "detailsInstructions": "Instructions détaillées",
+    "loadingUI": "Chargement de l'interface utilisateur"
   },
   "lightbox": {
     "next": "Prochaine",
@@ -159,7 +164,8 @@
     "changeDisplayLanguageLayers": "Les couches ne peuvent être chargée(s) de nouveau car la configuration ne supporte pas ce langage",
     "changeDisplayLanguage": "Seulement 'en' et 'fr' sont supporées",
     "changeDisplayTheme": "Theme non supporté",
-    "changeDisplayProjection": "Projection non supportée"
+    "changeDisplayProjection": "Projection non supportée",
+    "invalidConfig": "Configuration JSON non valide, configuration par défaut appliquée"
   },
   "exportModal": {
     "title": "Exporter la carte en PNG",
@@ -194,6 +200,13 @@
     "featureFiltered": "Item filtrée(s)",
     "images": "Images",
     "close": "Fermer"
+  },
+  "geochart": {
+    "noChartAvailable": "Cliquez sur la couche de carte avec le graphique"
+  },
+  "guide": {
+    "title": "Guide",
+    "errorMessage": "Désolé, impossible de trouver le document d'aide !"
   },
   "footerBar": {
     "focusToMap": "Aller à la carte",
