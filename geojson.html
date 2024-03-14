@@ -17,7 +17,7 @@
               'geoviewLayerName': { 'en': 'GeoJSON Sample' },
               'metadataAccessPath': { 'en': './datasets/geojson/metadata.json' },
               'geoviewLayerType': 'GeoJSON',
-              'initialSettings': { 'visible': 'yes' },
+              'initialSettings': { 'visible': true },
               'listOfLayerEntryConfig': [
                 {
                   'layerId': 'polygons.json',
@@ -37,7 +37,7 @@
                     {
                       'layerId': 'icon_points.json',
                       'layerName': { 'en': 'Icons' },
-                      'initialSettings': { 'visible': 'no' },
+                      'initialSettings': { 'visible': false },
                       'layerFilter': 'creationDate >= date \'2020-01-14T12:00:01-05:00\''
                     },
                     {
@@ -78,7 +78,7 @@
               'geoviewLayerName': { 'en': 'GeoJSON Sample' },
               'metadataAccessPath': { 'en': './datasets/geojson/metadata.json' },
               'geoviewLayerType': 'GeoJSON',
-              'initialSettings': { 'visible': 'yes' },
+              'initialSettings': { 'visible': true },
               'listOfLayerEntryConfig': [
                 {
                   'layerId': 'polygons.json',
@@ -96,7 +96,7 @@
                     {
                       'layerId': 'icon_points.json',
                       'layerName': { 'en': 'Icons' },
-                      'initialSettings': { 'visible': 'no' }
+                      'initialSettings': { 'visible': false }
                     },
                     {
                       'layerId': 'points.json',
@@ -201,7 +201,6 @@
         'LYR1/click/FeatureInfoLayerSet'
       );
 
-      const LegendLayerSet = cgpv.api.getLegendsLayerSet('LYR1');
       cgpv.api.event.on(
         cgpv.api.eventNames.GET_LEGENDS.LEGEND_LAYERSET_UPDATED,
         (payload) => {
