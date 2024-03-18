@@ -14,9 +14,6 @@
           "aliasFields": { "en": "Province,Creation Date,My Images", "fr": "Province,Date de création,Mes images" }
         }
       },
-      "initialSettings": {
-        "visible": true
-      },
       "style": {
         "Polygon": {
           "styleId": "uniqueValueId",
@@ -84,9 +81,6 @@
           "aliasFields": { "en": "Road Number,Province,Creation Date", "fr": "Numéro de route,Province,Date de création" }
         }
       },
-      "initialSettings": {
-        "visible": true
-      },
       "style": {
         "LineString": {
           "styleType": "simple",
@@ -111,9 +105,6 @@
           "fieldTypes": "string,string,date",
           "aliasFields": { "en": "data,label,Creation Date", "fr": "données,étiquette,Date de création" }
         }
-      },
-      "initialSettings": {
-        "visible": true
       },
       "style": {
         "Point": {
@@ -140,9 +131,6 @@
           "aliasFields": { "en": "Red,Green,Blue,Yellow,Orange,Creation Date", "fr": "Rouge,Vert,Bleu,Jaune,Orange,Date de création" }
         }
       },
-      "initialSettings": {
-        "visible": true
-      },
       "style": {
         "Point": {
           "styleType": "simple",
@@ -165,9 +153,6 @@
           "fieldTypes": "number,number,number,number,number,date",
           "aliasFields": { "en": "Red,Green,Blue,Yellow,Orange,Creation Date", "fr": "Rouge,Vert,Bleu,Jaune,Orange,Date de création" }
         }
-      },
-      "initialSettings": {
-        "visible": true
       },
       "style": {
         "Point": {
@@ -192,9 +177,6 @@
           "aliasFields": { "en": "Red,Green,Blue,Yellow,Orange,Creation Date", "fr": "Rouge,Vert,Bleu,Jaune,Orange,Date de création" }
         }
       },
-      "initialSettings": {
-        "visible": true
-      },
       "style": {
         "Point": {
           "styleType": "simple",
@@ -217,9 +199,6 @@
           "fieldTypes": "number,number,number,number,number,date",
           "aliasFields": { "en": "Red,Green,Blue,Yellow,Orange,Creation Date", "fr": "Rouge,Vert,Bleu,Jaune,Orange,Date de création" }
         }
-      },
-      "initialSettings": {
-        "visible": true
       },
       "style": {
         "Point": {

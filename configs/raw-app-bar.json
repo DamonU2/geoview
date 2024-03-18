@@ -24,7 +24,6 @@
         },
         "geoviewLayerType": "esriFeature",
         "initialSettings": {
-          "visible": true,
           "controls": { "visibility": false }
         },
         "listOfLayerEntryConfig": [
@@ -106,9 +105,6 @@
                 "layerName": {
                   "en": "Icons",
                   "fr": "Icones"
-                },
-                "initialSettings": {
-                  "visible": true
                 }
               },
               {
