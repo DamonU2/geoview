@@ -40,7 +40,7 @@
             'geoviewLayerType': 'esriFeature',
             'initialSettings': { 
               'controls': {'visibility': false}
-           },
+            },
             'listOfLayerEntryConfig': [
               {
                 'layerId': '8'
@@ -177,10 +177,10 @@
       }
 
       // initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
-      cgpv.init(function () {
-        console.log('api is ready');
-
-        //create snippets
-        createConfigSnippet();
-        createCodeSnippet();
+      cgpv.init((mapId) => {
+        if (mapId === 'allMaps') {
+          // create snippets
+          createCodeSnippet();
+          createConfigSnippet();
+        }
       });</script></body></html>
