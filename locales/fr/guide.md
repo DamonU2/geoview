@@ -447,21 +447,13 @@ Select from the Download dropdown (upper right of chart section) to download cha
 
 ### Available Chart Types:
 
-#### Line Charts
-
-![](img/guide/footer/chart.png)
+- Line Chart
+- Bar Charts
+- Pie Charts
 
 Points on line charts can be changed to steps, by selecting from the Steps dropdown in the upper left of the chart section.
 
-Click hold and drag the handles on the the slider bars to change the X or Y axis values displayed for the chart.
-
-#### Bar charts
-
-![](img/guide/footer/bar_chart.png)
-
-#### Pie charts
-
-![](img/guide/footer/pie_chart.png)
+Click hold and drag the handles on the the line chart slider bars to change the X or Y axis values displayed for the chart.
 
 =1!keyboardNavigation=
 
