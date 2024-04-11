@@ -98,9 +98,44 @@ _The tools shown in the Sidebar vary depending on the map._
 
 ### ![](img/guide/sidebar/geolocator.svg) Geolocator
 
-The geolocator component functions to allow users to search for places in Canada. When the geolocator icon ![](img/guide/geosearch/geolocator_20.svg) in the Sidebar is clicked, an input field for search keywords will appear on the map
+The geolocator component functions to allow users to search for places in Canada. When the geolocator icon ![](img/guide/geosearch/geolocator_20.svg) in the Sidebar is clicked, an input field for search keywords will appear on the map:
 
-Select the **Geolocator** panel for more information.
+![](img/guide/geosearch/searchbar_en.png)
+
+=3!supportedSearchTypes=
+
+### Supported Search Types
+
+**Keyword search**: Type any keyword into geolocator search bar to display a list of results that contains the keyword (minimum 3 characters).
+
+- each search result consists of: location name (with keyword highlighted), location province, and location category (lake, city, town, etc.)
+- click on any individual result to mark its coordinates and zoom the map to center around this location
+
+**FSA search**: A **forward sortation area (FSA)** is a way to designate a geographical area based on the first three characters in a Canadian postal code. All postal codes that start with the same three characters are considered an **FSA**.
+
+- click to zoom and center the map on the FSA
+- example: type in **M3H**
+
+**Latitude/Longitude search**: Search using lat/long coordinates to display a list of results in the vicinity of that map point.
+
+- similarly to FSA search, the first result will be a location of those coordinates entered, click this to zoom and center the map on the map point
+- lat/long search recognizes spaces, commas, semicolons, or vertical bars (|) to separate the co-ordinates
+- example: type in **54.3733,-91.7417**
+
+**NTS search**: **National Topographic System (NTS)** is a system used for providing general topographic maps of the country, producing details on landforms, lakes/rivers, forests, roads and railways, etc.
+
+- the NTS is split into three major zones: "Southern zone" - latitudes between 40°N and 68°N, "Arctic zone" - latitudes between 68°N and 80°N, and the "High Arctic zone" - latitudes between 80°N and 88°N
+- an NTS map number consists of a string containing a number identifying a map sheet, a letter identifying a map area, and a number identifying the scale map sheet
+- likewise, the first result will be a location of the NTS map number, click to center map on this area
+- example: type in **030M13**
+
+**Street address**: Search using direct street addresses should return results
+
+=3!geosearchFiltering=
+
+### Geosearch Filtering
+
+When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their **province** and by their **category** (lake, town, river, etc.). To the right of these two boxes is a **Clear Filters** ![](img/guide/geosearch/clear.svg) button, which when clicked clears the selected filter options.
 
 =2!basemapSelector=
 
@@ -460,46 +495,3 @@ Load times may vary based on:
 Unanticipated behaviour may occur if any map interactions occur before data is fully loaded. Please allow the map to load completely before triggering any map functions.
 
 **Note:** If the loading spinner is visible for a layer, please wait for it to disappear before triggering any function on the map.
-
-=1!geolocator=
-
-### Geolocator
-
-The geolocator component functions to allow users to search for places in Canada. When the geolocator icon ![](img/guide/geosearch/geolocator_20.svg) in the Sidebar is clicked, an input field for search keywords will appear on the map:
-
-![](img/guide/geosearch/searchbar_en.png)
-
-=2!supportedSearchTypes=
-
-### Supported Search Types
-
-**Keyword search**: Type any keyword into geolocator search bar to display a list of results that contains the keyword (minimum 3 characters).
-
-- each search result consists of: location name (with keyword highlighted), location province, and location category (lake, city, town, etc.)
-- click on any individual result to mark its coordinates and zoom the map to center around this location
-
-**FSA search**: A **forward sortation area (FSA)** is a way to designate a geographical area based on the first three characters in a Canadian postal code. All postal codes that start with the same three characters are considered an **FSA**.
-
-- click to zoom and center the map on the FSA
-- example: type in **M3H**
-
-**Latitude/Longitude search**: Search using lat/long coordinates to display a list of results in the vicinity of that map point.
-
-- similarly to FSA search, the first result will be a location of those coordinates entered, click this to zoom and center the map on the map point
-- lat/long search recognizes spaces, commas, semicolons, or vertical bars (|) to separate the co-ordinates
-- example: type in **54.3733,-91.7417**
-
-**NTS search**: **National Topographic System (NTS)** is a system used for providing general topographic maps of the country, producing details on landforms, lakes/rivers, forests, roads and railways, etc.
-
-- the NTS is split into three major zones: "Southern zone" - latitudes between 40°N and 68°N, "Arctic zone" - latitudes between 68°N and 80°N, and the "High Arctic zone" - latitudes between 80°N and 88°N
-- an NTS map number consists of a string containing a number identifying a map sheet, a letter identifying a map area, and a number identifying the scale map sheet
-- likewise, the first result will be a location of the NTS map number, click to center map on this area
-- example: type in **030M13**
-
-**Street address**: Search using direct street addresses should return results
-
-=2!geosearchFiltering=
-
-### Geosearch Filtering
-
-When searching for a location, a results panel will appear below the search box. This results panel contains two dropdown boxes that allow you to filter the search results by their **province** and by their **category** (lake, town, river, etc.). To the right of these two boxes is a **Clear Filters** ![](img/guide/geosearch/clear.svg) button, which when clicked clears the selected filter options.
