@@ -330,8 +330,6 @@ Check the highlight box ![](img/guide/layers/check.png) to keep the feature high
 
 The Data Table tab has two sections. The layers are listed on the left and the layer data on the right. Click on a layer to show the layer data in the table on the right.
 
-=3!dataTableControls=
-
 ### Data Table Controls
 
 The Data Table controls are shown in the upper right section of the layer data panel.

@@ -326,11 +326,9 @@ Check the highlight box ![](img/guide/layers/check.png) to keep the feature high
 
 =2!dataTable=
 
-### Data Table
+### ![](img/guide/footer/data_table.svg) Data Table
 
 The Data Table tab has two sections. The layers are listed on the left and the layer data on the right. Click on a layer to show the layer data in the table on the right.
-
-=3!dataTableControls=
 
 ### Data Table Controls
 
