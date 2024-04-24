@@ -2,8 +2,6 @@
   "map": {
     "interaction": "dynamic",
     "viewSettings": {
-      "zoom": 3,
-      "center": [-100, 50],
       "projection": 3978
     },
     "basemapOptions": {
@@ -107,7 +105,7 @@
     ]
   },
   "theme": "geo.ca",
-  "navBar": ["zoom", "fullscreen", "home", "location", "export"],
+  "navBar": ["zoom", "fullscreen", "home", "location"],
   "components": ["north-arrow", "overview-map"],
   "footerBar": {
     "tabs": {

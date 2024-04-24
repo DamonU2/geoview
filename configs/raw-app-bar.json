@@ -2,8 +2,6 @@
   "map": {
     "interaction": "dynamic",
     "viewSettings": {
-      "zoom": 3,
-      "center": [-100, 50],
       "projection": 3978
     },
     "basemapOptions": {
@@ -147,7 +145,7 @@
       "core": ["geolocator", "export", "guide", "details", "legend"]
     }
   },
-  "navBar": ["zoom", "fullscreen", "home", "location", "export"],
+  "navBar": ["zoom", "fullscreen", "home", "location"],
   "components": ["north-arrow"],
   "corePackages": [],
   "externalPackages": [],
