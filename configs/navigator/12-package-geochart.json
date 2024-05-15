@@ -141,5 +141,5 @@
     }
   },
   "corePackages": [],
-  "suportedLanguages": ["en", "fr"]
+  "supportedLanguages": ["en", "fr"]
 }

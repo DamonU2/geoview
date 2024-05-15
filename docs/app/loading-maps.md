@@ -62,7 +62,7 @@ The content of the config must match the schema, an example of the object in the
   "components": ["north-arrow"],
   "corePackages": ["basemap-panel"],
   "externalPackages": [],
-  "suportedLanguages": ["en", "fr"]
+  "supportedLanguages": ["en", "fr"]
 }
 ```
 
@@ -111,7 +111,7 @@ An example of this:
                     'components': ['north-arrow', 'overview-map'],
                     'corePackages': [],
                     'externalPackages': [],
-                    'suportedLanguages': ['en', 'fr']
+                    'supportedLanguages': ['en', 'fr']
                 }'
 ></div>
 ```
@@ -152,7 +152,7 @@ cgpv.init(function() {
         components: ['north-arrow', 'overview-map'],
         corePackages: ['basemap-panel'],
         externalPackages: [],
-        suportedLanguages: ['en', 'fr'],
+        supportedLanguages: ['en', 'fr'],
     });
 });
 </script>

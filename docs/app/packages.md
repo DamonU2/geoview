@@ -207,7 +207,7 @@ The viewer is bundled with core packages, you can load them by passing their id 
           }
         },
         'theme': 'geo.ca',
-        'suportedLanguages': ['en']
+        'supportedLanguages': ['en']
       }"
 ></div>
 ```

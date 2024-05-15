@@ -30,5 +30,5 @@
   },
   "corePackages": ["swiper"],
   "externalPackages": [],
-  "suportedLanguages": ["en"]
+  "supportedLanguages": ["en"]
 }

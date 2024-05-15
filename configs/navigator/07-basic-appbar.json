@@ -129,5 +129,5 @@
   "components": ["north-arrow"],
   "corePackages": [],
   "externalPackages": [],
-  "suportedLanguages": ["en", "fr"]
+  "supportedLanguages": ["en", "fr"]
 }
