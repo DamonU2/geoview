@@ -108,6 +108,5 @@
   },
   "components": ["north-arrow"],
   "corePackages": [],
-  "externalPackages": [],
-  "supportedLanguages": ["en", "fr"]
+  "externalPackages": []
 }

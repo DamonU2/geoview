@@ -38,6 +38,5 @@
     }
   },
   "corePackages": [],
-  "theme": "geo.ca",
-  "supportedLanguages": ["en"]
+  "theme": "geo.ca"
 }
