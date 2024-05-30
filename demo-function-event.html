@@ -39,7 +39,7 @@
         });
 
         // listen to layer status change event
-        cgpv.api.maps.Map1.layer.getLayerEntryConfig('uniqueValueId/1').onLayerFilterApplied((sender, payload) => {
+        cgpv.api.maps.Map1.layer.getGeoviewLayer('uniqueValueId/1').onLayerFilterApplied((sender, payload) => {
           cgpv.api.maps.Map1.notifications.addNotificationSuccess(`Filter ${payload.filter} applied to ${payload.layerPath} `);
         });
 
