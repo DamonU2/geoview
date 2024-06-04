@@ -44,8 +44,18 @@
                     'style': 'PRECIPMM_WATERSHED'
                   }
                 },
-                { 'layerId': 'HRDPA.6F_PR' },
-                { 'layerId': 'HRDPA.6P_PR' },
+                {
+                  'layerId': 'HRDPA.6F_PR',
+                  'source': {
+                    'style': 'CAPA24-LINEAR'
+                  }
+                },
+                {
+                  'layerId': 'HRDPA.6P_PR',
+                  'source': {
+                    'style': 'CAPA24-LINEAR'
+                  }
+                },
                 {
                   'layerId': 'HRDPA.24F_WATERSHED',
                   'source': {
@@ -58,8 +68,18 @@
                     'style': 'PRECIPMM_WATERSHED'
                   }
                 },
-                { 'layerId': 'HRDPA.24F_PR' },
-                { 'layerId': 'HRDPA.24P_PR' }
+                {
+                  'layerId': 'HRDPA.24F_PR',
+                  'source': {
+                    'style': 'CAPA24-LINEAR'
+                  }
+                },
+                {
+                  'layerId': 'HRDPA.24P_PR',
+                  'source': {
+                    'style': 'CAPA24-LINEAR'
+                  }
+                }
               ]
             },
             {
@@ -133,7 +153,12 @@
                     'style': 'SNOWDEPTH'
                   }
                 },
-                { 'layerId': 'CaLDAS-NSRPS_2.5km_SnowWaterEquiv' }
+                {
+                  'layerId': 'CaLDAS-NSRPS_2.5km_SnowWaterEquiv',
+                  'source': {
+                    'style': 'SNOWMASS'
+                  }
+                }
               ]
             },
             {
