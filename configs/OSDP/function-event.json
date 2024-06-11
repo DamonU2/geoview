@@ -32,7 +32,12 @@
         "geoviewLayerType": "esriFeature",
         "listOfLayerEntryConfig": [
           {
-            "layerId": "1"
+            "layerId": "1",
+            "initialSettings": {
+              "states": {
+                "legendCollapsed": true
+              }
+            }
           }
         ]
       },
