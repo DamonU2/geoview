@@ -70,25 +70,6 @@
               ]
             },
             {
-              'geoviewLayerId': 'mpmo',
-              'geoviewLayerName': { 'en': 'MPMO - Major Project' },
-              'metadataAccessPath': {
-                'en': 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/MPMO_Major_Projects/MapServer/'
-              },
-              'geoviewLayerType': 'esriFeature',
-              'listOfLayerEntryConfig': [
-                {
-                  'layerId': '0',
-                  'layerName': { 'en': 'MPMO - Major Project' },
-                  'initialSettings': {
-                    'states': {
-                      'visible': false
-                    }
-                  }
-                }
-              ]
-            },
-            {
               'geoviewLayerId': 'cpcad',
               'geoviewLayerName': { 'en': 'Protected and conserved area' },
               'metadataAccessPath': {
@@ -117,10 +98,9 @@
         },
         'corePackages': [],
         'theme': 'geo.ca'
-      }"></div><hr/><div>Outlier Geometry Layers:<ul><li>CSRS Layer - EPSG: 4617 - Issue #1798</li><li>Multi Polygon Layer - Ensure multi polygon is working - Issue #550</li><li>Coral Sponge - had issues with get feature info - Issue #1996</li><li>Major Project - esri feature layer does not load because of null field value - Issue #2208</li><li>Protected and conserved area - esri dynamic data table not fetching because of geometry in url - Issue #2200</li></ul></div><div class="map-title-holder"><h4 id="HMap2">2. More Unusual Layers</h4><a class="ref-link" href="#top">Top</a></div><button class="collapsible active">Map Status Flags</button><pre id="HMap2-state" class="panel map-title-holder"></pre><hr/><div id="Map2" class="geoview-map" data-lang="en" data-config-url="./configs/max-record-count.json"></div><div>More Outlier Layers:<ul><li>Advance Polling District - maxRecordCount of 1000, with 6172 features - Issue #2199</li></ul></div><script src="codedoc.js"></script><script src="layerlib.js"></script><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
+      }"></div><hr/><div>Outlier Geometry Layers:<ul><li>CSRS Layer - EPSG: 4617 - Issue #1798</li><li>Multi Polygon Layer - Ensure multi polygon is working - Issue #550</li><li>Coral Sponge - had issues with get feature info - Issue #1996</li><li>Protected and conserved area - esri dynamic data table not fetching because of geometry in url - Issue #2200</li></ul></div><script src="codedoc.js"></script><script src="layerlib.js"></script><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
       cgpv.init((mapId) => {
           listenToLegendLayerSetChanges('HMap1-state', 'Map1');
-          listenToLegendLayerSetChanges('HMap2-state', 'Map2');
       });
 
       // create snippets
