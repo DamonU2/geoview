@@ -17,14 +17,14 @@
         });
 
         // listen to layer loaded events
-        cgpv.api.maps.Map1.layer.onLayersLoaded((sender, payload) => {
+        cgpv.api.maps.Map1.layer.onLayerLoaded((sender, payload) => {
           cgpv.api.maps.Map1.notifications.addNotificationSuccess(payload.layerPath + ' loaded');
         });
 
         // listen to individual layer loaded event
-        cgpv.api.maps.Map1.layer.getGeoviewLayer('nonmetalmines/5').onLayerLoaded((sender, payload) => {
+        cgpv.api.maps.Map1.layer.getGeoviewLayer('nonmetalmines/5').onIndividualLayerLoaded((sender, payload) => {
           cgpv.api.maps.Map1.notifications.addNotificationSuccess('Nonmetal mines has finished loading');
-          console.log(cgpv.api.maps.Map1.layer.getOLLayer(payload.layerPath).getSource().getFeatures());
+          console.log(sender.olRootLayer.getSource().getFeatures());
         });
 
         // listen to layer removed event
