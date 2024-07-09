@@ -1,2 +1,7 @@
 /// <reference types="react" />
-export declare function Legend(): JSX.Element;
+interface LegendType {
+    fullWidth?: boolean;
+    containerType?: 'appBar' | 'footerBar';
+}
+export declare function Legend({ fullWidth, containerType }: LegendType): JSX.Element;
+export {};

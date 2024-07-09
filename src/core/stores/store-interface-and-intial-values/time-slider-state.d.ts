@@ -1,30 +1,19 @@
-import { TypeGetStore, TypeSetStore } from '../geoview-store';
-export interface TypeTimeSliderValues {
-    title?: string;
-    description?: string;
-    name: string;
-    range: string[];
-    defaultValue: string;
-    minAndMax: number[];
-    field: string;
-    fieldAlias: string;
-    singleHandle: boolean;
-    values: number[];
-    filtering: boolean;
-    delay: number;
-    locked?: boolean;
-    reversed?: boolean;
-}
+import { TypeGetStore, TypeSetStore } from '@/core/stores/geoview-store';
+type TimeSliderActions = ITimeSliderState['actions'];
 export interface ITimeSliderState {
-    timeSliderLayers: {
-        [index: string]: TypeTimeSliderValues;
-    };
-    visibleTimeSliderLayers: string[];
+    timeSliderLayers: TimeSliderLayerSet;
     actions: {
-        addTimeSliderLayer: (newLayer: {
-            [index: string]: TypeTimeSliderValues;
-        }) => void;
-        applyFilters: (layerPath: string, values: number[]) => void;
+        setTitle: (layerPath: string, title: string) => void;
+        setDescription: (layerPath: string, description: string) => void;
+        setDelay: (layerPath: string, delay: number) => void;
+        setFiltering: (layerPath: string, filter: boolean) => void;
+        setLocked: (layerPath: string, locked: boolean) => void;
+        setReversed: (layerPath: string, locked: boolean) => void;
+        setDefaultValue: (layerPath: string, defaultValue: string) => void;
+        setValues: (layerPath: string, values: number[]) => void;
+    };
+    setterActions: {
+        addTimeSliderLayer: (newLayer: TimeSliderLayerSet) => void;
         removeTimeSliderLayer: (layerPath: string) => void;
         setTitle: (layerPath: string, title: string) => void;
         setDescription: (layerPath: string, description: string) => void;
@@ -34,27 +23,34 @@ export interface ITimeSliderState {
         setReversed: (layerPath: string, locked: boolean) => void;
         setDefaultValue: (layerPath: string, defaultValue: string) => void;
         setValues: (layerPath: string, values: number[]) => void;
-        setVisibleTimeSliderLayers: (visibleLayerPaths: string[]) => void;
     };
 }
+/**
+ * Initializes an TimeSlider State and provide functions which use the get/set Zustand mechanisms.
+ * @param {TypeSetStore} set - The setter callback to be used by this state
+ * @param {TypeGetStore} get - The getter callback to be used by this state
+ * @returns {ITimeSliderState} - The initialized TimeSlider State
+ */
 export declare function initializeTimeSliderState(set: TypeSetStore, get: TypeGetStore): ITimeSliderState;
-export declare const useTimeSliderLayers: () => {
-    [index: string]: TypeTimeSliderValues;
+export type TimeSliderLayerSet = {
+    [layerPath: string]: TypeTimeSliderValues;
 };
-export declare const useVisibleTimeSliderLayers: () => string[];
-export declare const useTimeSliderStoreActions: () => {
-    addTimeSliderLayer: (newLayer: {
-        [index: string]: TypeTimeSliderValues;
-    }) => void;
-    applyFilters: (layerPath: string, values: number[]) => void;
-    removeTimeSliderLayer: (layerPath: string) => void;
-    setTitle: (layerPath: string, title: string) => void;
-    setDescription: (layerPath: string, description: string) => void;
-    setDelay: (layerPath: string, delay: number) => void;
-    setFiltering: (layerPath: string, filter: boolean) => void;
-    setLocked: (layerPath: string, locked: boolean) => void;
-    setReversed: (layerPath: string, locked: boolean) => void;
-    setDefaultValue: (layerPath: string, defaultValue: string) => void;
-    setValues: (layerPath: string, values: number[]) => void;
-    setVisibleTimeSliderLayers: (visibleLayerPaths: string[]) => void;
-};
+export interface TypeTimeSliderValues {
+    defaultValue: string;
+    delay: number;
+    description?: string;
+    discreteValues: boolean;
+    field: string;
+    fieldAlias: string;
+    filtering: boolean;
+    locked?: boolean;
+    minAndMax: number[];
+    range: string[];
+    reversed?: boolean;
+    singleHandle: boolean;
+    title?: string;
+    values: number[];
+}
+export declare const useTimeSliderLayers: () => TimeSliderLayerSet;
+export declare const useTimeSliderStoreActions: () => TimeSliderActions;
+export {};
