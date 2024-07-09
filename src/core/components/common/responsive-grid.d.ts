@@ -5,9 +5,11 @@ interface ResponsiveGridProps extends GridProps {
 }
 interface ResponsiveGridPanelProps extends GridProps {
     children: ReactNode;
-    isLayersPanelVisible: boolean;
+    isRightPanelVisible: boolean;
     sxProps?: SxProps | undefined;
-    isEnlargeDataTable: boolean;
+    isEnlarged: boolean;
+    fullWidth?: boolean;
+    className?: string;
 }
 export declare const ResponsiveGrid: {
     Root: import("react").ForwardRefExoticComponent<Omit<ResponsiveGridProps, "ref"> & import("react").RefAttributes<unknown>>;

@@ -1,29 +1,30 @@
 import { ReactNode } from 'react';
-import { TypeLayerStatus, TypeQueryStatus } from '@/app';
+import { TypeFeatureInfoEntry, TypeQueryStatus, TypeLayerStatus } from '@/geo/map/map-schema-types';
 export interface LayerListEntry {
+    content?: string | ReactNode;
     layerName: string;
     layerPath: string;
     layerStatus: TypeLayerStatus;
     queryStatus: TypeQueryStatus;
     layerFeatures?: ReactNode;
     mapFilteredIcon?: ReactNode;
-    tooltip?: ReactNode;
+    tooltip?: JSX.Element | string;
     numOffeatures?: number;
+    features?: TypeFeatureInfoEntry[] | undefined | null;
 }
 interface LayerListProps {
-    isEnlargeDataTable: boolean;
     layerList: LayerListEntry[];
-    selectedLayerPath: string;
-    handleListItemClick: (layer: LayerListEntry) => void;
+    selectedLayerPath: string | undefined;
+    onListItemClick: (layer: LayerListEntry) => void;
 }
 /**
  * Create a list of layers
  * @param {LayerListEntry} layerList  Array of layer list entries.
- * @param {boolean} isEnlargeDataTable  Boolean value if right panel is enlarged or not.
+ * @param {boolean} isEnlarged Boolean value if right panel is enlarged or not.
  * @param {number} selectedLayerIndex  Current index of list item selected.
  * @param {string} selectedLayerPath  Selected path of the layer.
- * @param {Function} handleListItemClick  Callback function excecuted when list item is clicked.
- * @returns
+ * @param {Function} onListItemClick  Callback function excecuted when list item is clicked.
+ * @returns {JSX.Element}
  */
-export declare function LayerList({ layerList, isEnlargeDataTable, selectedLayerPath, handleListItemClick }: LayerListProps): import("react").JSX.Element;
+export declare function LayerList({ layerList, selectedLayerPath, onListItemClick }: LayerListProps): JSX.Element;
 export {};
