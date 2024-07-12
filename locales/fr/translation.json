@@ -16,6 +16,7 @@
   },
   "mapnav": {
     "arianavbar": "Groupe de buttons vertical pour navigation sur la carte",
+    "basemap": "Changer la carte de base",
     "fullscreen": "Plein écran",
     "home": "Retour à la vue initiale",
     "zoomIn": "Zoom avant",

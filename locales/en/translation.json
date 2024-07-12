@@ -16,6 +16,7 @@
   },
   "mapnav": {
     "arianavbar": "Vertical button group for map navigation",
+    "basemap": "Change basemap",
     "fullscreen": "Full screen",
     "home": "Reset to initial view",
     "zoomIn": "Zoom in",
