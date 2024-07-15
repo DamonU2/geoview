@@ -25,6 +25,14 @@
     "scale": "Toggle between scale and resolution",
     "location": "Zoom to my location"
   },
+  "basemaps": {
+    "select": "Select a basemap",
+    "default": "Default",
+    "transport": "Transport",
+    "imagery": "Imagery",
+    "simple": "Simple",
+    "nogeom": "None"
+  },
   "mapctrl": {
     "rotation": {
       "resetRotation": "Reset Rotation",
