@@ -119,7 +119,7 @@ export type TypeBasemapOptions = {
     labeled: boolean;
 };
 /** Definition of the basemap options type. */
-export type TypeBasemapId = 'transport' | 'osm' | 'simple' | 'nogeom' | 'shaded';
+export type TypeBasemapId = 'transport' | 'osm' | 'simple' | 'nogeom' | 'shaded' | 'imagery';
 /** Definition of the valid map interactiom values. If map is dynamic (pan/zoom) or static to act as a thumbnail (no nav bar). */
 export type TypeInteraction = 'static' | 'dynamic';
 /** Definition of the view settings. */
