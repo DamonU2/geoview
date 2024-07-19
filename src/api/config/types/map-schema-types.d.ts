@@ -20,8 +20,8 @@ export { MapFeatureConfig } from '@config/types/classes/map-feature-config';
 /** Supported geoview themes. */
 export type TypeDisplayTheme = 'dark' | 'light' | 'geo.ca';
 /** Valid values for the navBar array. */
-export type TypeValidNavBarProps = 'zoom' | 'fullscreen' | 'home' | 'location';
-/** Controls available on the navigation bar. Default = ['zoom', 'fullscreen', 'home']. */
+export type TypeValidNavBarProps = 'zoom' | 'fullscreen' | 'home' | 'location' | 'basemap-select';
+/** Controls available on the navigation bar. Default = ['zoom', 'fullscreen', 'home', 'basemap-select]. */
 export type TypeNavBarProps = TypeValidNavBarProps[];
 /** Supported footer bar tabs */
 export type TypeValidFooterBarTabsCoreProps = 'legend' | 'layers' | 'details' | 'data-table' | 'time-slider' | 'geochart' | 'guide';
@@ -166,7 +166,7 @@ export type TypeMapViewSettings = {
      * Option to set initial view by extent.
      * Called with [minX, minY, maxX, maxY] extent coordinates. */
     extent?: Extent;
-    /** Geoview layer ID(s) or layer path(s) of layer(s) to use as initial map focus. */
+    /** Geoview layer ID(s) or layer path(s) of layer(s) to use as initial map focus. If empty, will use all layers. */
     layerIds?: string[];
 };
 /** Type used to define valid projection codes. */
