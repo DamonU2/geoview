@@ -16,27 +16,41 @@ export declare abstract class EntryConfigBaseClass {
     attributions: string[];
     /** Bounds (in lat long) obtained from the metadata or calculated from the layers */
     bounds: Extent | undefined;
+    /** Layer entry data type. */
+    entryType: TypeLayerEntryType;
     /** The min scale that can be reach by the layer. */
     minScale: number;
     /** The max scale that can be reach by the layer. */
     maxScale: number;
-    /** Layer entry data type. */
-    entryType: TypeLayerEntryType;
     /**
      * Initial settings to apply to the GeoView layer entry at creation time. Initial settings are inherited from the parent in the
      * configuration tree.
      */
     initialSettings: TypeLayerInitialSettings;
     /**
-     * The class constructor.
+     * The class constructor use the sublayer configuration supplied by the user and runs a validation on it to find any errors that
+     * may have been made. It only initalizes the properties needed to query the layer metadata for leaf nodes or to create a the
+     * layer group.
+     *
      * @param {TypeJsonObject} layerConfig The sublayer configuration we want to instanciate.
-     * @param {TypeLayerInitialSettings | TypeJsonObject} initialSettings The initial settings inherited.
      * @param {TypeDisplayLanguage} language The initial language to use when interacting with the map feature configuration.
      * @param {AbstractGeoviewLayerConfig} geoviewLayerConfig The GeoView instance that owns the sublayer.
      * @param {EntryConfigBaseClass} parentNode The The parent node that owns this layer or undefined if it is the root layer.
      * @constructor
      */
-    constructor(layerConfig: TypeJsonObject, initialSettings: TypeLayerInitialSettings | TypeJsonObject, language: TypeDisplayLanguage, geoviewLayerConfig: AbstractGeoviewLayerConfig, parentNode?: EntryConfigBaseClass);
+    constructor(layerConfig: TypeJsonObject, language: TypeDisplayLanguage, geoviewLayerConfig: AbstractGeoviewLayerConfig, parentNode?: EntryConfigBaseClass);
+    /**
+     * Validate the node configuration using the schema associated to its layer type.
+     * @protected
+     */
+    protected validateLayerConfig(layerConfig: TypeJsonObject): void;
+    /**
+     * Apply default value to undefined fields. The default values to be used for the initialSettings are
+     * inherited from the object that owns this sublayer instance.
+     *
+     * @param {TypeLayerInitialSettings} initialSettings The initial settings inherited by the parent container.
+     */
+    applyDefaultValueToUndefinedFields(initialSettings: TypeLayerInitialSettings): void;
     /**
      * The getter method that returns the schemaPath property. Each geoview sublayer type knows what section of the schema must be
      * used to do its validation.
@@ -44,7 +58,7 @@ export declare abstract class EntryConfigBaseClass {
      * @returns {string} The schemaPath associated to the sublayer.
      * @protected @abstract
      */
-    protected abstract get schemaPath(): string;
+    protected abstract getSchemaPath(): string;
     /**
      * A method that returns the entryType property. Each sublayer knows what entry type is associated to it.
      *
@@ -53,9 +67,9 @@ export declare abstract class EntryConfigBaseClass {
      */
     protected abstract getEntryType(): TypeLayerEntryType;
     /** The geoview layer type that owns this config entry. */
-    get geoviewLayerType(): TypeGeoviewLayerType;
+    getGeoviewLayerType(): TypeGeoviewLayerType;
     /** The geoview layer that owns this sub-layer configuration. */
-    get geoviewLayerConfigInstance(): AbstractGeoviewLayerConfig;
+    getGeoviewLayerConfig(): AbstractGeoviewLayerConfig;
     /**
      * The getter method, which returns the layerPath of the sublayer configuration. The layer path is a unique identifier
      * associated with the sublayer configuration. It's made up of the Geoview layer identifier and the node identifiers you need
@@ -63,7 +77,7 @@ export declare abstract class EntryConfigBaseClass {
      *
      * @returns {string} The schemaPath associated to the sublayer.
      */
-    get layerPath(): string;
+    getlayerPath(): string;
     /**
      * Method used to set the EntryConfigBaseClass error flag to true. Once this operation has been performed, the layer entry
      * config is no longer considered viable.
@@ -74,7 +88,13 @@ export declare abstract class EntryConfigBaseClass {
      *
      * @returns {boolean} The errorDetected property associated to the entry config.
      */
-    get errorDetected(): boolean;
+    getErrorDetectedFlag(): boolean;
+    /**
+     * The getter method that returns the parentNode.
+     *
+     * @returns {EntryConfigBaseClass | undefined} The parentNode property associated to the entry config.
+     */
+    getParentNode(): EntryConfigBaseClass | undefined;
     /**
      * This method returns the json string of the layer entry configuration. The output representation is not a multi-line indented
      * string. Private variables and pseudo-properties are not serialized.
