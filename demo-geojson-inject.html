@@ -15,37 +15,10 @@
               'geoviewLayerId': 'geojsonLYR1',
               'geoviewLayerName': { 'en': 'GeoJSON Sample' },
               'geoviewLayerType': 'GeoJSON',
+              'metadataAccessPath': { 'en': './datasets/geojson/metadata-blank.json' },
               'listOfLayerEntryConfig': [
                 {
-                  'layerId': 'blank.json',
-                  'layerName': { 'en': 'Empty' },
-                  'source': {
-                    'featureInfo': { 'queryable': true},
-                    'dataAccessPath': {
-                      'en': './datasets/geojson'
-                    }
-                  },
-                  'style': {
-                    'Point': {
-                      'styleType': 'simple',
-                      'label': 'Point label',
-                      'settings': {
-                        'type': 'simpleSymbol',
-                        'symbol': 'star'
-                      }
-                    },
-                    'LineString': {
-                      'styleType': 'simple',
-                      'label': 'LineString label',
-                      'settings': {
-                        'type': 'lineString',
-                        'stroke': {
-                          'lineStyle': 'shortDash-dot-dot',
-                          'color': 'rgba(128,128,0,1)'
-                        }
-                      }
-                    }
-                  }
+                  'layerId': 'blank.json'
                 }
               ]
             }
@@ -60,79 +33,137 @@
         },
         'corePackages': [],
         'theme': 'geo.ca'
-        }"></div><hr/><div><h3>API Functions:</h3><ul><li><button id="Add-lines">Place line strings</button><br/>cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', lines)</li><li><button id="Add-points">Place points</button><br/>cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', points)</li></ul></div><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
+        }"></div><hr/><div><h3>API Functions:</h3><ul><li><button id="Add-points1">Place points set 1</button><br/>cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', points1)</li><li><button id="Add-points2">Place points set 2</button><br/>cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', points2)</li><li><button id="Add-points3">Place points set 3</button><br/>cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', points3)</li></ul></div><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
       cgpv.init((mapId) => {});
 
-      // Add line strings button ====================================================================================
+      // Add points 1 button ====================================================================================
       // find the button element by ID
-      var addLinesButton = document.getElementById('Add-lines');
+      var addPoints1Button = document.getElementById('Add-points1');
 
-      const lines = {
+      const points1 = {
         type: 'FeatureCollection',
         features: [
           {
             type: 'Feature',
             properties: {
-              Road_Number: 55,
-              Province: 'Quebec',
-              creationDate: '28/05/2020T12:00:00-05:00',
+              Red: 92,
+              Green:
+                '1 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END',
+              Blue: '2 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END',
+              Yellow:
+                '3 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END',
+              Orange: 75,
+              creationDate: '15/02/2022T05:00:00-05:00',
             },
             geometry: {
-              type: 'LineString',
-              coordinates: [
-                [-79, 49],
-                [-78, 46],
-              ],
+              type: 'Point',
+              coordinates: [-120, 57],
             },
           },
           {
             type: 'Feature',
             properties: {
-              Road_Number: 55,
-              Province: 'Quebec',
-              creationDate: '14/09/2021T13:00:00-05:00',
+              Red: 553,
+              Green: 54,
+              Blue: 32.3,
+              Yellow: 5.43,
+              Orange: 55,
+              creationDate: '07/01/2020T12:00:00-05:00',
             },
             geometry: {
-              type: 'LineString',
-              coordinates: [
-                [-78, 49],
-                [-76, 46],
-                [-77, 49],
-              ],
+              type: 'Point',
+              coordinates: [-117, 65],
             },
           },
           {
             type: 'Feature',
             properties: {
-              Road_Number: 20,
-              Province: 'Ontario',
-              creationDate: '25/12/2020T12:00:00-05:00',
+              Red: 255,
+              Green: 255,
+              Blue: 32.3,
+              Yellow: 5.43,
+              Orange: 55,
+              creationDate: '15/02/2019T17:00:00-05:00',
             },
             geometry: {
-              type: 'LineString',
-              coordinates: [
-                [-81, 51],
-                [-80.5, 46],
-                [-80, 49],
-              ],
+              type: 'Point',
+              coordinates: [-83, 54],
             },
           },
         ],
       };
-
       // add an event listener when a button is clicked
-      addLinesButton.addEventListener('click', async () => {
-        cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', lines);
+      addPoints1Button.addEventListener('click', () => {
+        cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', points1);
       });
 
-      // Add points button ====================================================================================
+      // Add points 2 button ====================================================================================
       // find the button element by ID
-      var addPointsButton = document.getElementById('Add-points');
+      var addPoints2Button = document.getElementById('Add-points2');
 
-      const points =
-        '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"data":"92;43.54;12.3;66;75","label":"Red;Green;Blue;Yellow;Orange","creationDate":"14/01/2020T12:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-141,42]}},{"type":"Feature","properties":{"data":"92;43.54;12.3;66;75","label":"Red;Green;Blue;Yellow;Orange","creationDate":"16/02/2020T12:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-141,83]}},{"type":"Feature","properties":{"data":"553;54;32;5.43;55","label":"Red;Green;Blue;Yellow;Orange;","creationDate":"19/08/2022T14:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-53,83]}},{"type":"Feature","properties":{"data":"255;255;255;5.43;55","label":"Red;Green;Blue;Yellow;Orange;","creationDate":"30/10/2022T12:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-53,42]}},{"type":"Feature","properties":{"Red":92,"Green":"1 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END","Blue":"2 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END","Yellow":"3 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END","Orange":75,"creationDate":"15/02/2022T05:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-100,47]}},{"type":"Feature","properties":{"Red":553,"Green":54,"Blue":32.3,"Yellow":5.43,"Orange":55,"creationDate":"07/01/2020T12:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-113,45]}},{"type":"Feature","properties":{"Red":255,"Green":255,"Blue":32.3,"Yellow":5.43,"Orange":55,"creationDate":"15/02/2019T17:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-103,54]}}]}';
+      const points2 =
+        '{"type":"FeatureCollection","features":[{"type":"Feature","properties":{"data":"92;43.54;12.3;66;75","label":"Red;Green;Blue;Yellow;Orange","creationDate":"14/01/2020T12:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-141,52]}},{"type":"Feature","properties":{"data":"92;43.54;12.3;66;75","label":"Red;Green;Blue;Yellow;Orange","creationDate":"16/02/2020T12:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-141,83]}},{"type":"Feature","properties":{"data":"553;54;32;5.43;55","label":"Red;Green;Blue;Yellow;Orange;","creationDate":"19/08/2022T14:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-53,83]}},{"type":"Feature","properties":{"data":"255;255;255;5.43;55","label":"Red;Green;Blue;Yellow;Orange;","creationDate":"30/10/2022T12:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-53,49]}},{"type":"Feature","properties":{"Red":92,"Green":"1 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END","Blue":"2 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END","Yellow":"3 Start, this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text.this is very long text. END","Orange":75,"creationDate":"15/02/2022T05:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-100,57]}},{"type":"Feature","properties":{"Red":553,"Green":54,"Blue":32.3,"Yellow":5.43,"Orange":55,"creationDate":"07/01/2020T12:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-113,55]}},{"type":"Feature","properties":{"Red":255,"Green":255,"Blue":32.3,"Yellow":5.43,"Orange":55,"creationDate":"15/02/2019T17:00:00-05:00"},"geometry":{"type":"Point","coordinates":[-103,54]}}]}';
 
       // add an event listener when a button is clicked
-      addPointsButton.addEventListener('click', async () => {
-        cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', points);
+      addPoints2Button.addEventListener('click', () => {
+        cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', points2);
+      });
+
+      // Add points 3 button ====================================================================================
+      // find the button element by ID
+      var addPoints3Button = document.getElementById('Add-points3');
+
+      const points3 = {
+        type: 'FeatureCollection',
+        features: [
+          {
+            type: 'Feature',
+            properties: {
+              Red: 92,
+              Green: 40,
+              Blue: 86,
+              Yellow: 22,
+              Orange: 75,
+              creationDate: '15/02/2022T05:00:00-05:00',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [-95, 49],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              Red: 553,
+              Green: 54,
+              Blue: 32.3,
+              Yellow: 5.43,
+              Orange: 55,
+              creationDate: '07/01/2020T12:00:00-05:00',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [-135, 60],
+            },
+          },
+          {
+            type: 'Feature',
+            properties: {
+              Red: 255,
+              Green: 255,
+              Blue: 32.3,
+              Yellow: 5.43,
+              Orange: 55,
+              creationDate: '15/02/2019T17:00:00-05:00',
+            },
+            geometry: {
+              type: 'Point',
+              coordinates: [-125, 49.5],
+            },
+          },
+        ],
+      };
+      // add an event listener when a button is clicked
+      addPoints3Button.addEventListener('click', () => {
+        cgpv.api.maps.LYR1.layer.getGeoviewLayer('geojsonLYR1/blank.json').overrideGeojsonSource('geojsonLYR1/blank.json', points3);
       });</script></body></html>
