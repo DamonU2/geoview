@@ -84,7 +84,7 @@ export interface IMapState {
         setOverlayClickMarker: (overlay: Overlay) => void;
         setOverlayNorthMarker: (overlay: Overlay) => void;
         setProjection: (projectionCode: TypeValidMapProjectionCodes) => void;
-        setMapMoveEnd: (centerCoordinates: Coordinate, pointerPosition: TypeMapMouseInfo, degreeRotation: string, isNorthVisible: boolean, scale: TypeScaleInfo) => void;
+        setMapMoveEnd: (centerCoordinates: Coordinate, pointerPosition: TypeMapMouseInfo, degreeRotation: string, isNorthVisible: boolean, mapExtent: Extent, scale: TypeScaleInfo) => void;
         setPointerPosition: (pointerPosition: TypeMapMouseInfo) => void;
         setPointMarkers: (pointMarkers: Record<string, TypePointMarker[]>) => void;
         setClickCoordinates: (clickCoordinates: TypeMapMouseInfo) => void;

@@ -93,7 +93,7 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
     static setZoom(mapId: string, zoom: number): void;
     static setRotation(mapId: string, rotation: number): void;
     static setMapChangeSize(mapId: string, size: [number, number], scale: TypeScaleInfo): void;
-    static setMapMoveEnd(mapId: string, centerCoordinates: Coordinate, pointerPosition: TypeMapMouseInfo, degreeRotation: string, isNorthVisible: boolean, scale: TypeScaleInfo): void;
+    static setMapMoveEnd(mapId: string, centerCoordinates: Coordinate, pointerPosition: TypeMapMouseInfo, degreeRotation: string, isNorthVisible: boolean, mapExtent: Extent, scale: TypeScaleInfo): void;
     static setInteraction(mapId: string, interaction: TypeInteraction): void;
     static setProjection(mapId: string, projectionCode: TypeValidMapProjectionCodes): Promise<void>;
     static rotate(mapId: string, rotation: number): void;
