@@ -144,7 +144,7 @@ export type TypeViewSettings = {
     enableRotation?: boolean;
     /**
      * The initial rotation for the view in degree (positive rotation clockwise, 0 means North). Will be converted to radiant by
-     * the viewer. Domaine = [0..360], default = 0.
+     * the viewer. Domain = [0..360], default = 0.
      */
     rotation?: number;
     /** The extent that constrains the view. Called with [minX, minY, maxX, maxY] extent coordinates.
@@ -153,12 +153,12 @@ export type TypeViewSettings = {
     maxExtent?: Extent;
     /**
      * The minimum zoom level used to determine the resolution constraint. If not set, will use default from basemap.
-     * Domaine = [0..50].
+     * Domain = [0..50].
      */
     minZoom?: number;
     /**
      * The maximum zoom level used to determine the resolution constraint. If not set, will use default from basemap.
-     * Domaine = [0..50].
+     * Domain = [0..50].
      */
     maxZoom?: number;
     /**
@@ -212,6 +212,8 @@ export { AbstractGeoviewLayerConfig } from '@config/types/classes/geoview-config
 /** Child classes derived from the AbstractGeoviewLayerConfig. */
 export { EsriDynamicLayerConfig } from '@config/types/classes/geoview-config/raster-config/esri-dynamic-config';
 export { EsriFeatureLayerConfig } from '@config/types/classes/geoview-config/vector-config/esri-feature-config';
+export { WmsLayerConfig } from '@config/types/classes/geoview-config/raster-config/wms-config';
+export { WfsLayerConfig } from '@config/types/classes/geoview-config/vector-config/wfs-config';
 /** Definition of the geoview layer types accepted by the viewer. */
 export type TypeGeoviewLayerType = 'CSV' | 'esriDynamic' | 'esriFeature' | 'esriImage' | 'GeoJSON' | 'GeoPackage' | 'imageStatic' | 'ogcFeature' | 'ogcWfs' | 'ogcWms' | 'vectorTiles' | 'xyzTiles';
 /** Initial settings to apply to the GeoView layer at creation time. */
@@ -269,6 +271,8 @@ export { GroupLayerEntryConfig } from '@config/types/classes/sub-layer-config/gr
 /** Child classes derived from the AbstractBaseLayerEntryConfig. */
 export { EsriDynamicLayerEntryConfig } from '@config/types/classes/sub-layer-config/leaf/raster/esri-dynamic-layer-entry-config';
 export { EsriFeatureLayerEntryConfig } from '@config/types/classes/sub-layer-config/leaf/vector/esri-feature-layer-entry-config';
+export { WmsLayerEntryConfig } from '@config/types/classes/sub-layer-config/leaf/raster/wms-layer-entry-config';
+export { WfsLayerEntryConfig } from '@config/types/classes/sub-layer-config/leaf/vector/wfs-layer-entry-config';
 /** Valid keys for the geometryType property. */
 export type TypeStyleGeometry = 'point' | 'linestring' | 'polygon';
 /** Type of Style to apply to the GeoView vector layer source at creation time. */
@@ -298,13 +302,13 @@ export interface TypeSourceTileInitialConfig extends TypeBaseSourceInitialConfig
     tileGrid?: TypeTileGrid;
 }
 /** Initial settings for WMS image sources. */
-export interface TypeSourceImageWmsInitialConfig extends TypeBaseSourceInitialConfig {
+export interface TypeSourceWmsInitialConfig extends TypeBaseSourceInitialConfig {
     /** Definition of the feature information structure that will be used by the getFeatureInfo method. */
     featureInfo?: TypeFeatureInfoLayerConfig;
     /** The type of the remote WMS server. The default value is mapserver. */
     serverType?: TypeOfServer;
     /** Style to apply. Default = '' */
-    style?: string | string[];
+    wmsStyle?: string[];
 }
 /** Type of server. */
 export type TypeOfServer = 'mapserver' | 'geoserver' | 'qgis';
@@ -321,6 +325,8 @@ export interface TypeBaseVectorSourceInitialConfig extends TypeBaseSourceInitial
     /** Loading strategy to use (all or bbox). */
     strategy?: 'all' | 'bbox';
 }
+/** Type from which we derive the source properties for all the Wfs leaf nodes in the layer tree. */
+export type TypeSourceWfsInitialConfig = TypeBaseVectorSourceInitialConfig;
 /** Initial settings to apply to the GeoView vector layer source at creation time. */
 export interface TypeVectorSourceInitialConfig extends TypeBaseVectorSourceInitialConfig {
     /** The character used to separate columns of csv file. */

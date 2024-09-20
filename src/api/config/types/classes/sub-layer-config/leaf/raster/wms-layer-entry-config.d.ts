@@ -1,11 +1,12 @@
-import { TypeStyleConfig, TypeLayerEntryType, TypeSourceEsriDynamicInitialConfig } from '@config/types/map-schema-types';
-import { AbstractBaseEsriLayerEntryConfig } from '@/api/config/types/classes/sub-layer-config/leaf/abstract-base-esri-layer-entry-config';
+import { TypeStyleConfig, TypeLayerEntryType, TypeSourceWmsInitialConfig, WmsLayerConfig } from '@config/types/map-schema-types';
+import { AbstractBaseLayerEntryConfig } from '@config/types/classes/sub-layer-config/leaf/abstract-base-layer-entry-config';
 /**
- * The ESRI dynamic geoview sublayer class.
+ * The OGC WMS geoview sublayer class.
  */
-export declare class EsriDynamicLayerEntryConfig extends AbstractBaseEsriLayerEntryConfig {
+export declare class WmsLayerEntryConfig extends AbstractBaseLayerEntryConfig {
+    #private;
     /** Source settings to apply to the GeoView image layer source at creation time. */
-    source: TypeSourceEsriDynamicInitialConfig;
+    source: TypeSourceWmsInitialConfig;
     /** Style to apply to the raster layer. */
     style?: TypeStyleConfig;
     /**
@@ -23,16 +24,23 @@ export declare class EsriDynamicLayerEntryConfig extends AbstractBaseEsriLayerEn
      * @protected @override
      */
     protected getEntryType(): TypeLayerEntryType;
-    /** ***************************************************************************************************************************
-     * This method is used to parse the layer metadata and extract the style, source information and other properties.
+    /**
+     * Shadow method used to do a cast operation on the parent method to return WmsLayerConfig instead of
+     * AbstractGeoviewLayerConfig.
      *
-     * @protected @override
+     * @returns {WmsLayerConfig} The Geoview layer configuration that owns this WFS layer entry config.
+     * @override @async
      */
-    protected parseLayerMetadata(): void;
+    getGeoviewLayerConfig(): WmsLayerConfig;
+    /**
+     * This method is used to fetch, parse and extract the relevant information from the metadata of the leaf node.
+     * The same method signature is used by layer group nodes and leaf nodes (layers).
+     * @override
+     */
+    fetchLayerMetadata(): Promise<void>;
     /**
      * Apply default values. The default values will be overwritten by the values in the metadata when they are analyzed.
      * The resulting config will then be overwritten by the values provided in the user config.
-     *
      * @override
      */
     applyDefaultValues(): void;
