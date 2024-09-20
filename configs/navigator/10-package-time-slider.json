@@ -39,6 +39,18 @@
         ]
       },
       {
+        "geoviewLayerId": "wmsLYR1-spatiotemporel",
+        "geoviewLayerName": { "en": "Spatiotemporel" },
+        "metadataAccessPath": { "en": "https://geo.weather.gc.ca/geomet" },
+        "geoviewLayerType": "ogcWms",
+        "listOfLayerEntryConfig": [
+          {
+            "layerId": "RADAR_1KM_RSNO",
+            "layerName": { "en": "Test Spatiotemporel" }
+          }
+        ]
+      },
+      {
         "geoviewLayerId": "MSI",
         "geoviewLayerName": {
           "en": "MSI"
