@@ -17,7 +17,7 @@ export declare abstract class EntryConfigBaseClass {
     /** Bounds (in lat long) obtained from the metadata or calculated from the layers */
     bounds: Extent | undefined;
     /** Layer entry data type. */
-    entryType: TypeLayerEntryType;
+    entryType?: TypeLayerEntryType;
     /** The min scale that can be reach by the layer. */
     minScale: number;
     /** The max scale that can be reach by the layer. */
@@ -63,13 +63,6 @@ export declare abstract class EntryConfigBaseClass {
      */
     abstract fetchLayerMetadata(): Promise<void>;
     /**
-     * The getter method that returns the language used to create the  sublayer.
-     *
-     * @returns {TypeDisplayLanguage} The language associated to the config.
-     * @protected
-     */
-    protected getLanguage(): TypeDisplayLanguage;
-    /**
      * Validate the node configuration using the schema associated to its layer type.
      * @protected
      */
@@ -90,6 +83,8 @@ export declare abstract class EntryConfigBaseClass {
     getLayerMetadata(): TypeJsonObject;
     /** The geoview layer type that owns this config entry. */
     getGeoviewLayerType(): TypeGeoviewLayerType;
+    /** Set the geoview layer that owns this sub-layer configuration. */
+    setGeoviewLayerConfig(geoviewLayerConfig: AbstractGeoviewLayerConfig): void;
     /** The geoview layer that owns this sub-layer configuration. */
     getGeoviewLayerConfig(): AbstractGeoviewLayerConfig;
     /**
@@ -103,8 +98,10 @@ export declare abstract class EntryConfigBaseClass {
     /**
      * Method used to set the EntryConfigBaseClass error flag to true. Once this operation has been performed, the layer entry
      * config is no longer considered viable.
+     *
+     * @param {boolean} value The value to assign to the flag.
      */
-    setErrorDetectedFlag(): void;
+    setErrorDetectedFlag(value?: boolean): void;
     /**
      * The getter method that returns the errorDetected flag.
      *
@@ -112,11 +109,29 @@ export declare abstract class EntryConfigBaseClass {
      */
     getErrorDetectedFlag(): boolean;
     /**
+     * Method used to set the parent node.
+     *
+     * @param {EntryConfigBaseClass | undefined} parentNode The parent node.
+     */
+    setParentNode(parentNode: EntryConfigBaseClass | undefined): void;
+    /**
      * The getter method that returns the parentNode.
      *
      * @returns {EntryConfigBaseClass | undefined} The parentNode property associated to the entry config.
      */
     getParentNode(): EntryConfigBaseClass | undefined;
+    /**
+     * The setter method that sets the language used to create the sublayer.
+     *
+     * @param {TypeDisplayLanguage} language The language associated to the config.
+     */
+    setLanguage(language: TypeDisplayLanguage): void;
+    /**
+     * The getter method that returns the language used to create the sublayer.
+     *
+     * @returns {TypeDisplayLanguage} The language associated to the config.
+     */
+    getLanguage(): TypeDisplayLanguage;
     /**
      * This method returns the json string of the entry configuration. The output representation is a multi-line indented
      * string. Indentation can be controled using the ident parameter. Private variables are not serialized.
@@ -130,4 +145,20 @@ export declare abstract class EntryConfigBaseClass {
      * The resulting config will then be overwritten by the values provided in the user config.
      */
     applyDefaultValues(): void;
+    /**
+     * Create a clone of this node. This method is mainly used to clone a node from the layer tree to store a copy in the
+     * list of layer entry config of the GeoView Layer. It was created to preserve the private fields created using the #
+     * operator because cloneDeep doesn't copy them to the cloned instance.
+     *
+     * @param {EntryConfigBaseClass | undefined} parentNode The layer group that owns this node.
+     *
+     * @returns {EntryConfigBaseClass} The clone copy of the node.
+     */
+    clone(parentNode?: EntryConfigBaseClass | undefined): EntryConfigBaseClass;
+    /**
+     * The getter method that returns the sublayer configuration. If the layer path doesn't exists, return undefined.
+     *
+     * @returns {EntryConfigBaseClass | undefined} The sublayer configuration.
+     */
+    getSubLayerConfig(layerPath: string): EntryConfigBaseClass | undefined;
 }
