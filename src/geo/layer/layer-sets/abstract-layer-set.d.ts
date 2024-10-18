@@ -1,5 +1,5 @@
 import { EventDelegateBase } from '@/api/events/event-helper';
-import { QueryType, TypeFeatureInfoEntry, TypeLayerStatus, TypeLocation, TypeResultSet, TypeResultSetEntry } from '@/geo/map/map-schema-types';
+import { QueryType, TypeFeatureInfoEntry, TypeLayerEntryConfig, TypeLayerStatus, TypeLocation, TypeResultSet, TypeResultSetEntry } from '@/geo/map/map-schema-types';
 import { TypeAllFeatureInfoResultSetEntry } from '@/core/stores/store-interface-and-intial-values/data-table-state';
 import { TypeFeatureInfoResultSetEntry, TypeHoverResultSetEntry } from '@/core/stores/store-interface-and-intial-values/feature-info-state';
 import { AbstractGeoViewLayer } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
@@ -133,6 +133,15 @@ export declare abstract class AbstractLayerSet {
      */
     protected static isStateQueryable(layer: AbstractGeoViewLayer | AbstractBaseLayer, layerPath: string): boolean;
     /**
+     * Align records with informatiom provided by OutFields from layer config.
+     * This will update fields in and delete unwanted fields from the arrayOfRecords
+     * @param {TypeLayerEntryConfig} layerPath - Path of the layer to get config from.
+     * @param {TypeFeatureInfoEntry[]} arrayOfRecords - Features to delete fields from.
+     * @protected
+     * @static
+     */
+    protected static alignRecordsWithOutFields(layerEntryConfig: TypeLayerEntryConfig, arrayOfRecords: TypeFeatureInfoEntry[]): void;
+    /**
      * Registers a callback to be executed whenever the layer set is updated.
      * @param {LayerSetUpdatedDelegate} callback - The callback function
      */
@@ -142,6 +151,16 @@ export declare abstract class AbstractLayerSet {
      * @param {LayerSetUpdatedDelegate} callback - The callback function to unregister
      */
     offLayerSetUpdated(callback: LayerSetUpdatedDelegate): void;
+    /**
+     * Registers a callback to be executed whenever the layer status is updated.
+     * @param {LayerStatusUpdatedDelegate} callback - The callback function
+     */
+    onLayerStatusUpdated(callback: LayerStatusUpdatedDelegate): void;
+    /**
+     * Unregisters a callback from being called whenever the layer status is updated.
+     * @param {LayerStatusUpdatedDelegate} callback - The callback function to unregister
+     */
+    offLayerStatusUpdated(callback: LayerStatusUpdatedDelegate): void;
 }
 export type EventType = 'click' | 'hover' | 'all-features' | 'name';
 export type PropagationType = 'config-registration' | 'layer-registration' | 'layerStatus' | 'layerName';
@@ -155,5 +174,15 @@ type LayerSetUpdatedDelegate = EventDelegateBase<AbstractLayerSet, LayerSetUpdat
 export type LayerSetUpdatedEvent = {
     layerPath: string;
     resultSet: TypeResultSet;
+};
+/**
+ * Define a delegate for the event handler function signature
+ */
+type LayerStatusUpdatedDelegate = EventDelegateBase<AbstractLayerSet, LayerStatusUpdatedEvent, void>;
+/**
+ * Define an event for the delegate
+ */
+export type LayerStatusUpdatedEvent = {
+    layer: ConfigBaseClass;
 };
 export {};
