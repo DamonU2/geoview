@@ -157,9 +157,8 @@ export declare class LayerApi {
     loadListOfGeoviewLayer(mapConfigLayerEntries?: MapConfigLayerEntry[]): Promise<void>;
     /**
      * Refreshes GeoCore Layers
-     * @returns {Promise<void>} A promise which resolves when done refreshing
      */
-    reloadGeocoreLayers(): Promise<void>;
+    reloadGeocoreLayers(): void;
     /**
      * Adds a Geoview Layer by GeoCore UUID.
      * @param {string} uuid - The GeoCore UUID to add to the map
@@ -283,6 +282,10 @@ export declare class LayerApi {
      * @returns {Extent | undefined} An extent representing an union of all layer extents associated with the layer path
      */
     calculateBounds(layerPath: string): Extent | undefined;
+    /**
+     * Recalculates the bounds for all layers and updates the store.
+     */
+    recalculateBoundsAll(): void;
     /**
      * Registers a layer added event handler.
      * @param {LayerAddedDelegate} callback - The callback to be executed whenever the event is emitted

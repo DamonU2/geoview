@@ -143,9 +143,9 @@ export declare class MapViewer {
      *
      * @param {TypeDisplayLanguage} displayLanguage - The language to use (en, fr)
      * @param {boolean} resetLayer - Optional flag to ask viewer to reload layers with the new localize language
-     * @returns {Promise<[void, void]>}
+     * @returns {Promise<void>}
      */
-    setLanguage(displayLanguage: TypeDisplayLanguage, reloadLayers?: boolean | false): Promise<[void, void]>;
+    setLanguage(displayLanguage: TypeDisplayLanguage, reloadLayers?: boolean | false): Promise<void>;
     /**
      * Set the display projection of the map
      *
