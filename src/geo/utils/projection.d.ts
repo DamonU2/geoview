@@ -3,16 +3,12 @@ import { Projection as olProjection, ProjectionLike } from 'ol/proj';
 import { Extent } from 'ol/extent';
 import { TypeJsonObject } from '@/core/types/global-types';
 /**
- * Class used to handle functions for trasforming projections
+ * Class used to handle functions for transforming projections
  *
  * @exports
  * @class Projection
  */
 export declare abstract class Projection {
-    /**
-     * constant for the CRS84 URL
-     */
-    static CRS_84_URL: string;
     /**
      * constant used for the available projection names
      */
@@ -20,10 +16,13 @@ export declare abstract class Projection {
         3578: string;
         LCC: string;
         3979: string;
+        102100: string;
         102184: string;
         102190: string;
         WM: string;
+        4269: string;
         LNGLAT: string;
+        CRS84: string;
         CSRS: string;
         CSRS98: string;
     };
@@ -157,4 +156,12 @@ export declare abstract class Projection {
      * @returns the point resolution for map center
      */
     static getResolution(projection: string, center: Coordinate): number;
+    /**
+     * Reads an extent and verifies if it might be reversed (ymin,xmin,ymax,ymin) and when
+     * so puts it back in order (xmin,ymin,xmax,ymax).
+     * @param {string} projection The projection the extent is in
+     * @param {Extent} extent The extent to check
+     * @returns {Extent} The extent in order (xmin,ymin,xmax,ymax).
+     */
+    static readExtentCarefully(projection: string, extent: Extent): Extent;
 }
