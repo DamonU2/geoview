@@ -1,11 +1,12 @@
 import { Root } from 'react-dom/client';
+import { OverviewMap as OLOverviewMap } from 'ol/control';
 import { Extent } from 'ol/extent';
 import { FitOptions } from 'ol/View';
 import { Coordinate } from 'ol/coordinate';
-import { TypeBasemapOptions, TypeInteraction, TypeLayerInitialSettings, TypeValidMapProjectionCodes, TypePointMarker, TypeHighlightColors } from '@config/types/map-schema-types';
+import { TypeBasemapOptions, TypeInteraction, TypeValidMapProjectionCodes, TypePointMarker, TypeHighlightColors } from '@config/types/map-schema-types';
 import { LayerApi } from '@/geo/layer/layer';
 import { MapViewer, TypeMapState, TypeMapMouseInfo } from '@/geo/map/map-viewer';
-import { MapConfigLayerEntry, TypeFeatureInfoEntry, TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeMapFeaturesInstance } from '@/geo/map/map-schema-types';
+import { TypeFeatureInfoEntry, TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeMapFeaturesInstance } from '@/geo/map/map-schema-types';
 import { TypeRecordOfPlugin } from '@/api/plugin/plugin-types';
 import { GeoviewStoreType } from '@/core/stores/geoview-store';
 import { AbstractEventProcessor } from '@/api/event-processors/abstract-event-processor';
@@ -13,10 +14,8 @@ import { TypeMapFeaturesConfig } from '@/core/types/global-types';
 import { TypeClickMarker } from '@/core/components';
 import { IMapState, TypeOrderedLayerInfo, TypeScaleInfo } from '@/core/stores/store-interface-and-intial-values/map-state';
 import { TypeHoverFeatureInfo } from '@/core/stores/store-interface-and-intial-values/feature-info-state';
-import { TypeBasemapProps } from '@/geo/layer/basemap/basemap-types';
-import { TypeLegendLayer } from '@/core/components/layers/types';
-import { ConfigBaseClass } from '@/core/utils/config/validation-classes/config-base-class';
 export declare class MapEventProcessor extends AbstractEventProcessor {
+    #private;
     /**
      * Override the initialization process to register store subscriptions handlers and return them so they can be destroyed later.
      */
@@ -192,10 +191,12 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
      *
      * @param {string} mapId The ID of the map to remove the layer from.
      * @param {string} layerPath The path of the layer to remove.
+     * @param {boolean} removeSublayers Should sublayers be removed.
      * @return {void}
      */
-    static removeOrderedLayerInfo(mapId: string, layerPath: string): void;
-    static createOverviewMapBasemap(mapId: string): TypeBasemapProps | undefined;
+    static removeOrderedLayerInfo(mapId: string, layerPath: string, removeSublayers?: boolean): void;
+    static getOverviewMapControl(mapId: string, div: HTMLDivElement): OLOverviewMap;
+    static setOverviewMapVisibility(mapId: string, visible: boolean): void;
     static resetBasemap(mapId: string): Promise<void>;
     static setBasemap(mapId: string, basemapOptions: TypeBasemapOptions): Promise<void>;
     static setMapKeyboardPanInteractions(mapId: string, panDelta: number): void;
@@ -239,32 +240,12 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
     static getPixelFromCoordinate: (mapId: string, coord: Coordinate) => [number, number];
     static setClickMarkerOnPosition: (mapId: string, position: number[]) => void;
     /**
-     * Creates layer initial settings according to provided configs.
-     * @param {ConfigBaseClass} layerEntryConfig - Layer entry config for the layer.
-     * @param {TypeOrderedLayerInfo} orderedLayerInfo - Ordered layer info for the layer.
-     * @param {TypeLegendLayer} legendLayerInfo - Legend layer info for the layer.
-     * @returns {TypeLayerInitialSettings} Initial settings object.
+     * Get all active filters for layer.
+     *
+     * @param {string} mapId The map id.
+     * @param {string} layerPath The path for the layer to get filters from.
      */
-    static getInitialSettings(layerEntryConfig: ConfigBaseClass, orderedLayerInfo: TypeOrderedLayerInfo, legendLayerInfo: TypeLegendLayer): TypeLayerInitialSettings;
-    /**
-     * Creates a layer entry config based on current layer state.
-     * @param {string} mapId - Id of map.
-     * @param {string} layerPath - Path of the layer to create config for.
-     * @returns {TypeLayerEntryConfig} Entry config object.
-     */
-    static createLayerEntryConfig(mapId: string, layerPath: string): TypeLayerEntryConfig;
-    /**
-     * Creates a geoview layer config based on current layer state.
-     * @param {string} mapId - Id of map.
-     * @param {string} layerPath - Path of the layer to create config for.
-     * @returns {MapConfigLayerEntry} Geoview layer config object.
-     */
-    static createGeoviewLayerConfig(mapId: string, layerPath: string): MapConfigLayerEntry;
-    /**
-     * Creates a map config based on current map state.
-     * @param {string} mapId - Id of map.
-     */
-    static createMapConfigFromMapState(mapId: string): TypeMapFeaturesInstance | undefined;
+    static getActiveVectorFilters(mapId: string, layerPath: string): (string | undefined)[] | undefined;
     /**
      * Apply all available filters to layer.
      *
@@ -273,10 +254,17 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
      */
     static applyLayerFilters(mapId: string, layerPath: string): void;
     /**
-     * Get all active filters for layer.
-     *
-     * @param {string} mapId The map id.
-     * @param {string} layerPath The path for the layer to get filters from.
+     * Creates a map config based on current map state.
+     * @param {string} mapId - Id of map.
+     * @param {boolean | "hybrid"} overrideGeocoreServiceNames - Indicates if geocore layer names should be kept as is or returned to defaults.
      */
-    static getActiveVectorFilters(mapId: string, layerPath: string): (string | undefined)[] | undefined;
+    static createMapConfigFromMapState(mapId: string, overrideGeocoreServiceNames?: boolean | 'hybrid'): TypeMapFeaturesInstance | undefined;
+    /**
+     * Searches through a map config and replaces any matching layer names with their provided partner.
+     *
+     * @param {string[][]} namePairs -  The array of name pairs. Presumably one english and one french name in each pair.
+     * @param {TypeMapFeaturesInstance} mapConfig - The config to modify.
+     * @returns {TypeMapFeaturesInstance} Map config with updated names.
+     */
+    static replaceMapConfigLayerNames(namePairs: string[][], mapConfig: TypeMapFeaturesInstance): TypeMapFeaturesInstance;
 }
