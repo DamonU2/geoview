@@ -107,7 +107,7 @@ export type TypeFeatureInfoEntry = {
     geoviewLayerType: TypeGeoviewLayerType;
     extent: Extent | undefined;
     geometry: TypeGeometry | Feature | null;
-    featureIcon: HTMLCanvasElement;
+    featureIcon: string;
     fieldInfo: Partial<Record<string, TypeFieldEntry>>;
     nameField: string | null;
 };
@@ -260,7 +260,7 @@ export type GeoCoreLayerConfig = {
     /**
      * The display name of the layer (English/French). This overrides the default name coming from the GeoCore API.
      */
-    geoviewLayerName: string;
+    geoviewLayerName: string | undefined;
     /** Initial settings to apply to the GeoCore layer at creation time. */
     initialSettings?: TypeLayerInitialSettings;
     /** The layer entries to use from the GeoCore layer. */
