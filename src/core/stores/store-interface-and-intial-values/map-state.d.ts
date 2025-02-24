@@ -46,9 +46,6 @@ export interface IMapState {
     actions: {
         createBasemapFromOptions: (basemapOptions: TypeBasemapOptions) => Promise<void>;
         getPixelFromCoordinate: (coord: Coordinate) => [number, number];
-        getIndexFromOrderedLayerInfo: (layerPath: string) => number;
-        getLegendCollapsedFromOrderedLayerInfo: (layerPath: string) => boolean;
-        getVisibilityFromOrderedLayerInfo: (layerPath: string) => boolean;
         showClickMarker: (marker: TypeClickMarker) => void;
         hideClickMarker: () => void;
         highlightBBox: (extent: Extent, isLayerHighlight?: boolean) => void;
@@ -143,7 +140,6 @@ export declare const useMapHoverFeatureInfo: () => TypeHoverFeatureInfo;
 export declare const useMapLoaded: () => boolean;
 export declare const useMapNorthArrow: () => boolean;
 export declare const useMapNorthArrowElement: () => TypeNorthArrow;
-export declare const useMapOrderedLayerInfo: () => TypeOrderedLayerInfo[];
 export declare const useMapOverviewMap: () => boolean;
 export declare const useMapOverviewMapHideZoom: () => number;
 export declare const useMapPointerPosition: () => TypeMapMouseInfo | undefined;
@@ -155,5 +151,8 @@ export declare const useMapSize: () => [number, number];
 export declare const useMapVisibleLayers: () => string[];
 export declare const useMapZoom: () => number;
 export declare const getMapPointerPosition: (mapId: string) => TypeMapMouseInfo | undefined;
+export declare const useSelectorLayerVisibility: (layerPath: string) => boolean;
+export declare const useSelectorLayerLegendCollapsed: (layerPath: string) => boolean;
+export declare const useSelectorLayerPathOrder: () => string[];
 export declare const useMapStoreActions: () => MapActions;
 export {};
