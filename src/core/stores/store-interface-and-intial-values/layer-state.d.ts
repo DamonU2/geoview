@@ -74,5 +74,5 @@ export declare const useSelectorLayerStatus: (layerPath: string) => TypeLayerSta
 export declare const useSelectorLayerLegendQueryStatus: (layerPath: string) => string | undefined;
 export declare const useSelectorLayerControls: (layerPath: string) => TypeLayerControls | undefined;
 export declare const useSelectorLayerChildren: (layerPath: string) => TypeLegendLayer[] | undefined;
-export declare const useSelectorLayerItems: (layerPath: string) => TypeLegendItem[] | undefined;
+export declare const useSelectorLayerItems: (layerPath: string) => TypeLegendItem[];
 export {};

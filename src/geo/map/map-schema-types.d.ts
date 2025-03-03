@@ -4,7 +4,7 @@ import Feature from 'ol/Feature';
 import RenderFeature from 'ol/render/Feature';
 import { Coordinate } from 'ol/coordinate';
 import { Pixel } from 'ol/pixel';
-import { TypeBasemapOptions, TypeViewSettings, TypeInteraction, TypeHighlightColors, TypeOverlayObjects, TypeValidMapProjectionCodes, TypeDisplayTheme, TypeLayerStates, TypeLayerControls, TypePostSettings, TypeServiceUrls, TypeNavBarProps, TypeAppBarProps, TypeFooterBarProps, TypeOverviewMapProps, TypeMapComponents, TypeMapCorePackages, TypeExternalPackages, TypeGlobalSettings, TypeOutfields, TypeOutfieldsType } from '@config/types/map-schema-types';
+import { TypeBasemapOptions, TypeViewSettings, TypeInteraction, TypeHighlightColors, TypeOverlayObjects, TypeValidMapProjectionCodes, TypeDisplayTheme, TypeLayerStates, TypeLayerControls, TypePostSettings, TypeServiceUrls, TypeNavBarProps, TypeAppBarProps, TypeFooterBarProps, TypeOverviewMapProps, TypeMapComponents, TypeMapCorePackages, TypeExternalPackages, TypeGlobalSettings, TypeOutfields, TypeOutfieldsType, TypeCorePackagesConfig } from '@config/types/map-schema-types';
 import { CONST_LAYER_TYPES, TypeGeoviewLayerType } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
 import { ImageStaticLayerEntryConfig } from '@/core/utils/config/validation-classes/raster-validation-classes/image-static-layer-entry-config';
 import { OgcWmsLayerEntryConfig } from '@/core/utils/config/validation-classes/raster-validation-classes/ogc-wms-layer-entry-config';
@@ -249,6 +249,9 @@ export type TypeGeoviewLayerConfig = {
      * This attribute is allowed only if listOfLayerEntryConfig.length > 1.
      */
     initialSettings?: TypeLayerInitialSettings;
+    /** Min and max scales */
+    minScale?: number;
+    maxScale?: number;
     /** The layer entries to use from the GeoView layer. */
     listOfLayerEntryConfig: TypeLayerEntryConfig[];
 };
@@ -306,6 +309,8 @@ export type TypeMapFeaturesInstance = {
     components?: TypeMapComponents;
     /** List of core packages. */
     corePackages?: TypeMapCorePackages;
+    /** List of core packages. */
+    corePackagesConfig?: TypeCorePackagesConfig;
     /** List of external packages. */
     externalPackages?: TypeExternalPackages;
     /**
