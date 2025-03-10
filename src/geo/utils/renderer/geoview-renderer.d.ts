@@ -1,8 +1,9 @@
 import { Style } from 'ol/style';
 import Feature, { FeatureLike } from 'ol/Feature';
-import { TypeStyleGeometry, TypeLayerStyleConfig, TypeLayerStyleConfigInfo } from '@/geo/map/map-schema-types';
+import { TypeBaseStyleType, TypeKindOfVectorSettings, TypeStyleGeometry, TypeLayerStyleSettings, TypeLayerStyleConfig, TypeLayerStyleConfigInfo } from '@/geo/map/map-schema-types';
 import { FilterNodeArrayType } from './geoview-renderer-types';
 import { TypeVectorLayerStyles } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
+type TypeStyleProcessor = (styleSettings: TypeLayerStyleSettings | TypeKindOfVectorSettings, feature?: Feature, filterEquation?: FilterNodeArrayType, legendFilterIsOff?: boolean) => Style | undefined;
 /** ***************************************************************************************************************************
  * This method returns the type of geometry. It removes the Multi prefix because for the geoviewRenderer, a MultiPoint has
  * the same behaviour than a Point.
@@ -28,6 +29,8 @@ export declare function loadImage(src: string): Promise<HTMLImageElement | null>
  * @returns {Promise<TypeVectorLayerStyles>} A promise that the layer styles are processed.
  */
 export declare function getLegendStyles(styleConfig: TypeLayerStyleConfig | undefined): Promise<TypeVectorLayerStyles>;
+/** Table of function to process the style settings based on the feature geometry and the kind of style settings. */
+export declare const processStyle: Record<TypeBaseStyleType, Record<TypeStyleGeometry, TypeStyleProcessor>>;
 /** ***************************************************************************************************************************
  * This method gets the style of the feature using the layer entry config. If the style does not exist for the geometryType,
  * create it using the default style strategy.
@@ -41,15 +44,14 @@ export declare function getLegendStyles(styleConfig: TypeLayerStyleConfig | unde
  */
 export declare function getAndCreateFeatureStyle(feature: FeatureLike, style: TypeLayerStyleConfig, label: string, filterEquation?: FilterNodeArrayType, legendFilterIsOff?: boolean, callbackWhenCreatingStyle?: (geometryType: TypeStyleGeometry, style: TypeLayerStyleConfigInfo) => void): Style | undefined;
 /** ***************************************************************************************************************************
- * This method gets the canvas icon from the style of the feature using the layer entry config.
- * @param {Feature} feature - The feature that need its canvas icon to be defined.
+ * This method gets the image source from the style of the feature using the layer entry config.
+ * @param {Feature} feature - The feature that need its icon to be defined.
  * @param {TypeStyleConfig} style - The style to use
  * @param {FilterNodeArrayType} filterEquation - Filter equation associated to the layer.
  * @param {boolean} legendFilterIsOff - When true, do not apply legend filter.
- * @param {boolean} useRecycling - Special parameter to optimize canvas creation time when functions is called multiple times.
- * @returns {Promise<HTMLCanvasElement>} The canvas icon associated to the feature or a default empty canvas.
+ * @returns {string} The icon associated to the feature or a default empty one.
  */
-export declare function getFeatureCanvas(feature: Feature, style: TypeLayerStyleConfig, filterEquation?: FilterNodeArrayType, legendFilterIsOff?: boolean, useRecycling?: boolean): Promise<HTMLCanvasElement>;
+export declare function getFeatureImageSource(feature: Feature, style: TypeLayerStyleConfig, filterEquation?: FilterNodeArrayType, legendFilterIsOff?: boolean): string;
 /** ***************************************************************************************************************************
  * Analyse the filter and split it in syntaxique nodes.  If a problem is detected, an error object is thrown with an
  * explanatory message.
@@ -59,3 +61,4 @@ export declare function getFeatureCanvas(feature: Feature, style: TypeLayerStyle
  * @returns {FilterNodeArrayType} The new node array with all nodes classified.
  */
 export declare function analyzeLayerFilter(filterNodeArrayType: FilterNodeArrayType): FilterNodeArrayType;
+export {};
