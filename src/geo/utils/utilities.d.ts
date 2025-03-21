@@ -117,6 +117,13 @@ export declare function coordFormatDMS(value: number): string;
  */
 export declare function convertTypeFeatureStyleToOpenLayersStyle(style?: TypeFeatureStyle): Style;
 /**
+ * Check if a point is contained in an extent
+ * @param {Coordinate} point - The point
+ * @param {Extent} extent - The extent
+ * @returns True if point is within the extent, false otherwise
+ */
+export declare function isPointInExtent(point: Coordinate, extent: Extent): boolean;
+/**
  * Returns the union of 2 extents.
  * @param {Extent | undefined} extentA First extent
  * @param {Extent | undefined} extentB Optional second extent
@@ -193,7 +200,7 @@ export declare function getMetersPerPixel(projection: TypeValidMapProjectionCode
  * @param targetScale The desired scale (e.g. 50000 for 1:50,000)
  * @returns number representing the closest zoom level for the given scale
  */
-export declare const getZoomFromScale: (view: View, targetScale: number) => number | undefined;
+export declare const getZoomFromScale: (view: View, targetScale: number | undefined) => number | undefined;
 /**
  * Convert a map scale to zoom level
  * @param view The view for converting the zoom
