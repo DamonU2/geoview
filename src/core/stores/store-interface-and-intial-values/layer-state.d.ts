@@ -30,6 +30,7 @@ export interface ILayerState {
         sortLegendLayersChildren: (legendLayerList: TypeLegendLayer[]) => void;
         toggleItemVisibility: (layerPath: string, item: TypeLegendItem) => void;
         zoomToLayerExtent: (layerPath: string) => Promise<void>;
+        zoomToLayerVisibleScale: (layerPath: string) => void;
         setSelectedLayerSortingArrowId: (layerId: string) => void;
     };
     setterActions: {

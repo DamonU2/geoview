@@ -236,6 +236,13 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
      */
     static zoomToMyLocation(mapId: string, position: GeolocationPosition): Promise<void>;
     /**
+     * Zoom to layer visible scale.
+     *
+     * @param {string} mapId - ID of map to zoom on
+     * @param {string} layerPath - Path of layer to zoom to.
+     */
+    static zoomToLayerVisibleScale(mapId: string, layerPath: string): void;
+    /**
      * Set Z index for layers
      *
      * @param {string} mapId - Id of map to set layer Z indices
