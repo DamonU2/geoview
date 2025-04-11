@@ -179,6 +179,10 @@ export declare class LayerApi {
      */
     removeAllGeoviewLayers(): void;
     /**
+     * Removes all layers in error from the map
+     */
+    removeAllLayersInError(): void;
+    /**
      * Removes layer and feature highlights for a given layer.
      * @param {string} layerPath - The path of the layer to remove highlights from.
      */
