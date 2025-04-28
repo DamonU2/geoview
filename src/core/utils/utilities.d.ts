@@ -30,11 +30,19 @@ export declare function isObjectEmpty(obj: object): boolean;
  */
 export declare function getScriptAndAssetURL(): string;
 /**
- * Generate a unique id if an id was not provided
- * @param {string?} id - An id to return if it was already passed
- * @returns {string} The generated id
+ * Generates a unique id of the specified length.
+ * @param {8 | 18 | 36} length - Number of characters to return.
+ * @returns {string} The id.
  */
-export declare function generateId(id?: string): string;
+export declare function generateId(length?: 8 | 18 | 36): string;
+/**
+ * Function used to validate the GeoCore UUIDs.
+ *
+ * @param {string} uuid The UUID to validate.
+ *
+ * @returns {boolean} Returns true if the UUID respect the format.
+ */
+export declare function isValidUUID(uuid: string): boolean;
 /**
  * Take string like "My string is __param__" and replace parameters (__param__) from array of values
  *
