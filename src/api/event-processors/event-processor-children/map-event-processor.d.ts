@@ -3,10 +3,9 @@ import { OverviewMap as OLOverviewMap } from 'ol/control';
 import { Extent } from 'ol/extent';
 import { FitOptions } from 'ol/View';
 import { Coordinate } from 'ol/coordinate';
-import { TypeBasemapOptions, TypeInteraction, TypeValidMapProjectionCodes, TypePointMarker, TypeHighlightColors, TypeMapViewSettings } from '@config/types/map-schema-types';
+import { TypeBasemapOptions, TypeInteraction, TypeValidMapProjectionCodes, TypePointMarker, TypeHighlightColors, TypeMapViewSettings, TypeFeatureInfoEntry, TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeMapFeaturesInstance } from '@/api/config/types/map-schema-types';
 import { LayerApi } from '@/geo/layer/layer';
 import { MapViewer, TypeMapState, TypeMapMouseInfo } from '@/geo/map/map-viewer';
-import { TypeFeatureInfoEntry, TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeMapFeaturesInstance } from '@/geo/map/map-schema-types';
 import { TypeRecordOfPlugin } from '@/api/plugin/plugin-types';
 import { TypeMapFeaturesConfig } from '@/core/types/global-types';
 import { TypeClickMarker } from '@/core/components';
@@ -28,21 +27,21 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
     protected static getMapStateProtected(mapId: string): IMapState;
     /**
      * Shortcut to get the Map Viewer instance for a given map id
-     * This is use to reduce the use of api.maps[mapId] and be more explicit
+     * This is use to reduce the use of api.getMapViewer(mapId) and be more explicit
      * @param {string} mapId - map Id
      * @returns {MapViewer} The Map viewer instance
      */
     static getMapViewer(mapId: string): MapViewer;
     /**
      * Shortcut to get the Map Viewer layer api instance for a given map id
-     * This is use to reduce the use of api.maps[mapId].layer and be more explicit
+     * This is use to reduce the use of api.getMapViewer(mapId).layer and be more explicit
      * @param {string} mapId - map Id
      * @returns {LayerApi} The Map viewer layer API instance
      */
     static getMapViewerLayerAPI(mapId: string): LayerApi;
     /**
      * Shortcut to get the Map Viewer plugins instance for a given map id
-     * This is use to reduce the use of api.maps[mapId].plugins and be more explicit
+     * This is use to reduce the use of api.getMapViewer(mapId).plugins and be more explicit
      * @param {string} mapId - map Id
      * @returns {TypeRecordOfPlugin} The map plugins record
      */
@@ -88,6 +87,7 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
     static getMapState(mapId: string): TypeMapState;
     static setMapAttribution(mapId: string, attribution: string[]): void;
     static setMapLoaded(mapId: string, mapLoaded: boolean): void;
+    static setMapDisplayed(mapId: string): void;
     static setMapPointerPosition(mapId: string, pointerPosition: TypeMapMouseInfo): void;
     static setClickCoordinates(mapId: string, clickCoordinates: TypeMapMouseInfo): void;
     static getLayersInVisibleRange: (mapId: string) => string[];
@@ -148,10 +148,10 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
      * Update or remove the layer highlight.
      * @param {string} mapId - The ID of the map.
      * @param {string} layerPath - The layer path to set as the highlighted layer.
-     * @param {string} hilightedLayerPath - The layer path of the currently highlighted layer.
+     * @param {string} highlightedLayerPath - The layer path of the currently highlighted layer.
      * @returns {string} The layer path of the highlighted layer.
      */
-    static changeOrRemoveLayerHighlight(mapId: string, layerPath: string, hilightedLayerPath: string): string;
+    static changeOrRemoveLayerHighlight(mapId: string, layerPath: string, highlightedLayerPath: string): string;
     static addInitialFilter(mapId: string, layerPath: string, filter: string): void;
     static setCurrentBasemapOptions(mapId: string, basemapOptions: TypeBasemapOptions): void;
     static setMapLayerHoverable(mapId: string, layerPath: string, hoverable: boolean): void;

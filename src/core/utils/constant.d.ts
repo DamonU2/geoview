@@ -13,7 +13,9 @@ export declare const OL_OVERVIEWMAP_SIZE: {
 };
 export declare const LAYER_STATUS: {
     readonly NEW_INSTANCE: "newInstance";
+    readonly REGISTERED: "registered";
     readonly PROCESSING: "processing";
+    readonly PROCESSED: "processed";
     readonly LOADING: "loading";
     readonly LOADED: "loaded";
     readonly ERROR: "error";
@@ -22,14 +24,6 @@ export declare const FEATURE_INFO_STATUS: {
     readonly PROCESSING: "processing";
     readonly PROCESSED: "processed";
     readonly ERROR: "error";
-};
-export declare const VECTOR_LAYER: {
-    csv: string;
-    esriFeature: string;
-    GeoJSON: string;
-    GeoPackage: string;
-    ogcFeature: string;
-    ogcWfs: string;
 };
 export declare const ARROW_KEY_CODES: string[];
 export declare const ARROW_KEYS_WITH_SPACE: string[];
@@ -49,4 +43,3 @@ export declare const CONTAINER_TYPE: {
     readonly APP_BAR: "appBar";
     readonly FOOTER_BAR: "footerBar";
 };
-export declare const WMS_PROXY_URL = "https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy?";
