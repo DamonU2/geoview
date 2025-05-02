@@ -6,11 +6,10 @@ import { Coordinate } from 'ol/coordinate';
 import { Extent } from 'ol/extent';
 import { Projection as OLProjection, ProjectionLike } from 'ol/proj';
 import { Condition } from 'ol/events/condition';
-import { TypeViewSettings, TypeInteraction, TypeValidMapProjectionCodes, TypeDisplayLanguage, TypeDisplayTheme, TypeMapViewSettings } from '@config/types/map-schema-types';
-import { Basemap } from '@/geo/layer/basemap/basemap';
+import { TypeMapFeaturesInstance, TypeViewSettings, TypeInteraction, TypeValidMapProjectionCodes, TypeDisplayLanguage, TypeDisplayTheme, TypeMapViewSettings } from '@/api/config/types/map-schema-types';
+import { BasemapApi } from '@/geo/layer/basemap/basemap';
 import { LayerApi } from '@/geo/layer/layer';
 import { TypeFeatureStyle } from '@/geo/layer/geometry/geometry-types';
-import { TypeMapFeaturesInstance, TypeOrderedLayerInfo } from '@/app';
 import { TypeRecordOfPlugin } from '@/api/plugin/plugin-types';
 import { AppBarApi } from '@/core/components/app-bar/app-bar-api';
 import { NavBarApi } from '@/core/components/nav-bar/nav-bar-api';
@@ -24,9 +23,11 @@ import { Snap } from '@/geo/interaction/snap';
 import { Translate } from '@/geo/interaction/translate';
 import { EventDelegateBase } from '@/api/events/event-helper';
 import { ModalApi } from '@/ui';
-import { TypeMapFeaturesConfig, TypeHTMLElement, TypeJsonObject } from '@/core/types/global-types';
+import { TypeMapFeaturesConfig, TypeHTMLElement } from '@/core/types/global-types';
+import { TypeJsonObject } from '@/api/config/types/config-types';
 import { TypeClickMarker } from '@/core/components/click-marker/click-marker';
 import { Notifications } from '@/core/utils/notifications';
+import { TypeOrderedLayerInfo } from '@/core/stores/store-interface-and-intial-values/map-state';
 /**
  * Class used to manage created maps
  *
@@ -45,7 +46,7 @@ export declare class MapViewer {
     navBarApi: NavBarApi;
     footerBarApi: FooterBarApi;
     stateApi: StateApi;
-    basemap: Basemap;
+    basemap: BasemapApi;
     notifications: Notifications;
     layer: LayerApi;
     modal: ModalApi;
@@ -234,7 +235,7 @@ export declare class MapViewer {
      * Remove map
      *
      * @param {boolean} deleteContainer - True if we want to delete div from the page
-     * @returns {HTMLElement} The HTML element
+     * @returns {Promise<HTMLElement>} The Promise containing the HTML element
      */
     remove(deleteContainer: boolean): Promise<HTMLElement>;
     /**
@@ -444,6 +445,16 @@ export declare class MapViewer {
      * @param {MapPointerMoveDelegate} callback - The callback to stop being called whenever the event is emitted
      */
     offMapPointerMove(callback: MapPointerMoveDelegate): void;
+    /**
+     * Registers a map pointer stop event callback.
+     * @param {MapPointerMoveDelegate} callback - The callback to be executed whenever the event is emitted
+     */
+    onMapPointerStop(callback: MapPointerMoveDelegate): void;
+    /**
+     * Unregisters a map pointer stop event callback.
+     * @param {MapPointerMoveDelegate} callback - The callback to stop being called whenever the event is emitted
+     */
+    offMapPointerStop(callback: MapPointerMoveDelegate): void;
     /**
      * Registers a map single click event callback.
      * @param {MapSingleClickDelegate} callback - The callback to be executed whenever the event is emitted

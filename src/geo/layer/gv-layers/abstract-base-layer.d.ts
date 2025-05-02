@@ -1,8 +1,7 @@
 import BaseLayer from 'ol/layer/Base';
-import { Extent } from '@/api/config/types/map-schema-types';
+import { Extent, TypeLayerStatus } from '@/api/config/types/map-schema-types';
 import { EventDelegateBase } from '@/api/events/event-helper';
 import { ConfigBaseClass } from '@/core/utils/config/validation-classes/config-base-class';
-import { TypeLayerStatus } from '@/geo/map/map-schema-types';
 /**
  * Abstract Base Layer managing an OpenLayer layer, including a layer group.
  */
@@ -20,6 +19,10 @@ export declare abstract class AbstractBaseLayer {
      * @returns {string[]} The layer attributions
      */
     abstract getAttributions(): string[];
+    /**
+     * A quick getter to help identify which layer class the current instance is coming from.
+     */
+    getClassName(): string;
     /**
      * Gets the Map Id
      * @returns The Map id
