@@ -20,7 +20,7 @@ export interface IAppState {
     showUnsymbolizedFeatures: boolean;
     setDefaultConfigValues: (geoviewConfig: TypeMapFeaturesConfig) => void;
     actions: {
-        addMessage: (type: SnackbarType, message: string, param?: string[]) => void;
+        addMessage: (type: SnackbarType, messageKey: string, param?: string[]) => void;
         addNotification: (notif: NotificationDetailsType) => void;
         setCrosshairActive: (active: boolean) => void;
         setDisplayLanguage: (lang: TypeDisplayLanguage) => Promise<void>;
