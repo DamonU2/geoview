@@ -20,7 +20,9 @@ export interface ILayerState {
         queryLayerEsriDynamic: (layerPath: string, objectIDs: number[]) => Promise<TypeFeatureInfoEntryPartial[]>;
         getLayer: (layerPath: string) => TypeLegendLayer | undefined;
         getLayerBounds: (layerPath: string) => number[] | undefined;
+        getLayerDefaultFilter: (layerPath: string) => string | undefined;
         getLayerDeleteInProgress: () => boolean;
+        getLayerServiceProjection: (layerPath: string) => string | undefined;
         refreshLayer: (layerPath: string) => void;
         setAllItemsVisibility: (layerPath: string, visibility: boolean) => void;
         setDisplayState: (newDisplayState: TypeLayersViewDisplayState) => void;
