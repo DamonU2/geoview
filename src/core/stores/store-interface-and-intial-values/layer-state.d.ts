@@ -13,6 +13,7 @@ export interface ILayerState {
     displayState: TypeLayersViewDisplayState;
     layerDeleteInProgress: boolean;
     selectedLayerSortingArrowId: string;
+    layersAreLoading: boolean;
     setDefaultConfigValues: (geoviewConfig: TypeMapFeaturesConfig) => void;
     actions: {
         deleteLayer: (layerPath: string) => void;
@@ -44,6 +45,7 @@ export interface ILayerState {
         setLegendLayers: (legendLayers: TypeLegendLayer[]) => void;
         setSelectedLayerPath: (layerPath: string) => void;
         setSelectedLayerSortingArrowId: (arrowId: string) => void;
+        setLayersAreLoading: (areLoading: boolean) => void;
     };
 }
 /**
@@ -71,6 +73,7 @@ export declare const useLayerSelectedLayer: () => TypeLegendLayer;
 export declare const useLayerSelectedLayerPath: () => string | null | undefined;
 export declare const useLayerDisplayState: () => TypeLayersViewDisplayState;
 export declare const useSelectedLayerSortingArrowId: () => string;
+export declare const useLayersAreLoading: () => boolean;
 export declare const useLayerStoreActions: () => LayerActions;
 export declare const useSelectedLayer: () => TypeLegendLayer | undefined;
 export declare const useIconLayerSet: (layerPath: string) => string[];

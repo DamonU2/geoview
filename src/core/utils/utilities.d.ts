@@ -188,6 +188,16 @@ export declare function whenThisThen<T>(checkCallback: () => T, timeout?: number
  */
 export declare function escapeRegExp(text: string): string;
 /**
+ * Tries to read an ArrayBuffer into a string by guessing different encodings and returning the best that works to read the content.
+ * @param {ArrayBuffer} buffer - The array buffer to read from.
+ * @param {string[]} encodings - The encodings to try, defaults to ['utf-8', 'windows-1252', 'iso-8859-1'].
+ * @returns { text: string; encoding: string } The best text and the best encoding used for the text
+ */
+export declare function readTextWithBestEncoding(buffer: ArrayBuffer, encodings?: string[]): {
+    text: string;
+    encoding: string;
+};
+/**
  * Create guide object from .md file.
  * @param {string} mapId - ID of map.
  * @param {TypeDisplayLanguage} language - Language to use for guide.

@@ -66,6 +66,12 @@ export declare class LegendEventProcessor extends AbstractEventProcessor {
      */
     static setLayerBounds(mapId: string, layerPath: string, bounds: Extent | undefined): void;
     /**
+     * Sets the layersAreLoading flag in the store
+     * @param {string} mapId - The map id
+     * @param {boolean} areLoading - Indicator if any layer is currently loading
+     */
+    static setLayersAreLoading(mapId: string, areLoading: boolean): void;
+    /**
      * Gets the extent of a feature or group of features
      * @param {string} mapId - The map identifier
      * @param {string} layerPath - The layer path

@@ -115,8 +115,9 @@ export declare abstract class ConfigBaseClass {
     /**
      * Updates the status of all parents layers based on the status of their sibling layers.
      * This method checks the statuses of sibling layers (layers sharing the same parent).
+     * - If at least one sibling is in a 'loading' state, it sets the parent layer status to 'loading'.
+     * - If all siblings are in a 'loaded' state, it sets the parent layer status to 'loaded'.
      * - If all siblings are in an 'error' state, it sets the parent layer status to 'error'.
-     * - If at least one sibling is in a 'loaded' state, it sets the parent layer status to 'loaded'.
      * - If neither condition is met, the parent status remains unchanged.
      */
     updateLayerStatusParent(): void;
@@ -172,12 +173,12 @@ export declare abstract class ConfigBaseClass {
     offLayerStatusChanged(callback: LayerStatusChangedDelegate): void;
 }
 /**
- * Define a delegate for the event handler function signature.
- */
-export type LayerStatusChangedDelegate = EventDelegateBase<ConfigBaseClass, LayerStatusChangedEvent, void>;
-/**
  * Define an event for the delegate.
  */
 export type LayerStatusChangedEvent = {
     layerStatus: TypeLayerStatus;
 };
+/**
+ * Define a delegate for the event handler function signature.
+ */
+export type LayerStatusChangedDelegate = EventDelegateBase<ConfigBaseClass, LayerStatusChangedEvent, void>;
