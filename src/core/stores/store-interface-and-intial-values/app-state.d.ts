@@ -1,17 +1,18 @@
-import { TypeDisplayLanguage, TypeDisplayTheme, TypeGeoviewLayerTypeWithGeoCore } from '@/api/config/types/map-schema-types';
+import { TypeDisplayLanguage, TypeDisplayTheme, TypeInitialGeoviewLayerType } from '@/api/config/types/map-schema-types';
 import { TypeSetStore, TypeGetStore } from '@/core/stores/geoview-store';
 import { NotificationDetailsType } from '@/core/components/notifications/notifications';
 import { TypeHTMLElement, TypeMapFeaturesConfig } from '@/core/types/global-types';
 import { SnackbarType } from '@/core/utils/notifications';
 type AppActions = IAppState['actions'];
 export interface IAppState {
-    disabledLayerTypes: TypeGeoviewLayerTypeWithGeoCore[];
+    disabledLayerTypes: TypeInitialGeoviewLayerType[];
     displayLanguage: TypeDisplayLanguage;
     displayTheme: TypeDisplayTheme;
     guide: TypeGuideObject | undefined;
     geolocatorServiceURL: string | undefined;
     metadataServiceURL: string | undefined;
     geoviewHTMLElement: HTMLElement;
+    height: number;
     geoviewAssetsURL: string;
     isCircularProgressActive: boolean;
     isCrosshairsActive: boolean;
@@ -55,16 +56,18 @@ export interface TypeGuideObject {
 }
 export declare const useAppCircularProgressActive: () => boolean;
 export declare const useAppCrosshairsActive: () => boolean;
-export declare const useAppDisabledLayerTypes: () => TypeGeoviewLayerTypeWithGeoCore[];
+export declare const useAppDisabledLayerTypes: () => TypeInitialGeoviewLayerType[];
 export declare const useAppDisplayLanguage: () => TypeDisplayLanguage;
 export declare const useAppDisplayTheme: () => TypeDisplayTheme;
 export declare const useAppFullscreenActive: () => boolean;
 export declare const useAppGeolocatorServiceURL: () => string | undefined;
 export declare const useAppMetadataServiceURL: () => string | undefined;
 export declare const useAppGeoviewHTMLElement: () => HTMLElement;
+export declare const useAppHeight: () => number;
 export declare const useAppGeoviewAssetsURL: () => string;
 export declare const useAppGuide: () => TypeGuideObject | undefined;
 export declare const useAppNotifications: () => NotificationDetailsType[];
+export declare const useAppShowUnsymbolizedFeatures: () => boolean;
 export declare const useAppDisplayLanguageById: (mapId: string) => TypeDisplayLanguage;
 export declare const useAppDisplayThemeById: (mapId: string) => TypeDisplayTheme;
 export declare const getAppCrosshairsActive: (mapId: string) => boolean;
