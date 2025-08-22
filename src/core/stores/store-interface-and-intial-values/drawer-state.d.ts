@@ -8,12 +8,15 @@ export type StyleProps = {
     fillColor: string;
     strokeColor: string;
     strokeWidth: number;
+    iconSize?: number;
     text?: string;
     textSize?: number;
     textFont?: string;
     textColor?: string;
     textHaloColor?: string;
     textHaloWidth?: number;
+    textBold?: boolean;
+    textItalic?: boolean;
 };
 export type TypeDrawerConfig = {
     activeGeom?: string;
@@ -43,6 +46,7 @@ export interface IDrawerState {
         getIsEditing: () => boolean;
         getTransformInstance: () => Transform;
         getSelectedDrawing: () => Feature | undefined;
+        getSelectedDrawingType: () => string;
         getHideMeasurements: () => boolean;
         getIconSrc: () => string;
         toggleDrawing: () => void;
@@ -54,6 +58,15 @@ export interface IDrawerState {
         setFillColor(fillColor: string): void;
         setStrokeColor(strokeColor: string): void;
         setStrokeWidth(strokeWidth: number): void;
+        setIconSize: (iconSize: number) => void;
+        setTextValue: (text: string) => void;
+        setTextSize: (textSize: number) => void;
+        setTextFont: (textFont: string) => void;
+        setTextColor: (textColor: string) => void;
+        setTextHaloColor: (textHaloColor: string) => void;
+        setTextHaloWidth: (textHaloWidth: number) => void;
+        setTextBold: (textBold: boolean) => void;
+        setTextItalic: (textItalic: boolean) => void;
         setDrawInstance(drawInstance: Draw): void;
         removeDrawInstance(): void;
         setTransformInstance(transformInstance: Transform): void;
@@ -67,6 +80,8 @@ export interface IDrawerState {
         setRedoDisabled: (redoDisabled: boolean) => void;
         downloadDrawings: () => void;
         uploadDrawings: (file: File) => void;
+        updateFeatureStyle: () => void;
+        updateStateStyle: (style: StyleProps) => void;
     };
     setterActions: {
         toggleDrawing: () => void;
@@ -78,6 +93,15 @@ export interface IDrawerState {
         setFillColor: (fillColor: string) => void;
         setStrokeColor: (strokeColor: string) => void;
         setStrokeWidth: (strokeWidth: number) => void;
+        setIconSize: (iconSize: number) => void;
+        setTextValue: (text: string) => void;
+        setTextSize: (textSize: number) => void;
+        setTextFont: (textFont: string) => void;
+        setTextColor: (textColor: string) => void;
+        setTextHaloColor: (textHaloColor: string) => void;
+        setTextHaloWidth: (textHaloWidth: number) => void;
+        setTextBold: (textBold: boolean) => void;
+        setTextItalic: (textItalic: boolean) => void;
         setDrawInstance: (drawInstance: Draw) => void;
         removeDrawInstance: () => void;
         setIsEditing: (isEditing: boolean) => void;
@@ -88,6 +112,7 @@ export interface IDrawerState {
         setIconSrc: (iconSrc: string) => void;
         setUndoDisabled: (undoDisabled: boolean) => void;
         setRedoDisabled: (redoDisabled: boolean) => void;
+        updateStateStyle: (style: StyleProps) => void;
     };
 }
 /**
@@ -99,6 +124,7 @@ export interface IDrawerState {
 export declare function initializeDrawerState(set: TypeSetStore, get: TypeGetStore): IDrawerState;
 export declare const useDrawerIsDrawing: () => boolean;
 export declare const useDrawerIsEditing: () => boolean;
+export declare const useDrawerSelectedDrawingType: () => string | undefined;
 export declare const useDrawerActiveGeom: () => string;
 export declare const useDrawerStyle: () => StyleProps;
 export declare const useDrawerDrawInstance: () => Draw | undefined;
