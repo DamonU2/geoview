@@ -17,6 +17,7 @@ export type StyleProps = {
     textHaloWidth?: number;
     textBold?: boolean;
     textItalic?: boolean;
+    textRotation?: number;
 };
 export type TypeDrawerConfig = {
     activeGeom?: string;
@@ -67,6 +68,7 @@ export interface IDrawerState {
         setTextHaloWidth: (textHaloWidth: number) => void;
         setTextBold: (textBold: boolean) => void;
         setTextItalic: (textItalic: boolean) => void;
+        setTextRotation: (textRotation: number) => void;
         setDrawInstance(drawInstance: Draw): void;
         removeDrawInstance(): void;
         setTransformInstance(transformInstance: Transform): void;
@@ -102,6 +104,7 @@ export interface IDrawerState {
         setTextHaloWidth: (textHaloWidth: number) => void;
         setTextBold: (textBold: boolean) => void;
         setTextItalic: (textItalic: boolean) => void;
+        setTextRotation: (textRotation: number) => void;
         setDrawInstance: (drawInstance: Draw) => void;
         removeDrawInstance: () => void;
         setIsEditing: (isEditing: boolean) => void;
