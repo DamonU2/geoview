@@ -1,5 +1,6 @@
 import { TypeSetStore, TypeGetStore } from '@/core/stores/geoview-store';
-import { TypeFeatureInfoEntry, TypeResultSet, TypeResultSetEntry, TypeQueryStatus, TypeFieldEntry, TypeGeoviewLayerType } from '@/api/config/types/map-schema-types';
+import { TypeFeatureInfoEntry, TypeResultSet, TypeResultSetEntry, TypeQueryStatus, TypeFieldEntry } from '@/api/config/types/map-schema-types';
+import { TypeGeoviewLayerType } from '@/api/config/types/layer-schema-types';
 type FeatureInfoActions = IFeatureInfoState['actions'];
 export interface IFeatureInfoState {
     checkedFeatures: Array<TypeFeatureInfoEntry>;

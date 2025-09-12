@@ -1,16 +1,26 @@
-import { VectorLayerEntryConfig } from '@/core/utils/config/validation-classes/vector-layer-entry-config';
+import { VectorLayerEntryConfig, VectorLayerEntryConfigProps } from '@/core/utils/config/validation-classes/vector-layer-entry-config';
 import { TypeSourceCSVInitialConfig } from '@/geo/layer/geoview-layers/vector/csv';
+export interface CsvLayerEntryConfigProps extends VectorLayerEntryConfigProps {
+    /** Source settings to apply to the GeoView layer source at creation time. */
+    source?: TypeSourceCSVInitialConfig;
+    /** Character separating values in csv file */
+    valueSeparator?: string;
+}
 export declare class CsvLayerEntryConfig extends VectorLayerEntryConfig {
     /** Tag used to link the entry to a specific schema. */
-    schemaTag: import("@/api/config/types/map-schema-types").TypeGeoviewLayerType;
+    schemaTag: import("@/api/config/types/layer-schema-types").TypeGeoviewLayerType;
     /** Layer entry data type. */
-    entryType: import("@/api/config/types/map-schema-types").TypeLayerEntryType;
+    entryType: import("@/api/config/types/layer-schema-types").TypeLayerEntryType;
+    /** The layer entry props that were used in the constructor. */
+    layerEntryProps: CsvLayerEntryConfigProps;
+    /** Source settings to apply to the GeoView layer source at creation time. */
     source: TypeSourceCSVInitialConfig;
-    valueSeparator?: string | undefined;
+    /** Character separating values in csv file */
+    valueSeparator?: string;
     /**
      * The class constructor.
-     * @param {CsvLayerEntryConfig} layerConfig - The layer configuration we want to instanciate.
+     * @param {CsvLayerEntryConfigProps | CsvLayerEntryConfig} layerConfig - The layer configuration we want to instanciate.
      */
-    constructor(layerConfig: CsvLayerEntryConfig);
+    constructor(layerConfig: CsvLayerEntryConfigProps | CsvLayerEntryConfig);
 }
 //# sourceMappingURL=csv-layer-entry-config.d.ts.map

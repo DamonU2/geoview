@@ -1,4 +1,5 @@
-import { TypeDisplayLanguage, TypeGeoviewLayerConfig, TypeGeoviewLayerType, TypeOfServer } from '@/api/config/types/map-schema-types';
+import { TypeDisplayLanguage } from '@/api/config/types/map-schema-types';
+import { TypeGeoviewLayerConfig, TypeGeoviewLayerType, TypeOfServer } from '@/api/config/types/layer-schema-types';
 import { TypeLayerEntryShell } from '@/core/utils/config/validation-classes/config-base-class';
 /**
  * A class to generate GeoView layers config from a URL using a UUID.

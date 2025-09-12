@@ -1,4 +1,5 @@
-import { TypeDisplayLanguage, MapConfigLayerEntry } from '@/api/config/types/map-schema-types';
+import { TypeDisplayLanguage } from '@/api/config/types/map-schema-types';
+import { MapConfigLayerEntry } from '@/api/config/types/layer-schema-types';
 /**
  * A class to define the default values of a GeoView map configuration and validation methods for the map config attributes.
  * @exports
@@ -24,9 +25,8 @@ export declare class ConfigValidation {
     set mapId(mapId: string);
     /**
      * Validate the map features configuration.
-     * @param {TypeMapFeaturesConfig} mapFeaturesConfigToValidate - The map features configuration to validate.
-     *
-     * @returns {TypeMapFeaturesConfig} A valid map features configuration.
+     * @param {MapConfigLayerEntry[]} listOfGeoviewLayerConfig - The map features configuration to validate.
+     * @returns {MapConfigLayerEntry[]} A valid map features configuration.
      */
     validateLayersConfigAgainstSchema(listOfGeoviewLayerConfig: MapConfigLayerEntry[], onErrorCallback: ErrorCallbackDelegate): MapConfigLayerEntry[];
     /**
