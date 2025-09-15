@@ -1,16 +1,22 @@
-import { TypeLayerMetadataOGC, TypeSourceOgcFeatureInitialConfig } from '@/api/config/types/map-schema-types';
-import { VectorLayerEntryConfig } from '@/core/utils/config/validation-classes/vector-layer-entry-config';
+import { TypeLayerMetadataOGC, TypeSourceOgcFeatureInitialConfig } from '@/api/config/types/layer-schema-types';
+import { VectorLayerEntryConfig, VectorLayerEntryConfigProps } from '@/core/utils/config/validation-classes/vector-layer-entry-config';
+export interface OgcFeatureLayerEntryConfigProps extends VectorLayerEntryConfigProps {
+    /** Source settings to apply to the GeoView layer source at creation time. */
+    source?: TypeSourceOgcFeatureInitialConfig;
+}
 export declare class OgcFeatureLayerEntryConfig extends VectorLayerEntryConfig {
     /** Tag used to link the entry to a specific schema. */
-    schemaTag: import("@/api/config/types/map-schema-types").TypeGeoviewLayerType;
+    schemaTag: import("@/api/config/types/layer-schema-types").TypeGeoviewLayerType;
     /** Layer entry data type. */
-    entryType: import("@/api/config/types/map-schema-types").TypeLayerEntryType;
+    entryType: import("@/api/config/types/layer-schema-types").TypeLayerEntryType;
+    /** The layer entry props that were used in the constructor. */
+    layerEntryProps: OgcFeatureLayerEntryConfigProps;
     source: TypeSourceOgcFeatureInitialConfig;
     /**
      * The class constructor.
-     * @param {OgcFeatureLayerEntryConfig} layerConfig - The layer configuration we want to instanciate.
+     * @param {OgcFeatureLayerEntryConfigProps | OgcFeatureLayerEntryConfig} layerConfig - The layer configuration we want to instanciate.
      */
-    constructor(layerConfig: OgcFeatureLayerEntryConfig);
+    constructor(layerConfig: OgcFeatureLayerEntryConfigProps | OgcFeatureLayerEntryConfig);
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
      * @override

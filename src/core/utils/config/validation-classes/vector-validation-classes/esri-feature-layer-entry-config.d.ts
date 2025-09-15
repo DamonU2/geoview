@@ -1,19 +1,23 @@
-import { TypeLayerMetadataEsri } from '@/api/config/types/map-schema-types';
-import { VectorLayerEntryConfig } from '@/core/utils/config/validation-classes/vector-layer-entry-config';
+import { TypeLayerMetadataEsri } from '@/api/config/types/layer-schema-types';
+import { VectorLayerEntryConfig, VectorLayerEntryConfigProps } from '@/core/utils/config/validation-classes/vector-layer-entry-config';
 import { TypeSourceEsriFeatureInitialConfig } from '@/geo/layer/geoview-layers/vector/esri-feature';
+export interface EsriFeatureLayerEntryConfigProps extends VectorLayerEntryConfigProps {
+    /** Source settings to apply to the GeoView layer source at creation time. */
+    source?: TypeSourceEsriFeatureInitialConfig;
+}
 export declare class EsriFeatureLayerEntryConfig extends VectorLayerEntryConfig {
     /** Tag used to link the entry to a specific schema. */
-    schemaTag: import("@/api/config/types/map-schema-types").TypeGeoviewLayerType;
+    schemaTag: import("@/api/config/types/layer-schema-types").TypeGeoviewLayerType;
     /** Layer entry data type. */
-    entryType: import("@/api/config/types/map-schema-types").TypeLayerEntryType;
+    entryType: import("@/api/config/types/layer-schema-types").TypeLayerEntryType;
+    /** The layer entry props that were used in the constructor. */
+    layerEntryProps: EsriFeatureLayerEntryConfigProps;
     source: TypeSourceEsriFeatureInitialConfig;
-    /** Max number of records for query */
-    maxRecordCount?: number;
     /**
      * The class constructor.
-     * @param {EsriFeatureLayerEntryConfig} layerConfig - The layer configuration we want to instanciate.
+     * @param {EsriFeatureLayerEntryConfigProps | EsriFeatureLayerEntryConfig} layerConfig - The layer configuration we want to instanciate.
      */
-    constructor(layerConfig: EsriFeatureLayerEntryConfig);
+    constructor(layerConfig: EsriFeatureLayerEntryConfigProps | EsriFeatureLayerEntryConfig);
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
      * @override

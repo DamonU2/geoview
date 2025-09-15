@@ -1,4 +1,5 @@
-import { MapConfigLayerEntry, TypeDisplayLanguage } from '@/api/config/types/map-schema-types';
+import { TypeDisplayLanguage } from '@/api/config/types/map-schema-types';
+import { MapConfigLayerEntry, TypeGeoviewLayerType, TypeLayerEntryType } from '@/api/config/types/layer-schema-types';
 import { ConfigValidation, ErrorCallbackDelegate } from '@/core/utils/config/config-validation';
 /**
  * Class to read and validate the GeoView map features configuration. Will validate every item for structure and valid values.
@@ -31,5 +32,15 @@ export declare class Config {
      * @returns {MapConfigLayerEntry[] | undefined} The validated list of layer configs, or `undefined` if invalid.
      */
     initializeMapConfig(mapId: string, listOfGeoviewLayerConfig: MapConfigLayerEntry[], onErrorCallback: ErrorCallbackDelegate): MapConfigLayerEntry[] | undefined;
+    /**
+     * Returns the corresponding layer entry type for a given GeoView layer type.
+     * This method maps a `TypeGeoviewLayerType` (e.g., CSV, WMS, XYZ_TILES)
+     * to its associated `TypeLayerEntryType` (e.g., VECTOR, RASTER_IMAGE, RASTER_TILE).
+     * Useful for determining how a layer should be handled/rendered internally.
+     * @param {TypeGeoviewLayerType} layerType - The GeoView layer type to convert.
+     * @returns The corresponding layer entry type.
+     * @throws {NotSupportedError} If the provided `layerType` is not supported for conversion.
+     */
+    static getLayerEntryTypeFromLayerType(layerType: TypeGeoviewLayerType): TypeLayerEntryType;
 }
 //# sourceMappingURL=config.d.ts.map
