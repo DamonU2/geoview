@@ -1,9 +1,9 @@
 import Static from 'ol/source/ImageStatic';
-import { ConfigBaseClass, TypeLayerEntryShell } from '@/core/utils/config/validation-classes/config-base-class';
+import { ConfigBaseClass, TypeLayerEntryShell } from '@/api/config/validation-classes/config-base-class';
 import { AbstractGeoViewRaster } from '@/geo/layer/geoview-layers/raster/abstract-geoview-raster';
-import { Extent } from '@/api/config/types/map-schema-types';
-import { TypeGeoviewLayerConfig, CONST_LAYER_TYPES, TypeValidSourceProjectionCodes } from '@/api/config/types/layer-schema-types';
-import { ImageStaticLayerEntryConfig } from '@/core/utils/config/validation-classes/raster-validation-classes/image-static-layer-entry-config';
+import { Extent } from '@/api/types/map-schema-types';
+import { TypeGeoviewLayerConfig, CONST_LAYER_TYPES, TypeValidSourceProjectionCodes } from '@/api/types/layer-schema-types';
+import { ImageStaticLayerEntryConfig } from '@/api/config/validation-classes/raster-validation-classes/image-static-layer-entry-config';
 import { GVImageStatic } from '@/geo/layer/gv-layers/raster/gv-image-static';
 export interface TypeImageStaticLayerConfig extends Omit<TypeGeoviewLayerConfig, 'listOfLayerEntryConfig'> {
     geoviewLayerType: typeof CONST_LAYER_TYPES.IMAGE_STATIC;

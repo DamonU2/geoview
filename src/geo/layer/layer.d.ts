@@ -3,10 +3,10 @@ import { Extent } from 'ol/extent';
 import { GeoJSONObject } from 'ol/format/GeoJSON';
 import { GeometryApi } from '@/geo/layer/geometry/geometry';
 import { FeatureHighlight } from '@/geo/map/feature-highlight';
-import { ConfigBaseClass } from '@/core/utils/config/validation-classes/config-base-class';
+import { ConfigBaseClass } from '@/api/config/validation-classes/config-base-class';
 import { AbstractGeoViewLayer } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
-import { TypeDisplayLanguage, TypeOutfieldsType } from '@/api/config/types/map-schema-types';
-import { MapConfigLayerEntry, TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeLayerStatus } from '@/api/config/types/layer-schema-types';
+import { TypeDisplayLanguage, TypeOutfieldsType } from '@/api/types/map-schema-types';
+import { MapConfigLayerEntry, TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeLayerStatus } from '@/api/types/layer-schema-types';
 import { HoverFeatureInfoLayerSet } from '@/geo/layer/layer-sets/hover-feature-info-layer-set';
 import { AllFeatureInfoLayerSet } from '@/geo/layer/layer-sets/all-feature-info-layer-set';
 import { LegendsLayerSet } from '@/geo/layer/layer-sets/legends-layer-set';
@@ -495,6 +495,7 @@ export type LayerErrorDelegate = EventDelegateBase<LayerApi, LayerErrorEvent, vo
  */
 export type LayerPathEvent = {
     layerPath: string;
+    layerName: string;
 };
 /**
  * Define a delegate for the event handler function signature

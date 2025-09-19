@@ -3,11 +3,11 @@ import { ReadOptions } from 'ol/format/Feature';
 import { Vector as VectorSource } from 'ol/source';
 import Feature from 'ol/Feature';
 import { AbstractGeoViewVector } from '@/geo/layer/geoview-layers/vector/abstract-geoview-vector';
-import { TypeGeoviewLayerConfig, CONST_LAYER_TYPES, TypeMetadataOGCFeature } from '@/api/config/types/layer-schema-types';
-import { OgcFeatureLayerEntryConfig } from '@/core/utils/config/validation-classes/vector-validation-classes/ogc-layer-entry-config';
-import { VectorLayerEntryConfig } from '@/core/utils/config/validation-classes/vector-layer-entry-config';
+import { TypeGeoviewLayerConfig, CONST_LAYER_TYPES, TypeMetadataOGCFeature } from '@/api/types/layer-schema-types';
+import { OgcFeatureLayerEntryConfig } from '@/api/config/validation-classes/vector-validation-classes/ogc-layer-entry-config';
+import { VectorLayerEntryConfig } from '@/api/config/validation-classes/vector-layer-entry-config';
 import { GVOGCFeature } from '@/geo/layer/gv-layers/vector/gv-ogc-feature';
-import { ConfigBaseClass, TypeLayerEntryShell } from '@/core/utils/config/validation-classes/config-base-class';
+import { ConfigBaseClass, TypeLayerEntryShell } from '@/api/config/validation-classes/config-base-class';
 export interface TypeOgcFeatureLayerConfig extends Omit<TypeGeoviewLayerConfig, 'listOfLayerEntryConfig' | 'geoviewLayerType'> {
     geoviewLayerType: typeof CONST_LAYER_TYPES.OGC_FEATURE;
     listOfLayerEntryConfig: OgcFeatureLayerEntryConfig[];

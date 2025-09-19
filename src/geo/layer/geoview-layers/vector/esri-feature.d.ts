@@ -3,10 +3,10 @@ import { Options as SourceOptions } from 'ol/source/Vector';
 import { ReadOptions } from 'ol/format/Feature';
 import Feature from 'ol/Feature';
 import { AbstractGeoViewVector } from '@/geo/layer/geoview-layers/vector/abstract-geoview-vector';
-import { EsriFeatureLayerEntryConfig } from '@/core/utils/config/validation-classes/vector-validation-classes/esri-feature-layer-entry-config';
-import { TypeVectorSourceInitialConfig, TypeGeoviewLayerConfig, CONST_LAYER_TYPES, TypeMetadataEsriFeature } from '@/api/config/types/layer-schema-types';
+import { EsriFeatureLayerEntryConfig } from '@/api/config/validation-classes/vector-validation-classes/esri-feature-layer-entry-config';
+import { TypeVectorSourceInitialConfig, TypeGeoviewLayerConfig, CONST_LAYER_TYPES, TypeMetadataEsriFeature } from '@/api/types/layer-schema-types';
 import { GVEsriFeature } from '@/geo/layer/gv-layers/vector/gv-esri-feature';
-import { ConfigBaseClass, TypeLayerEntryShell } from '@/core/utils/config/validation-classes/config-base-class';
+import { ConfigBaseClass, TypeLayerEntryShell } from '@/api/config/validation-classes/config-base-class';
 export interface TypeSourceEsriFeatureInitialConfig extends Omit<TypeVectorSourceInitialConfig, 'format'> {
     format: 'EsriJSON';
 }
