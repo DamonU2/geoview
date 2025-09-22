@@ -1,4 +1,4 @@
-import { Extent, TypeFeatureInfoEntry } from '@/api/config/types/map-schema-types';
+import { Extent, TypeFeatureInfoEntry } from '@/api/types/map-schema-types';
 import { TimeDimension } from '@/core/utils/date-mgt';
 import { TypeLegendLayer, TypeLegendLayerItem, TypeLegendItem } from '@/core/components/layers/types';
 import { ILayerState, TypeLegend, TypeLegendResultSetEntry } from '@/core/stores/store-interface-and-intial-values/layer-state';

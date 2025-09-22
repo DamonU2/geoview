@@ -1,7 +1,7 @@
-import { TypeDisplayLanguage } from '@/api/config/types/map-schema-types';
-import { TypeLayerEntryConfig, MapConfigLayerEntry, TypeGeoviewLayerConfig } from '@/api/config/types/layer-schema-types';
-import { ConfigBaseClassProps } from '@/core/utils/config/validation-classes/config-base-class';
-import { GroupLayerEntryConfigProps } from '@/core/utils/config/validation-classes/group-layer-entry-config';
+import { TypeDisplayLanguage } from '@/api/types/map-schema-types';
+import { TypeLayerEntryConfig, MapConfigLayerEntry, TypeGeoviewLayerConfig } from '@/api/types/layer-schema-types';
+import { ConfigBaseClassProps } from '@/api/config/validation-classes/config-base-class';
+import { GroupLayerEntryConfigProps } from '@/api/config/validation-classes/group-layer-entry-config';
 type BuildGeoViewLayerInput = {
     layerIdsToAdd: string[];
     layerName: string;

@@ -1,11 +1,11 @@
 import BaseLayer from 'ol/layer/Base';
 import { TypeDateFragments } from '@/core/utils/date-mgt';
-import { AbstractBaseLayerEntryConfig } from '@/core/utils/config/validation-classes/abstract-base-layer-entry-config';
-import { GroupLayerEntryConfig } from '@/core/utils/config/validation-classes/group-layer-entry-config';
+import { AbstractBaseLayerEntryConfig } from '@/api/config/validation-classes/abstract-base-layer-entry-config';
+import { GroupLayerEntryConfig } from '@/api/config/validation-classes/group-layer-entry-config';
 import { EventDelegateBase } from '@/api/events/event-helper';
-import { TypeStyleGeometry } from '@/api/config/types/map-schema-types';
-import { TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeLayerInitialSettings, TypeLayerStatus } from '@/api/config/types/layer-schema-types';
-import { ConfigBaseClass } from '@/core/utils/config/validation-classes/config-base-class';
+import { TypeStyleGeometry } from '@/api/types/map-schema-types';
+import { TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeLayerInitialSettings, TypeLayerStatus } from '@/api/types/layer-schema-types';
+import { ConfigBaseClass } from '@/api/config/validation-classes/config-base-class';
 import { TypeLegend } from '@/core/stores/store-interface-and-intial-values/layer-state';
 import { SnackbarType } from '@/core/utils/notifications';
 import { AbstractBaseLayer } from '@/geo/layer/gv-layers/abstract-base-layer';

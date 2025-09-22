@@ -1,5 +1,5 @@
 import { Root } from 'react-dom/client';
-import { TypeDisplayLanguage } from '@/api/config/types/map-schema-types';
+import { TypeDisplayLanguage } from '@/api/types/map-schema-types';
 import { TypeGuideObject } from '@/core/stores/store-interface-and-intial-values/app-state';
 /**
  * Take string like "My string is __param__" and replace parameters (__param__) from array of values
