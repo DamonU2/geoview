@@ -171,7 +171,7 @@ export declare class NoExtentError extends GeoViewError {
 export declare class InitDivNotExistError extends GeoViewError {
     /**
      * Creates an instance of InitDivNotExistError.
-     * @param {string} mapId - The map id for which a wront function call was made.
+     * @param {string} mapId - The map id for which a wrong function call was made.
      */
     constructor(mapId: string);
 }
@@ -182,8 +182,19 @@ export declare class InitDivNotExistError extends GeoViewError {
 export declare class InitMapWrongCallError extends GeoViewError {
     /**
      * Creates an instance of InitMapWrongCallError.
-     * @param {string} mapId - The map id for which a wront function call was made.
+     * @param {string} mapId - The map id for which a wrong function call was made.
      */
     constructor(mapId: string);
+}
+/**
+ * Error thrown when a plugin state hasn't been initialized and we're trying to access it.
+ */
+export declare class PluginStateUninitializedError extends GeoViewError {
+    /**
+     * Creates an instance of PluginStateUninitializedError.
+     * @param {string} pluginId - The plugin id for which the state was uninitialized.
+     * @param {string} mapId - The map id
+     */
+    constructor(pluginId: string, mapId: string);
 }
 //# sourceMappingURL=geoview-exceptions.d.ts.map
