@@ -335,16 +335,6 @@ export declare abstract class ConfigBaseClass {
      */
     toGroupLayerConfigProps(name?: string): GroupLayerEntryConfigProps;
     /**
-     * Clones the configuration class.
-     * @returns {ConfigBaseClass} The cloned ConfigBaseClass object.
-     */
-    clone(): ConfigBaseClass;
-    /**
-     * Overridable function to clone a child of a ConfigBaseClass.
-     * @returns {ConfigBaseClass} The cloned child object of a ConfigBaseClass.
-     */
-    protected onClone(): ConfigBaseClass;
-    /**
      * Recursively checks the list of layer entries to see if all of them are greater than or equal to the provided layer status.
      *
      * @param {TypeLayerStatus} layerStatus - The layer status to compare with the internal value of the config.
@@ -435,6 +425,12 @@ export declare abstract class ConfigBaseClass {
      * @returns {string | undefined} The layer name or undefined.
      */
     static getClassOrTypeLayerName(layerConfig: ConfigClassOrType | TypeGeoviewLayerConfig | undefined): string | undefined;
+    /**
+     * Helper function to support when a layerConfig is either a class instance or a regular json object.
+     * @param {ConfigClassOrType | undefined} layerConfig - The layer config class instance or regular json object.
+     * @param {string} layerName - The layer name to apply.
+     */
+    static setClassOrTypeLayerName(layerConfig: ConfigClassOrType | TypeGeoviewLayerConfig | undefined, layerName: string): void;
     /**
      * Helper function to support when a layerConfig is either a class instance or a regular json object.
      * @param {ConfigClassOrType | undefined} layerConfig - The layer config class instance or regular json object.

@@ -5,6 +5,7 @@ import { TypeDisplayLanguage } from '@/api/types/map-schema-types';
  * @extends {Error}
  */
 export declare class GeoViewError extends Error {
+    #private;
     /** The localized key or message */
     readonly messageKey: string;
     /** The parameters to be translated using the localizedKey */
@@ -29,6 +30,13 @@ export declare class GeoViewError extends Error {
      * @param {TypeDisplayLanguage} language - The language to translate the error into. English by default.
      */
     static logError(error: unknown, language?: TypeDisplayLanguage): void;
+    /**
+     * Logs an error using the application's logger.
+     * If the error is a GeoViewError, its message is translated to English (default) before logging.
+     * @param {unknown} error - The error to be logged. Can be any type.
+     * @param {TypeDisplayLanguage} language - The language to translate the error into. English by default.
+     */
+    static logWarning(error: unknown, language?: TypeDisplayLanguage): void;
 }
 /**
  * Error thrown when a map viewer with a specified ID is not found.
