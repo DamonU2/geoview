@@ -1,5 +1,4 @@
 import { ConfigClassOrType, TypeGeoviewLayerConfig, TypeLayerMetadataWMS, TypeMetadataWMS, TypeSourceImageWmsInitialConfig } from '@/api/types/layer-schema-types';
-import { ConfigBaseClass } from '@/api/config/validation-classes/config-base-class';
 import { AbstractBaseLayerEntryConfig, AbstractBaseLayerEntryConfigProps } from '@/api/config/validation-classes/abstract-base-layer-entry-config';
 import { TypeWMSLayerConfig } from '@/geo/layer/geoview-layers/raster/wms';
 export interface OgcWmsLayerEntryConfigProps extends AbstractBaseLayerEntryConfigProps {
@@ -30,11 +29,6 @@ export declare class OgcWmsLayerEntryConfig extends AbstractBaseLayerEntryConfig
      * @returns {TypeLayerMetadataEsri | undefined} The strongly-typed layer metadata specific to this layer entry config.
      */
     getLayerMetadata(): TypeLayerMetadataWMS | undefined;
-    /**
-     * Clones an instance of a OgcWmsLayerEntryConfig.
-     * @returns {ConfigBaseClass} The cloned OgcWmsLayerEntryConfig instance
-     */
-    protected onClone(): ConfigBaseClass;
     /**
      * Type guard that checks whether the given configuration (class instance or plain object)
      * represents a WMS layer type.
