@@ -240,6 +240,12 @@ export declare function isElementInViewport(el: Element): boolean;
  */
 export declare function scrollIfNotVisible(el: HTMLElement, blockValue: ScrollLogicalPosition, offset?: number): void;
 /**
+ * Scrolls a list item into view within its scrollable container only, without scrolling the page.
+ * Adds a 20px gap for better visibility when scrolling.
+ * @param {HTMLElement} listItem - The list item element to scroll into view
+ */
+export declare function scrollListItemIntoView(listItem: HTMLElement): void;
+/**
  * Checks whether the current environment is running on localhost port 8080.
  *
  * @returns {boolean} True if the current hostname is localhost and the port is 8080; otherwise, false.
