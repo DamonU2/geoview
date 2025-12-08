@@ -49,7 +49,7 @@ export type TypeDisplayTheme = 'dark' | 'light' | 'geo.ca';
 /** Array of valid geoview themes. */
 export declare const VALID_DISPLAY_THEME: TypeDisplayTheme[];
 /** Valid values for the navBar array. */
-export type TypeValidNavBarProps = 'zoom' | 'fullscreen' | 'home' | 'location' | 'basemap-select' | 'projection' | 'drawer';
+export type TypeValidNavBarProps = 'zoom' | 'fullscreen' | 'home' | 'location' | 'basemap-select' | 'projection' | 'drawer' | 'map-rotation';
 /** Supported footer bar tabs */
 export type TypeValidFooterBarTabsCoreProps = 'legend' | 'layers' | 'details' | 'data-table' | 'time-slider' | 'geochart' | 'guide';
 /** Default tabs order */
@@ -271,7 +271,8 @@ export declare const MAP_EXTENTS: Record<TypeValidMapProjectionCodes, number[]>;
 export declare const MAP_CENTER: Record<TypeValidMapProjectionCodes, [number, number]>;
 export declare const MAP_ZOOM_LEVEL: Record<TypeValidMapProjectionCodes, number>;
 /** Type used to define valid highlight colors. */
-export type TypeHighlightColors = 'black' | 'white' | 'red' | 'green';
+export type TypeHighlightColors = 'aqua' | 'black' | 'white' | 'red' | 'green';
+export declare const DEFAULT_HIGHLIGHT_COLOR: TypeHighlightColors;
 /** Type used to define overlay objects. */
 export type TypeOverlayObjects = {
     /** Non interactive markers */
