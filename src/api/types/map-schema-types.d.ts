@@ -392,6 +392,7 @@ export type TypeLayerStyleSettings = {
     fields: string[];
     hasDefault: boolean;
     info: TypeLayerStyleConfigInfo[];
+    visualVariables?: TypeLayerStyleVisualVariable[];
 };
 /** Information needed to render the feature. */
 export type TypeLayerStyleConfigInfo = {
@@ -410,6 +411,31 @@ export type TypeLayerStyleConfigInfo = {
     valuesConditions?: TypeLayerStyleValueCondition[];
     /** The geometry settings. */
     settings: TypeBaseVectorGeometryConfig;
+};
+/**
+ * Indiviual feature style modifications sometimes specified in ESRI Renderer
+ * https://developers.arcgis.com/documentation/mapping-and-location-services/data-visualization/data-driven-styles/visual-variables/
+ * Rest specific documentation
+ * https://developers.arcgis.com/web-map-specification/objects/colorInfo_visualVariable/
+ */
+export type TypeLayerStyleVisualVariable = {
+    type: 'colorInfo' | 'sizeInfo' | 'rotationInfo' | 'opacityInfo';
+    field: string;
+    normalizationField?: string;
+    stops?: TypeEsriStyleStops[];
+    minDataValue?: number;
+    maxDataValue?: number;
+    minSize?: number;
+    maxSize?: number;
+    rotationType?: 'geographic' | 'arithmetic';
+    valueExpression?: string;
+};
+/** Stops for Visual Variable modifications */
+export type TypeEsriStyleStops = {
+    value: string | number;
+    color?: string;
+    size?: number;
+    opacity?: number;
 };
 /**
  * The style config for vector layers. Options are the same as
