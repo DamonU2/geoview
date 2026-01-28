@@ -1,4 +1,4 @@
-import type { TypeKindOfVectorSettings, TypeFillStyle, TypeLineStyle, TypeLayerStyleConfig, TypeStyleGeometry, TypeSymbol } from '@/api/types/map-schema-types';
+import type { TypeKindOfVectorSettings, TypeFillStyle, TypeLineStyle, TypeLayerStyleConfig, TypeStyleGeometry, TypeSymbol, TypeLayerStyleVisualVariable } from '@/api/types/map-schema-types';
 export declare abstract class EsriRenderer {
     #private;
     /**
@@ -138,6 +138,7 @@ export declare abstract class EsriRenderer {
 export type EsriRendererTypes = 'uniqueValue' | 'simple' | 'classBreaks';
 export type EsriBaseRenderer = {
     type: EsriRendererTypes;
+    visualVariables?: TypeLayerStyleVisualVariable[];
 };
 type TypeEsriColor = [number, number, number, number];
 export interface EsriUniqueValueRenderer extends EsriBaseRenderer {
