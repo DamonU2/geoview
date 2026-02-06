@@ -66,7 +66,6 @@ export type TypeFooterBarProps = {
         core: TypeValidFooterBarTabsCoreProps[];
         custom: TypeFooterBarTabsCustomProps[];
     };
-    collapsed: boolean;
     selectedTab: TypeValidFooterBarTabsCoreProps;
     selectedLayersLayerPath: string;
     selectedDataTableLayerPath: string;
@@ -79,7 +78,6 @@ export type TypeAppBarProps = {
     tabs: {
         core: TypeValidAppBarCoreProps[];
     };
-    collapsed: boolean;
     selectedTab: TypeValidAppBarCoreProps;
     selectedLayersLayerPath: string;
     selectedDataTableLayerPath: string;
