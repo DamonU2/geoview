@@ -72,7 +72,7 @@ export type TypeFooterBarProps = {
     selectedTimeSliderLayerPath: string;
 };
 /** Supported app bar values. */
-export type TypeValidAppBarCoreProps = 'geolocator' | 'export' | 'aoi-panel' | 'custom-legend' | 'guide' | 'legend' | 'details' | 'data-table' | 'layers';
+export type TypeValidAppBarCoreProps = 'geolocator' | 'export' | 'aoi-panel' | 'about-panel' | 'custom-legend' | 'guide' | 'legend' | 'details' | 'data-table' | 'layers';
 /** Configuration available on the application bar. Default = ['geolocator']. The about GeoView and notification are always there. */
 export type TypeAppBarProps = {
     tabs: {
@@ -162,6 +162,8 @@ export type TypeGlobalSettings = {
     canRemoveSublayers?: boolean;
     /** Whether a certain layer type should be disabled */
     disabledLayerTypes?: TypeGeoviewLayerType[];
+    /** Whether to show the bounding box of the highlighted layer. Default = true */
+    showLayerHighlightLayerBbox?: boolean;
     /** Whether to display unsymbolized features in the datatable and other components */
     showUnsymbolizedFeatures?: boolean;
     /** Whether the initial state of the coordinate info tool should be enabled */
