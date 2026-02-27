@@ -10,7 +10,7 @@ type LayerActions = ILayerState['actions'];
 export interface ILayerState {
     highlightedLayer: string;
     selectedLayer: TypeLegendLayer;
-    selectedLayerPath: string | undefined | null;
+    selectedLayerPath?: string;
     legendLayers: TypeLegendLayer[];
     displayState: TypeLayersViewDisplayState;
     layerDeleteInProgress: string;
@@ -25,17 +25,19 @@ export interface ILayerState {
         getLayerDeleteInProgress: () => string;
         getLayerServiceProjection: (layerPath: string) => string | undefined;
         getLayerTimeDimension: (layerPath: string) => TimeDimension | undefined;
-        refreshLayer: (layerPath: string) => void;
+        refreshLayer: (layerPath: string) => Promise<void>;
         reloadLayer: (layerPath: string) => void;
+        toggleItemVisibility: (layerPath: string, item: TypeLegendItem) => void;
+        toggleItemVisibilityAndWait: (layerPath: string, item: TypeLegendItem) => Promise<void>;
         setAllItemsVisibility: (layerPath: string, visibility: boolean) => void;
+        setAllItemsVisibilityAndWait: (layerPath: string, visibility: boolean) => Promise<void>;
         setDisplayState: (newDisplayState: TypeLayersViewDisplayState) => void;
         setHighlightLayer: (layerPath: string) => void;
         setLayerDeleteInProgress: (newVal: string) => void;
         setLayerOpacity: (layerPath: string, opacity: number, updateLegendLayers?: boolean) => void;
         setLayerHoverable: (layerPath: string, enable: boolean) => void;
         setLayerQueryable: (layerPath: string, enable: boolean) => void;
-        setSelectedLayerPath: (layerPath: string) => void;
-        toggleItemVisibility: (layerPath: string, item: TypeLegendItem) => void;
+        setSelectedLayerPath: (layerPath: string | undefined) => void;
         zoomToLayerExtent: (layerPath: string) => Promise<void>;
         zoomToLayerVisibleScale: (layerPath: string) => void;
     };
@@ -44,7 +46,7 @@ export interface ILayerState {
         setHighlightLayer: (layerPath: string) => void;
         setLayerDeleteInProgress: (newVal: string) => void;
         setLegendLayers: (legendLayers: TypeLegendLayer[]) => void;
-        setSelectedLayerPath: (layerPath: string) => void;
+        setSelectedLayerPath: (layerPath: string | undefined) => void;
         setLayersAreLoading: (areLoading: boolean) => void;
     };
 }

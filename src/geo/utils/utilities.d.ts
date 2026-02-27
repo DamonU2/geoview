@@ -80,6 +80,18 @@ export declare abstract class GeoUtilities {
      */
     static ensureServiceRequestUrlGetFeature(url: string, layerId: string, version: string, outputFormat: string | undefined, outfields: TypeOutfields[] | undefined, xmlFilter: string | undefined, outputProjectionCode: string | undefined): string;
     /**
+     * Removes specified query parameters from a URL, preserving all others.
+     * This method normalizes a URL by stripping out any query parameters whose
+     * keys match the ones provided in `removeParams`. It works even if the URL
+     * contains multiple `?` or `&` characters (e.g., proxy-wrapped URLs).
+     * @param {string} url - The URL to normalize.
+     * @param {string[]} removeParams - Array of parameter names (case-insensitive)
+     *   to remove from the URL.
+     * @returns {string} - The normalized URL with the specified parameters removed.
+     * @static
+     */
+    static ensureURLForOpenLayersSource(url: string, removeParams: string[]): string;
+    /**
      * Fetch the json response from the ESRI map server to get REST endpoint metadata.
      * @param {string} url - The url of the ESRI map server.
      * @returns {Promise<unknown>} A json promise containing the result of the query.

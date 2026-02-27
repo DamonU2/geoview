@@ -106,8 +106,8 @@ export declare abstract class AbstractGeoViewLayer {
      */
     getClassName(): string;
     /**
-     * Gets the Geoview layer id.
-     * @returns {string} The geoview layer id
+     * Gets the Geoview layer config.
+     * @returns {string} The geoview layer config
      */
     getGeoviewLayerConfig(): TypeGeoviewLayerConfig;
     /**
@@ -206,7 +206,6 @@ export declare abstract class AbstractGeoViewLayer {
     initGVLayer(layer: AbstractGVLayer): void;
     /**
      * Emits a layer-specific message event with localization support
-     * @protected
      * @param {string} messageKey - The key used to lookup the localized message OR message
      * @param {string[] | undefined} messageParams - Array of parameters to be interpolated into the localized message
      * @param {SnackbarType} messageType - The message type
@@ -221,6 +220,7 @@ export declare abstract class AbstractGeoViewLayer {
      * );
      *
      * @fires LayerMessageEvent
+     * @protected
      */
     protected emitMessage(messageKey: string, messageParams?: string[] | undefined, messageType?: SnackbarType, notification?: boolean): void;
     /**
@@ -310,8 +310,8 @@ export declare abstract class AbstractGeoViewLayer {
      * Processes a Layer Config by calling 'createGeoViewLayers' on the provided layer.
      * @param {AbstractGeoViewLayer} layer - The layer to use to process the configuration
      * @returns {Promise<ConfigBaseClass>} The promise of a generated ConfigBaseClass.
-     * @protected
      * @static
+     * @protected
      */
     protected static processConfig(layer: AbstractGeoViewLayer): Promise<ConfigBaseClass[]>;
 }

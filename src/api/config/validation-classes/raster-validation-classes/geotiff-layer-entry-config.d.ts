@@ -17,14 +17,20 @@ export declare class GeoTIFFLayerEntryConfig extends AbstractBaseLayerEntryConfi
     constructor(layerConfig: GeoTIFFLayerEntryConfigProps);
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
+     * @returns {TypeGeoTIFFLayerConfig} The strongly-typed layer configuration specific to this layer.
      * @override
+     */
+    getGeoviewLayerConfig(): TypeGeoTIFFLayerConfig;
+    /**
+     * Overrides the parent class's getter to provide a more specific return type (covariant return).
      * @returns {TypeSourceGeoTIFFInitialConfig} The strongly-typed source configuration specific to this layer entry config.
+     * @override
      */
     getSource(): TypeSourceGeoTIFFInitialConfig;
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
-     * @override
      * @returns {TypeMetadataGeoTIFF | undefined} The strongly-typed layer configuration specific to this layer entry config.
+     * @override
      */
     getServiceMetadata(): TypeMetadataGeoTIFF | undefined;
     /**

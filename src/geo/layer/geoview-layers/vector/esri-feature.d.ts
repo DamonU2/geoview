@@ -29,8 +29,14 @@ export declare class EsriFeature extends AbstractGeoViewVector {
     constructor(layerConfig: TypeEsriFeatureLayerConfig);
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
+     * @returns {TypeEsriFeatureLayerConfig} The strongly-typed layer configuration specific to this layer.
      * @override
+     */
+    getGeoviewLayerConfig(): TypeEsriFeatureLayerConfig;
+    /**
+     * Overrides the parent class's getter to provide a more specific return type (covariant return).
      * @returns {TypeMetadataEsriFeature | undefined} The strongly-typed layer configuration specific to this layer.
+     * @override
      */
     getMetadata(): TypeMetadataEsriFeature | undefined;
     /**
@@ -39,6 +45,8 @@ export declare class EsriFeature extends AbstractGeoViewVector {
      * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
      * @returns {Promise<T = TypeMetadataEsriFeature | undefined>} A promise with the metadata or undefined when no metadata for the particular layer type.
      * @throws {LayerServiceMetadataUnableToFetchError} When the metadata fetch fails or contains an error.
+     * @override
+     * @protected
      */
     protected onFetchServiceMetadata<T = TypeMetadataEsriFeature | undefined>(abortSignal?: AbortSignal): Promise<T>;
     /**
@@ -46,12 +54,17 @@ export declare class EsriFeature extends AbstractGeoViewVector {
      * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
      * @returns {Promise<TypeGeoviewLayerConfig>} A promise resolved once the layer entries have been initialized.
      * @throws {LayerServiceMetadataUnableToFetchError} When the metadata fetch fails or contains an error.
+     * @override
+     * @protected
      */
     protected onInitLayerEntries(abortSignal?: AbortSignal): Promise<TypeGeoviewLayerConfig>;
     /**
      * This method validates recursively the configuration of the layer entries to ensure that it is a feature layer identified
      * with a numeric layerId and creates a group entry when a layer is a group.
      * @param {ConfigBaseClass[]} listOfLayerEntryConfig The list of layer entries configuration to validate.
+     * @returns {void}
+     * @override
+     * @protected
      */
     protected onValidateListOfLayerEntryConfig(listOfLayerEntryConfig: ConfigBaseClass[]): void;
     /**
@@ -62,6 +75,8 @@ export declare class EsriFeature extends AbstractGeoViewVector {
      * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
      * @returns {Promise<EsriFeatureLayerEntryConfig>} A promise that the layer entry configuration has gotten its metadata processed.
      * @throws {LayerTooManyEsriFeatures} When the layer has too many Esri features.
+     * @override
+     * @protected
      */
     protected onProcessLayerMetadata(layerConfig: EsriFeatureLayerEntryConfig, displayDateMode: DisplayDateMode, mapProjection?: OLProjection, abortSignal?: AbortSignal): Promise<EsriFeatureLayerEntryConfig>;
     /**
@@ -78,14 +93,16 @@ export declare class EsriFeature extends AbstractGeoViewVector {
      * `featureProjection`.
      * @returns {Promise<Feature[]>}
      * A promise that resolves to an array of OpenLayers features.
-     * @protected
      * @override
+     * @protected
      */
     protected onCreateVectorSourceLoadFeatures(layerConfig: VectorLayerEntryConfig, sourceOptions: SourceOptions<Feature>, readOptions: ReadOptions): Promise<Feature[]>;
     /**
      * Overrides the creation of the GV Layer
      * @param {EsriFeatureLayerEntryConfig} layerConfig - The layer entry configuration.
      * @returns {GVEsriFeature} The GV Layer
+     * @override
+     * @protected
      */
     protected onCreateGVLayer(layerConfig: EsriFeatureLayerEntryConfig): GVEsriFeature;
     /**

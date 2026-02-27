@@ -674,6 +674,10 @@ export type TypeResultSetEntry = {
 export type TypeResultSet<T extends TypeResultSetEntry = TypeResultSetEntry> = {
     [layerPath: string]: T;
 };
+export type TypeFeatureInfoResult = {
+    results: TypeFeatureInfoEntry[];
+    promiseGeometries?: Promise<boolean>;
+};
 export type TypeFeatureInfoEntry = {
     featureKey: number;
     geoviewLayerType: TypeGeoviewLayerType;
@@ -684,7 +688,7 @@ export type TypeFeatureInfoEntry = {
     extent: Extent | undefined;
     featureIcon?: string;
     fieldInfo: Partial<Record<string, TypeFieldEntry>>;
-    nameField: string | null;
+    nameField?: string;
     layerPath: string;
 };
 /**

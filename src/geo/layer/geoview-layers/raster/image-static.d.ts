@@ -24,14 +24,24 @@ export declare class ImageStatic extends AbstractGeoViewRaster {
      */
     constructor(layerConfig: TypeImageStaticLayerConfig);
     /**
+     * Overrides the parent class's getter to provide a more specific return type (covariant return).
+     * @returns {TypeImageStaticLayerConfig} The strongly-typed layer configuration specific to this layer.
+     * @override
+     */
+    getGeoviewLayerConfig(): TypeImageStaticLayerConfig;
+    /**
      * Overrides the way the metadata is fetched.
      * Resolves with the Json object or undefined when no metadata is to be expected for a particular layer type.
      * @returns {Promise<T>} A promise with the metadata or undefined when no metadata for the particular layer type.
+     * @override
+     * @protected
      */
     protected onFetchServiceMetadata<T>(): Promise<T>;
     /**
      * Overrides the way a geoview layer config initializes its layer entries.
      * @returns {Promise<TypeGeoviewLayerConfig>} A promise resolved once the layer entries have been initialized.
+     * @override
+     * @protected
      */
     protected onInitLayerEntries(): Promise<TypeGeoviewLayerConfig>;
     /**
@@ -41,12 +51,16 @@ export declare class ImageStatic extends AbstractGeoViewRaster {
      * @param {OLProjection?} [mapProjection] - The map projection.
      * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
      * @returns {Promise<ImageStaticLayerEntryConfig>} A promise that the layer entry configuration has gotten its metadata processed.
+     * @override
+     * @protected
      */
     protected onProcessLayerMetadata(layerConfig: ImageStaticLayerEntryConfig, displayDateMode: DisplayDateMode, mapProjection?: OLProjection, abortSignal?: AbortSignal): Promise<ImageStaticLayerEntryConfig>;
     /**
      * Overrides the creation of the GV Layer
      * @param {ImageStaticLayerEntryConfig} layerConfig - The layer entry configuration.
      * @returns {GVImageStatic} The GV Layer
+     * @override
+     * @protected
      */
     protected onCreateGVLayer(layerConfig: ImageStaticLayerEntryConfig): GVImageStatic;
     /**

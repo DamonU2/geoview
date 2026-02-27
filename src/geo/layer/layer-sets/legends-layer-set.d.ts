@@ -24,39 +24,58 @@ export declare class LegendsLayerSet extends AbstractLayerSet {
      * Overrides the behavior to apply when an all-feature-info-layer-set wants to check for condition to register a layer in its set.
      * @param {ConfigBaseClass} layerConfig - The layer config
      * @returns {boolean} True when the layer should be registered to this legends-layer-set
+     * @override
+     * @protected
      */
     protected onRegisterLayerConfigCheck(layerConfig: ConfigBaseClass): boolean;
     /**
      * Overrides the behavior to apply when an all-feature-info-layer-set wants to check for condition to register a layer in its set.
      * @param {AbstractBaseGVLayer} layer - The layer
      * @returns {boolean} True when the layer should be registered to this legends-layer-set
+     * @override
+     * @protected
      */
     protected onRegisterLayerCheck(layer: AbstractBaseGVLayer): boolean;
     /**
      * Overrides the behavior to apply when a legends-layer-set wants to register a layer in its set.
      * @param {ConfigBaseClass} layerConfig - The layer config
+     * @returns {void}
+     * @override
+     * @protected
      */
     protected onRegisterLayerConfig(layerConfig: ConfigBaseClass): void;
     /**
      * Overrides the behavior to apply when a legends-layer-set wants to register a layer in its set.
      * @param {AbstractBaseGVLayer} layer - The layer
+     * @returns {void}
+     * @override
+     * @protected
      */
     protected onRegisterLayer(layer: AbstractBaseGVLayer): void;
     /**
      * Overrides the behavior to apply when a layer status changed for a legends-layer-set.
      * @param {ConfigBaseClass} layerConfig - The layer config
      * @param {TypeLayerStatus} layerStatus - The new layer status
+     * @returns {void}
+     * @override
+     * @protected
      */
     protected onProcessLayerStatusChanged(layerConfig: ConfigBaseClass, layerStatus: TypeLayerStatus): void;
     /**
      * Overrides the behavior to apply when propagating to the store
      * @param {TypeLegendResultSetEntry} resultSetEntry - The result set entry to propagate
      * @param {PropagationType} type - The propagation type
+     * @returns {void}
+     * @override
+     * @protected
      */
     protected onPropagateToStore(resultSetEntry: TypeLegendResultSetEntry, type: PropagationType): void;
     /**
      * Overrides the behavior to apply when deleting from the store
      * @param {string} layerPath - The layer path to delete form the store
+     * @returns {void}
+     * @override
+     * @protected
      */
     protected onDeleteFromStore(layerPath: string): void;
 }

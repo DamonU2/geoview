@@ -25,8 +25,14 @@ export declare class GeoTIFF extends AbstractGeoViewRaster {
     constructor(layerConfig: TypeGeoTIFFLayerConfig);
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
+     * @returns {TypeGeoTIFFLayerConfig} The strongly-typed layer configuration specific to this layer.
      * @override
+     */
+    getGeoviewLayerConfig(): TypeGeoTIFFLayerConfig;
+    /**
+     * Overrides the parent class's getter to provide a more specific return type (covariant return).
      * @returns {TypeMetadataGeoTIFF | undefined} The strongly-typed layer configuration specific to this layer.
+     * @override
      */
     getMetadata(): TypeMetadataGeoTIFF | undefined;
     /**
@@ -35,11 +41,15 @@ export declare class GeoTIFF extends AbstractGeoViewRaster {
      * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
      * @returns {Promise<T = TypeMetadataGeoTIFF | undefined>} A promise with the metadata or undefined when no metadata for the particular layer type.
      * @throws {LayerServiceMetadataUnableToFetchError} Error thrown when the metadata fetch fails or contains an error.
+     * @override
+     * @protected
      */
     protected onFetchServiceMetadata<T = TypeMetadataGeoTIFF | undefined>(abortSignal?: AbortSignal): Promise<T>;
     /**
      * Overrides the way a geoview layer config initializes its layer entries.
      * @returns {Promise<TypeGeoviewLayerConfig>} A promise resolved once the layer entries have been initialized.
+     * @override
+     * @protected
      */
     protected onInitLayerEntries(): Promise<TypeGeoviewLayerConfig>;
     /**
@@ -49,12 +59,16 @@ export declare class GeoTIFF extends AbstractGeoViewRaster {
      * @param {OLProjection?} [mapProjection] - The map projection.
      * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
      * @returns {Promise<GeoTIFFLayerEntryConfig>} A promise that the layer entry configuration has gotten its metadata processed.
+     * @override
+     * @protected
      */
     protected onProcessLayerMetadata(layerConfig: GeoTIFFLayerEntryConfig, displayDateMode: DisplayDateMode, mapProjection?: OLProjection, abortSignal?: AbortSignal): Promise<GeoTIFFLayerEntryConfig>;
     /**
      * Overrides the creation of the GV Layer
      * @param {GeoTIFFLayerEntryConfig} layerConfig - The layer entry configuration.
      * @returns {GVGeoTIFF} The GV Layer
+     * @override
+     * @protected
      */
     protected onCreateGVLayer(layerConfig: GeoTIFFLayerEntryConfig): GVGeoTIFF;
     /**

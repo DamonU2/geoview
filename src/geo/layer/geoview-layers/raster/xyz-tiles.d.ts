@@ -27,18 +27,29 @@ export declare class XYZTiles extends AbstractGeoViewRaster {
     constructor(layerConfig: TypeXYZTilesConfig);
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
+     * @returns {TypeXYZTilesConfig} The strongly-typed layer configuration specific to this layer.
      * @override
+     */
+    getGeoviewLayerConfig(): TypeXYZTilesConfig;
+    /**
+     * Overrides the parent class's getter to provide a more specific return type (covariant return).
      * @returns {TypeMetadataXYZTiles | undefined} The strongly-typed layer configuration specific to this layer.
+     * @override
      */
     getMetadata(): TypeMetadataXYZTiles | undefined;
     /**
      * Overrides the way a geoview layer config initializes its layer entries.
      * @returns {Promise<TypeGeoviewLayerConfig>} A promise resolved once the layer entries have been initialized.
+     * @override
+     * @protected
      */
     protected onInitLayerEntries(): Promise<TypeGeoviewLayerConfig>;
     /**
      * Overrides the validation of a layer entry config.
      * @param {ConfigBaseClass} layerConfig - The layer entry config to validate.
+     * @returns {void}
+     * @override
+     * @protected
      */
     protected onValidateLayerEntryConfig(layerConfig: ConfigBaseClass): void;
     /**
@@ -48,12 +59,15 @@ export declare class XYZTiles extends AbstractGeoViewRaster {
      * @param {OLProjection?} [mapProjection] - The map projection.
      * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
      * @returns {Promise<XYZTilesLayerEntryConfig>} A promise that the layer entry configuration has gotten its metadata processed.
+     * @override
+     * @protected
      */
     protected onProcessLayerMetadata(layerConfig: XYZTilesLayerEntryConfig, displayDateMode: DisplayDateMode, mapProjection?: OLProjection, abortSignal?: AbortSignal): Promise<XYZTilesLayerEntryConfig>;
     /**
      * Overrides the creation of the GV Layer
      * @param {XYZTilesLayerEntryConfig} layerConfig - The layer entry configuration.
      * @returns {GVXYZTiles} The GV Layer
+     * @override
      */
     protected onCreateGVLayer(layerConfig: XYZTilesLayerEntryConfig): GVXYZTiles;
     /**
