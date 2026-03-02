@@ -23,6 +23,8 @@ export interface TypeWMSLayerConfig extends Omit<TypeGeoviewLayerConfig, 'listOf
  */
 export declare class WMS extends AbstractGeoViewRaster {
     #private;
+    /** Default setting for the WMS layer group processing (true will explode the group in many wms layers) */
+    static readonly DEFAULT_WMS_LAYER_GROUP_FULL_SUB_LAYERS = true;
     /**
      * Constructs a WMS Layer configuration processor.
      * @param {TypeWMSLayerConfig} layerConfig the layer configuration
@@ -30,8 +32,14 @@ export declare class WMS extends AbstractGeoViewRaster {
     constructor(layerConfig: TypeWMSLayerConfig);
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
+     * @returns {TypeWMSLayerConfig} The strongly-typed layer configuration specific to this layer.
      * @override
+     */
+    getGeoviewLayerConfig(): TypeWMSLayerConfig;
+    /**
+     * Overrides the parent class's getter to provide a more specific return type (covariant return).
      * @returns {TypeMetadataWMS | undefined} The strongly-typed layer configuration specific to this layer.
+     * @override
      */
     getMetadata(): TypeMetadataWMS | undefined;
     /**
@@ -46,6 +54,8 @@ export declare class WMS extends AbstractGeoViewRaster {
      * @returns {Promise<T = TypeMetadataWMS | undefined>} A promise resolving to the parsed metadata object,
      * or `undefined` if metadata could not be retrieved or no capabilities were found.
      * @throws {LayerServiceMetadataUnableToFetchError} When the metadata fetch fails or contains an error.
+     * @override
+     * @protected
      */
     protected onFetchServiceMetadata<T = TypeMetadataWMS | undefined>(abortSignal?: AbortSignal): Promise<T>;
     /**
@@ -53,11 +63,16 @@ export declare class WMS extends AbstractGeoViewRaster {
      * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
      * @returns {Promise<TypeGeoviewLayerConfig>} A promise resolved once the layer entries have been initialized.
      * @throws {LayerServiceMetadataUnableToFetchError} When the metadata fetch fails or contains an error.
+     * @override
+     * @protected
      */
     protected onInitLayerEntries(abortSignal?: AbortSignal): Promise<TypeGeoviewLayerConfig>;
     /**
      * Overrides the validation of a layer entry config.
      * @param {ConfigBaseClass} layerConfig - The layer entry config to validate.
+     * @returns {void}
+     * @override
+     * @protected
      */
     protected onValidateLayerEntryConfig(layerConfig: ConfigBaseClass): void;
     /**
@@ -69,12 +84,16 @@ export declare class WMS extends AbstractGeoViewRaster {
      * @returns {Promise<OgcWmsLayerEntryConfig>} A promise that the layer entry configuration has gotten its metadata processed.
      * @throws {InvalidTimeDimensionError} When range couldn't be computed, or when duration is invalid, or non-positive or when an infinite loop is detected.
      * @throws {InvalidDateError} When input has invalid dates.
+     * @override
+     * @protected
      */
     protected onProcessLayerMetadata(layerConfig: OgcWmsLayerEntryConfig, displayDateMode: DisplayDateMode, mapProjection?: OLProjection, abortSignal?: AbortSignal): Promise<OgcWmsLayerEntryConfig>;
     /**
      * Overrides the creation of the GV Layer
      * @param {OgcWmsLayerEntryConfig} layerConfig - The layer entry configuration.
      * @returns {GVWMS} The GV Layer
+     * @override
+     * @protected
      */
     protected onCreateGVLayer(layerConfig: OgcWmsLayerEntryConfig): GVWMS;
     /**

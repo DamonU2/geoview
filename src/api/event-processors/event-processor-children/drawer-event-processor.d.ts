@@ -11,8 +11,10 @@ export declare class DrawerEventProcessor extends AbstractEventProcessor {
      * Initializes the event processor and sets up subscriptions
      * @param {GeoviewStoreType} store - The store to initialize with
      * @returns {Array<() => void>} Array of unsubscribe functions
+     * @override
+     * @protected
      */
-    onInitialize(store: GeoviewStoreType): Array<() => void>;
+    protected onInitialize(store: GeoviewStoreType): Array<() => void>;
     /**
      * Shortcut to get the Drawer state for a given map id
      * @param {string} mapId - The mapId

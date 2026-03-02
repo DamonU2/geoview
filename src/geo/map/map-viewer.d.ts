@@ -370,6 +370,16 @@ export declare class MapViewer {
      */
     waitAllLayersStatus(layerStatus: TypeLayerStatus): Promise<number>;
     /**
+     * Waits for the map layers loaded event to be emitted.
+     * @returns {Promise<MapViewer>} Promise resolved when the map layers loaded event is emitted
+     */
+    waitForLayersLoaded(): Promise<MapViewer>;
+    /**
+     * Waits for the rendercomplete event to be triggered
+     * @returns {Promise<void>} Promise resolved when map render is complete
+     */
+    waitForRender(): Promise<void>;
+    /**
      * Initializes selection interactions
      */
     initSelectInteractions(): Select;
@@ -535,11 +545,6 @@ export declare class MapViewer {
      * @param {MapLayersLoadedDelegate} callback - The callback to be executed whenever the event is emitted
      */
     onMapLayersLoaded(callback: MapLayersLoadedDelegate): void;
-    /**
-     * Waits for the map layers loaded event to be emitted.
-     * @returns {Promise<MapViewer>} Promise resolved when the map layers loaded event is emitted
-     */
-    waitForLayersLoaded(): Promise<MapViewer>;
     /**
      * Unregisters a map layers loaded event callback.
      * @param {MapLayersLoadedDelegate} callback - The callback to stop being called whenever the event is emitted
