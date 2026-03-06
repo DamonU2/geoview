@@ -13,7 +13,9 @@ import type { VectorLayerEntryConfig } from '@/api/config/validation-classes/vec
 import type { TypeFeatureInfoResult, TypeOutfieldsType } from '@/api/types/map-schema-types';
 import type { FilterNodeType } from '@/geo/utils/renderer/geoview-renderer-types';
 import { AbstractGVLayer } from '@/geo/layer/gv-layers/abstract-gv-layer';
+import { GVVectorSource } from '@/geo/layer/source/vector-source';
 import type { LayerFilters } from '@/geo/layer/gv-layers/layer-filters';
+import { GeoViewError } from '@/core/exceptions/geoview-exceptions';
 /**
  * Abstract Geoview Layer managing an OpenLayer vector type layer.
  */
@@ -35,10 +37,10 @@ export declare abstract class AbstractGVVector extends AbstractGVLayer {
     getOLLayer(): VectorLayer<VectorSource>;
     /**
      * Overrides the parent class's method to return a more specific OpenLayers source type (covariant return).
-     * @returns {VectorSource} The VectorSource source instance associated with this layer.
+     * @returns {GVVectorSource} The VectorSource source instance associated with this layer.
      * @override
      */
-    getOLSource(): VectorSource;
+    getOLSource(): GVVectorSource;
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
      * @returns {VectorLayerEntryConfig} The strongly-typed layer configuration specific to this layer.
@@ -53,6 +55,12 @@ export declare abstract class AbstractGVVector extends AbstractGVLayer {
      * @protected
      */
     protected onGetFieldType(fieldName: string): TypeOutfieldsType;
+    /**
+     * Overridable method called to get a more specific error code for all errors.
+     * @param event - The event which is being triggered.
+     * @returns The GeoViewError stored in the GVVectorSource if any or the one from the parent method.
+     */
+    protected onErrorDecipherError(event: Event): GeoViewError;
     /**
      * Overrides the get all feature information for all the features stored in the layer.
      * @param {OLMap} map - The Map so that we can grab the resolution/projection we want to get features on.
@@ -96,12 +104,11 @@ export declare abstract class AbstractGVVector extends AbstractGVLayer {
     protected getFeatureInfoAtLonLat(map: OLMap, lonlat: Coordinate, queryGeometry?: boolean, abortController?: AbortController | undefined): Promise<TypeFeatureInfoResult>;
     /**
      * Overrides the way to get the bounds for this layer type.
-     * @param {OLProjection} projection - The projection to get the bounds into.
-     * @param {number} stops - The number of stops to use to generate the extent.
-     * @returns {Extent | undefined} The layer bounding box.
-     * @override
+     * @param projection - The projection to get the bounds into.
+     * @param stops - The number of stops to use to generate the extent.
+     * @returns A promise of layer bounding box.
      */
-    onGetBounds(projection: OLProjection, stops: number): Extent | undefined;
+    onGetBounds(projection: OLProjection, stops: number): Promise<Extent | undefined>;
     /**
      * Gets the extent of an array of features.
      * @param {number[] | string[]} objectIds - The uids of the features to calculate the extent from.

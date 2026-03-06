@@ -1,6 +1,7 @@
 import type { GeoviewStoreType } from '@/core/stores';
 import type { GeoChartStoreByLayerPath, IGeochartState, TypeGeochartResultSetEntry } from '@/core/stores/store-interface-and-intial-values/geochart-state';
 import type { GeoViewGeoChartConfig } from '@/api/config/reader/uuid-config-reader';
+import type { SubscriptionDelegate } from '@/api/event-processors/abstract-event-processor';
 import { AbstractEventProcessor } from '@/api/event-processors/abstract-event-processor';
 /**
  * Event processor focusing on interacting with the geochart state in the store.
@@ -10,12 +11,10 @@ export declare class GeochartEventProcessor extends AbstractEventProcessor {
     static TIME_DELAY_BETWEEN_PROPAGATION_FOR_BATCH: number;
     /**
      * Overrides initialization of the GeoChart Event Processor
-     * @param {GeoviewStoreType} store - The store associated with the GeoChart Event Processor
-     * @returns {Array<() => void> | void} An array of the subscriptions callbacks which were created
-     * @override
-     * @protected
+     * @param store - The store associated with the GeoChart Event Processor
+     * @returns An array of the subscriptions callbacks which were created
      */
-    protected onInitialize(store: GeoviewStoreType): Array<() => void> | void;
+    protected onInitialize(store: GeoviewStoreType): SubscriptionDelegate[];
     /**
      * Checks if the Geochart plugin is iniitialized for the given map.
      * @param {string} mapId - The map id

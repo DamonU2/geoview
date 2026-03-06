@@ -28,6 +28,10 @@ import type { TypeLegendItem } from '@/core/components/layers/types';
  */
 export declare class LayerApi {
     #private;
+    /** A zoom level buffer to guarantee that the calculations being done via the resolutions, inches per meter, dpi are more strict than not enough */
+    /** The value 0.21 seems rather specific, but it was the value giving us the best result during testing on layer National Forest Inventory Photo Plot Summary */
+    /** It could be increased slightly if ever we need to, but it might offer worse precision depending on various layers */
+    static readonly MIN_MAX_ZOOM_LEVEL_BUFFER = 0.21;
     /** Reference on the map viewer */
     mapViewer: MapViewer;
     /** Used to access geometry API to create and manage geometries */
@@ -46,12 +50,12 @@ export declare class LayerApi {
     featureInfoLayerSet: FeatureInfoLayerSet;
     /**
      * Initializes layer types and listen to add/remove layer events from outside
-     * @param {MapViewer} mapViewer - A reference to the map viewer
+     * @param mapViewer - A reference to the map viewer
      */
     constructor(mapViewer: MapViewer);
     /**
      * Gets the Map Id.
-     * @returns {string} The map id
+     * @returns The map id
      */
     getMapId(): string;
     /**
@@ -61,47 +65,47 @@ export declare class LayerApi {
     getGeoviewLayerIds(): string[];
     /**
      * Verifies if a layer is registered. Returns true if registered.
-     * @param {string} layerPath - The layer path to check.
-     * @returns {boolean} Returns true if the layer configuration is registered.
+     * @param layerPath - The layer path to check.
+     * @returns Returns true if the layer configuration is registered.
      */
     isLayerEntryConfigRegistered(layerPath: string): boolean;
     /**
      * Gets the Layer Entry layer paths
-     * @returns {string[]} The GeoView Layer Paths
+     * @returns The GeoView Layer Paths
      */
     getLayerEntryLayerPaths(): string[];
     /**
      * Gets the Layer Entry Configs
-     * @returns {string[]} The GeoView Layer Entry Configs
+     * @returns The GeoView Layer Entry Configs
      */
     getLayerEntryConfigs(): ConfigBaseClass[];
     /**
      * Gets the layer configuration of the specified layer path.
-     * @param {string} layerPath - The layer path.
-     * @returns {ConfigBaseClass} The layer configuration.
+     * @param layerPath - The layer path.
+     * @returns The layer configuration.
      * @throws {LayerConfigNotFoundError} When the layer configuration couldn't be found at the given layer path.
      */
     getLayerEntryConfig(layerPath: string): ConfigBaseClass;
     /**
      * Gets the layer configuration of a regular layer (not a group) at the specified layer path.
-     * @param {string} layerPath - The layer path.
-     * @returns {AbstractBaseLayerEntryConfig} The layer configuration.
+     * @param layerPath - The layer path.
+     * @returns The layer configuration.
      * @throws {LayerConfigNotFoundError} When the layer configuration couldn't be found at the given layer path.
      * @throws {LayerWrongTypeError} When the layer configuration is of the wrong type at the given layer path.
      */
     getLayerEntryConfigRegular(layerPath: string): AbstractBaseLayerEntryConfig;
     /**
      * Gets the layer configuration of a group layer (not a regular) at the specified layer path.
-     * @param {string} layerPath - The layer path.
-     * @returns {AbstractBaseLayerEntryConfig} The layer configuration.
+     * @param layerPath - The layer path.
+     * @returns The layer configuration.
      * @throws {LayerConfigNotFoundError} When the layer configuration couldn't be found at the given layer path.
      * @throws {LayerWrongTypeError} When the layer configuration is of the wrong type at the given layer path.
      */
     getLayerEntryConfigGroup(layerPath: string): GroupLayerEntryConfig;
     /**
      * Gets the layer configuration of the specified layer path.
-     * @param {string} layerPath - The layer path.
-     * @returns {ConfigBaseClass | undefined} The layer configuration or undefined if not found.
+     * @param layerPath - The layer path.
+     * @returns The layer configuration or undefined if not found.
      */
     getLayerEntryConfigIfExists(layerPath: string): ConfigBaseClass | undefined;
     /**
@@ -118,22 +122,20 @@ export declare class LayerApi {
      * Gets all GeoView layers that are regular layers (not groups).
      * This method filters the list returned by `getGeoviewLayers()` and
      * returns only the layers that are instances of `AbstractGVLayer`.
-     * @returns {AbstractGVLayer[]} An array containing only the regular layers
-     *   from the current GeoView layer collection.
+     * @returns An array containing only the regular layers from the current GeoView layer collection.
      */
     getGeoviewLayersRegulars(): AbstractGVLayer[];
     /**
      * Gets all GeoView layers that are group layers.
      * This method filters the list returned by `getGeoviewLayers()` and
      * returns only the layers that are instances of `GVGroupLayer`.
-     * @returns {GVGroupLayer[]} An array containing only the group layers
-     *   from the current GeoView layer collection.
+     * @returns An array containing only the group layers from the current GeoView layer collection.
      */
     getGeoviewLayersGroups(): GVGroupLayer[];
     /**
      * Returns the GeoView instance associated to the layer path.
-     * @param {string} layerPath - The layer path
-     * @returns {AbstractBaseGVLayer} The new Geoview Layer
+     * @param layerPath - The layer path
+     * @returns The new Geoview Layer
      * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path.
      */
     getGeoviewLayer(layerPath: string): AbstractBaseGVLayer;
@@ -141,8 +143,8 @@ export declare class LayerApi {
      * Returns the AbstractGVLayer instance associated to the layer path.
      * This returns an actual AbstractGVLayer and throws a LayerWrongTypeError if the layerPath points to a GVGroupLayer object.
      * An AbstractGVLayer is essentially a layer that's not a group layer.
-     * @param {string} layerPath - The layer path
-     * @returns {AbstractGVLayer} The new Geoview Layer
+     * @param layerPath - The layer path
+     * @returns The new Geoview Layer
      * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path.
      * @throws {LayerWrongTypeError} When the layer is of wrong type at the given layer path.
      */
@@ -151,61 +153,64 @@ export declare class LayerApi {
      * Returns the GeoView Layer instance associated to the layer path.
      * This returns an actual AbstractGVLayer (or undefined) and throws a LayerWrongTypeError if the layerPath points to a GVGroupLayer object.
      * An AbstractGVLayer is essentially a layer that's not a group layer.
-     * @param {string} layerPath - The layer path
-     * @returns {AbstractGVLayer | undefined} The AbstractGVLayer or undefined when not found
+     * @param layerPath - The layer path
+     * @returns The AbstractGVLayer or undefined when not found
      * @throws {LayerWrongTypeError} When the layer is of wrong type at the given layer path.
      */
     getGeoviewLayerRegularIfExists(layerPath: string): AbstractGVLayer | undefined;
     /**
      * Returns the GeoView Layer instance associated to the layer path.
-     * @param {string} layerPath - The layer path
-     * @returns {AbstractBaseGVLayer | undefined} The AbstractBaseGVLayer or undefined when not found
+     * @param layerPath - The layer path
+     * @returns The AbstractBaseGVLayer or undefined when not found
      */
     getGeoviewLayerIfExists(layerPath: string): AbstractBaseGVLayer | undefined;
     /**
      * Returns the OpenLayer instance associated with the layer path.
-     * @param {string} layerPath - The layer path to the layer's configuration.
-     * @returns {BaseLayer} Returns the geoview instance associated to the layer path.
+     * @param layerPath - The layer path to the layer's configuration.
+     * @returns Returns the geoview instance associated to the layer path.
      * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path.
      */
     getOLLayer(layerPath: string): BaseLayer;
     /**
      * Returns the OpenLayer instance associated with the layer path.
-     * @param {string} layerPath - The layer path to the layer's configuration.
-     * @returns {BaseLayer | undefined} Returns the geoview instance associated to the layer path.
+     * @param layerPath - The layer path to the layer's configuration.
+     * @returns Returns the geoview instance associated to the layer path.
      */
     getOLLayerIfExists(layerPath: string): BaseLayer | undefined;
     /**
      * Asynchronously returns the OpenLayer layer associated to a specific layer path.
      * This function waits the timeout period before abandonning (or uses the default timeout when not provided).
      * Note this function uses the 'Async' suffix to differentiate it from 'getOLLayer'.
-     * @param {string} layerPath - The layer path to the layer's configuration.
-     * @param {number} timeout - Optionally indicate the timeout after which time to abandon the promise
-     * @param {number} checkFrequency - Optionally indicate the frequency at which to check for the condition on the layerabstract
-     * @returns {Promise<BaseLayer>} Returns the OpenLayer layer associated to the layer path.
+     * @param layerPath - The layer path to the layer's configuration.
+     * @param timeout - Optionally indicate the timeout after which time to abandon the promise
+     * @param checkFrequency - Optionally indicate the frequency at which to check for the condition on the layerabstract
+     * @returns Returns a Promise of an OpenLayer layer associated to the layer path.
      */
     getOLLayerAsync(layerPath: string, timeout?: number, checkFrequency?: number): Promise<BaseLayer>;
     /**
      * Load layers that was passed in with the map config
-     * @param {MapConfigLayerEntry[]} mapConfigLayerEntries - An optional array containing layers passed within the map config
-     * @returns {Promise<void>}
+     * @param mapConfigLayerEntries - An optional array containing layers passed within the map config
+     * @returns A Promise resolving when everything is done
      */
     loadListOfGeoviewLayer(mapConfigLayerEntries: MapConfigLayerEntry[]): Promise<void>;
     /**
      * Adds a Geoview Layer by GeoCore UUID.
-     * @param {string} uuid - The GeoCore UUID to add to the map
-     * @param {string} layerEntryConfig - The optional layer configuration
-     * @returns {Promise<GeoViewLayerAddedResult | undefined>} A promise which resolves when done adding
+     * @param uuid - The GeoCore UUID to add to the map
+     * @param layerEntryConfig - The optional layer configuration
+     * @returns A Promise which resolves when done adding
      */
     addGeoviewLayerByGeoCoreUUID(uuid: string, layerEntryConfig?: string): Promise<GeoViewLayerAddedResult | undefined>;
     /**
-     * Adds a layer to the map. This is the main method to add a GeoView Layer on the map.
-     * It handles all the processing, including the validations, and makes sure to inform the layer sets about the layer.
-     * @param {TypeGeoviewLayerConfig} geoviewLayerConfig - The geoview layer configuration to add.
-     * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
-     * @returns {GeoViewLayerAddedResult} The result of the addition of the geoview layer.
+     * Adds a layer to the map.
+     *
+     * This is the main method to add a GeoView Layer on the map. It handles all the processing, including the validations,
+     * and makes sure to inform the layer sets about the layer. The result contains the instanciated GeoViewLayer along
+     * with a promise that will resolve when the layer will be officially on the map.
+     *
+     * @param geoviewLayerConfig - The geoview layer configuration to add.
+     * @param abortSignal - Optional {@link AbortSignal} used to cancel the layer creation process.
+     * @returns The result of the addition of the geoview layer.
      * @throws {LayerCreatedTwiceError} When there already is a layer on the map with the provided geoviewLayerId.
-     * The result contains the instanciated GeoViewLayer along with a promise that will resolve when the layer will be officially on the map.
      */
     addGeoviewLayer(geoviewLayerConfig: TypeGeoviewLayerConfig, abortSignal?: AbortSignal): GeoViewLayerAddedResult;
     /**
@@ -278,7 +283,7 @@ export declare class LayerApi {
      * @param {string[]} layerIds - IDs or layerPaths of layers to get max extents from.
      * @returns {Extent} The overall extent.
      */
-    getExtentOfMultipleLayers(layerIds?: string[]): Extent;
+    getExtentOfMultipleLayers(layerIds?: string[]): Promise<Extent | undefined>;
     /**
      * Loops through all geoview layers and refresh their respective source.
      * Use this function on projection change or other viewer modification who may affect rendering.
@@ -429,17 +434,6 @@ export declare class LayerApi {
      * @throws {LayerNotQueryableError} When the layer configuration is not queryable.
      */
     replaceFeatureOutfields(layerPath: string, types: TypeOutfieldsType[], fieldNames: string[], fieldAliases?: string[]): void;
-    /**
-     * Calculates an union of all the layer extents based on the given layerPath and its possible children.
-     * @param {string} layerPath - The layer path
-     * @returns {Extent | undefined} An extent representing an union of all layer extents associated with the layer path
-     */
-    calculateBounds(layerPath: string): Extent | undefined;
-    /**
-     * Recalculates the bounds for all layers and updates the store.
-     * @returns {void}
-     */
-    recalculateBoundsAll(): void;
     /**
      * Show the errors that happened during layers loading.
      * If it's an aggregate error, log and show all of them.

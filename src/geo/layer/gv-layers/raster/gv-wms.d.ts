@@ -11,6 +11,7 @@ import type { OgcWfsLayerEntryConfig } from '@/api/config/validation-classes/vec
 import type { TypeFeatureInfoResult } from '@/api/types/map-schema-types';
 import { AbstractGVRaster } from '@/geo/layer/gv-layers/raster/abstract-gv-raster';
 import type { EsriImageLayerEntryConfig } from '@/api/config/validation-classes/raster-validation-classes/esri-image-layer-entry-config';
+import type { GeoViewError } from '@/core/exceptions/geoview-exceptions';
 import type { LayerFilters } from '@/geo/layer/gv-layers/layer-filters';
 /**
  * Manages a WMS layer.
@@ -55,7 +56,7 @@ export declare class GVWMS extends AbstractGVRaster {
      * @override
      * @protected
      */
-    protected onImageLoadError(event: Event): void;
+    protected onImageLoadError(error: GeoViewError): void;
     /**
      * Deciphers an image load error event and returns a corresponding
      * localized error message key.
@@ -67,12 +68,12 @@ export declare class GVWMS extends AbstractGVRaster {
      * - An empty image response (zero width or height).
      * If none of the specific conditions are met, a generic image load error
      * message key is returned.
-     * @param {Event} event - The image load error event triggered by the image source.
-     * @returns {string} A translation key representing the detected error condition.
+     * @param event - The image load error event triggered by the image source.
+     * @returns A GeoView Error representing the error.
      * @override
      * @protected
      */
-    protected onImageLoadErrorDecipherError(event: Event): string;
+    protected onImageLoadErrorDecipherError(event: Event): GeoViewError;
     /**
      * Overrides the return of feature information at a given coordinate.
      * @param {OLMap} map - The Map where to get Feature Info At Coordinate from.
@@ -121,12 +122,11 @@ export declare class GVWMS extends AbstractGVRaster {
     onFetchLegend(): Promise<TypeLegend | null>;
     /**
      * Overrides the way to get the bounds for this layer type.
-     * @param {OLProjection} projection - The projection to get the bounds into.
-     * @param {number} stops - The number of stops to use to generate the extent.
-     * @returns {Extent | undefined} The layer bounding box.
-     * @override
+     * @param projection - The projection to get the bounds into.
+     * @param stops - The number of stops to use to generate the extent.
+     * @returns A promise of layer bounding box.
      */
-    onGetBounds(projection: OLProjection, stops: number): Extent | undefined;
+    onGetBounds(projection: OLProjection, stops: number): Promise<Extent | undefined>;
     /**
      * Sends a query to get feature and calculates an extent from them.
      * @param {number[] | string[]} objectIds - The IDs of the features to calculate the extent from.
@@ -243,7 +243,7 @@ export type CRSOverride = {
  * Define an event for the delegate
  */
 export type ImageLoadRescueEvent = {
-    imageLoadErrorEvent: unknown;
+    imageLoadErrorEvent: Error;
 };
 /**
  * Define a delegate for the event handler function signature

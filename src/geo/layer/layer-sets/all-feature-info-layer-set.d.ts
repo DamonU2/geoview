@@ -17,10 +17,9 @@ export declare class AllFeatureInfoLayerSet extends AbstractLayerSet {
     resultSet: TypeAllFeatureInfoResultSet;
     /**
      * Overrides the behavior to apply when a feature-info-layer-set wants to check for condition to register a layer in its set.
-     * @param {AbstractBaseGVLayer} layer - The layer
-     * @returns {boolean} True when the layer should be registered to this all-feature-info-layer-set.
-     * @override
-     * @protected
+     *
+     * @param layer - The layer
+     * @returns True when the layer should be registered to this all-feature-info-layer-set.
      */
     protected onRegisterLayerCheck(layer: AbstractBaseGVLayer): boolean;
     /**

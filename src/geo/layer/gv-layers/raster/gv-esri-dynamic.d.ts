@@ -41,12 +41,11 @@ export declare class GVEsriDynamic extends AbstractGVRaster {
     onSetStyleAccordingToLegend(legend: TypeLegend): void;
     /**
      * Overrides the way to get the bounds for this layer type.
-     * @param {OLProjection} projection - The projection to get the bounds into.
-     * @param {number} stops - The number of stops to use to generate the extent.
-     * @returns {Extent | undefined} The layer bounding box.
-     * @override
+     * @param projection - The projection to get the bounds into.
+     * @param stops - The number of stops to use to generate the extent.
+     * @returns A promise of layer bounding box.
      */
-    onGetBounds(projection: OLProjection, stops: number): Extent | undefined;
+    onGetBounds(projection: OLProjection, stops: number): Promise<Extent | undefined>;
     /**
      * Sends a query to get ESRI Dynamic feature geometries and calculates an extent from them.
      * @param {number[] | string[]} objectIds - The IDs of the features to calculate the extent from.

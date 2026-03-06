@@ -1,8 +1,12 @@
+import type { Projection as OLProjection } from 'ol/proj';
 import type { Extent } from '@/api/types/map-schema-types';
 import type { TemporalMode, TimeDimension, TypeDisplayDateFormat } from '@/core/utils/date-mgt';
-import type { TypeLegendLayer, TypeLegendLayerItem, TypeLegendItem } from '@/core/components/layers/types';
-import type { ILayerState, TypeLegend, TypeLegendResultSetEntry } from '@/core/stores/store-interface-and-intial-values/layer-state';
+import type { TypeLayerStatus } from '@/api/types/layer-schema-types';
+import type { TypeLegendLayer, TypeLegendItem } from '@/core/components/layers/types';
+import type { ILayerState, LegendQueryStatus, TypeLegend, TypeLegendResultSetEntry } from '@/core/stores/store-interface-and-intial-values/layer-state';
 import { AbstractEventProcessor } from '@/api/event-processors/abstract-event-processor';
+import type { AbstractBaseGVLayer } from '@/geo/layer/gv-layers/abstract-base-layer';
+import type { GVGroupLayer } from '@/geo/layer/gv-layers/gv-group-layer';
 export declare class LegendEventProcessor extends AbstractEventProcessor {
     #private;
     /**
@@ -13,7 +17,7 @@ export declare class LegendEventProcessor extends AbstractEventProcessor {
      * @protected
      */
     protected static getLayerState(mapId: string): ILayerState;
-    static setSelectedLayersTabLayer(mapId: string, layerPath: string): void;
+    static setSelectedLayersTabLayerInStore(mapId: string, layerPath: string): void;
     static reorderLegendLayers(mapId: string): void;
     /**
      * Gets a specific state.
@@ -47,41 +51,65 @@ export declare class LegendEventProcessor extends AbstractEventProcessor {
      */
     static getLayerBounds(mapId: string, layerPath: string): Extent | undefined;
     /**
-     * Calculates the geographic bounds of a layer identified by its layer path
-     * and stores the result in the layer's state within the legend.
-     * This method:
-     *  1. Calls the MapViewer API to compute the layer's bounds.
-     *  2. Validates that the computed bounds are finite.
-     *  3. Locates the corresponding legend layer by its path.
-     *  4. Updates the layer's `bounds` property.
-     *  5. Persists the updated legend state.
-     * @param {string} mapId - Identifier of the map instance containing the layer.
-     * @param {string} layerPath - The unique hierarchical path of the layer whose
-     *   bounds should be calculated and stored.
-     * @static
-     */
-    static calculateLayerBoundsAndSaveToStore(mapId: string, layerPath: string): void;
-    /**
-     * Retrieves the projection code for a specific layer.
+     * Retrieves the service (metadata) projection code for a specific raster layer.
      *
-     * @param {string} mapId - The unique identifier of the map instance.
-     * @param {string} layerPath - The path to the layer.
-     * @returns {string | undefined} - The projection code of the layer, or `undefined` if not available.
+     * @param mapId - The unique identifier of the map instance.
+     * @param layerPath - The fully qualified path of the layer.
+     * @returns The projection code (e.g., "EPSG:4326") defined in the layer's service metadata,
+     *          or `undefined` if:
+     *          - the layer does not exist,
+     *          - the layer is not a raster layer,
+     *          - or the metadata projection is not available.
      * @description
-     * This method fetches the Geoview layer for the specified layer path and checks if it has a `getMetadataProjection` method.
-     * If the method exists, it retrieves the projection object and returns its code using the `getCode` method.
-     * If the projection or its code is not available, the method returns `undefined`.
+     * This method looks up the GeoView layer associated with the provided `layerPath`.
+     * If the layer exists and is an instance of `AbstractGVRaster`, it retrieves the
+     * projection defined in the service metadata via `getMetadataProjection()`.
+     * The projection code is then returned using `projection.getCode()`.
      * @static
      */
     static getLayerServiceProjection(mapId: string, layerPath: string): string | undefined;
     /**
-     * Sets the layer bounds for a layer path
+     * Triggers asynchronous bounds recalculation and propagation for a layer
+     * and its parent hierarchy without awaiting completion.
+     *
+     * @param mapId - The unique identifier of the map instance.
+     * @param gvLayer - The layer from which bounds recalculation should begin.
+     * @param allGroups - The collection of root-level group layers used to
+     * resolve parent relationships.
+     * @description
+     * This method invokes {@link setLayerBoundsForLayerAndParentsInStore} using a
+     * fire-and-forget pattern. The returned promise is intentionally not awaited,
+     * allowing bounds recalculation and propagation to occur in the background.
+     * @remarks
+     * This method is intended for non-blocking workflows (e.g., UI updates)
+     * where bounds propagation should not delay execution. Callers requiring
+     * completion guarantees should use the awaited version instead.
+     */
+    static setLayerBoundsForLayerAndParentsAndForgetInStore(mapId: string, gvLayer: AbstractBaseGVLayer, allGroups: GVGroupLayer[]): void;
+    /**
+     * Recalculates and stores bounds for a layer and all of its parent groups.
+     *
+     * @param mapId - The unique identifier of the map instance.
+     * @param gvLayer - The starting layer for which bounds should be computed.
+     * @param allGroups - The collection of root-level group layers used to
+     *   resolve parent relationships.
+     * @returns A promise that resolves once bounds have been computed and
+     * propagated up the entire parent hierarchy.
+     * @description
+     * This method recalculates the bounds for the provided layer and then
+     * iteratively walks up the layer hierarchy, recalculating and storing
+     * bounds for each parent group layer.
+     */
+    static setLayerBoundsForLayerAndParentsInStore(mapId: string, gvLayer: AbstractBaseGVLayer, allGroups: GVGroupLayer[]): Promise<void>;
+    /**
+     * Sets the layer bounds for a layer path.
+     *
      * @param {string} mapId - The map id
      * @param {string} layerPath - The layer path
      * @param {Extent | undefined} bounds - The extent of the layer at the given path
      * @static
      */
-    static setLayerBounds(mapId: string, layerPath: string, bounds: Extent | undefined): void;
+    static setLayerBoundsInStore(mapId: string, layerPath: string, bounds: Extent | undefined, mapProjection: OLProjection, stops: number): void;
     /**
      * Sets the layer queryable.
      * @param {string} mapId - The ID of the map.
@@ -184,7 +212,36 @@ export declare class LegendEventProcessor extends AbstractEventProcessor {
      * @param {boolean} areLoading - Indicator if any layer is currently loading
      * @static
      */
-    static setLayersAreLoading(mapId: string, areLoading: boolean): void;
+    static setLayersAreLoadingInStore(mapId: string, areLoading: boolean): void;
+    /**
+     * Updates the status of a specific layer in the legend store.
+     * This method:
+     * - Locates the layer using the provided `layerPath`.
+     * - Updates its `layerStatus` value.
+     * - Persists the modified legend layer collection back into the store.
+     * If the layer cannot be found, no changes are applied.
+     * @param mapId - The unique identifier of the map instance containing the layer.
+     * @param layerPath - The fully qualified path used to identify the target layer.
+     * @param layerStatus - The new status to assign to the layer.
+     */
+    static setLayerStatusInStore(mapId: string, layerPath: string, layerStatus: TypeLayerStatus): void;
+    /**
+     * Updates the legend query status and associated legend data for a specific layer
+     * in the store.
+     * This method:
+     * - Locates the target layer using its `layerPath`.
+     * - Updates the layer's `legendQueryStatus`.
+     * - Stores the legend `styleConfig` if provided.
+     * - Regenerates the layer's `icons` and flattened `items` when legend `type` is available.
+     * - Persists the updated legend layers back into the store.
+     * If the layer cannot be found, no updates are performed.
+     * @param mapId - The unique identifier of the map instance whose legend state is being updated.
+     * @param layerPath - The fully qualified path identifying the target layer.
+     * @param legendQueryStatus - The new legend query status to assign to the layer.
+     * @param data - The legend definition returned from the query,
+     * which may include style configuration and rendering information.
+     */
+    static setLegendQueryStatusInStore(mapId: string, layerPath: string, legendQueryStatus: LegendQueryStatus, data: TypeLegend | undefined): void;
     /**
      * Gets the extent of a feature or group of features
      * @param {string} mapId - The map identifier
@@ -214,18 +271,12 @@ export declare class LegendEventProcessor extends AbstractEventProcessor {
      */
     static getLayerTimeDimension(mapId: string, layerPath: string): TimeDimension | undefined;
     /**
-     * Gets the legend icon images for a given layer legend
-     * @param {TypeLegend | null | undefined} layerLegend - The legend of the layer
-     * @returns {TypeLegendLayerItem[] | undefined} The legend icon images details
-     * @static
-     */
-    static getLayerIconImage(layerLegend: TypeLegend | null | undefined): TypeLegendLayerItem[] | undefined;
-    /**
      * This method propagates the information stored in the legend layer set to the store.
      *
      * @param {string} mapId - The map identifier.
      * @param {TypeLegendResultSetEntry} legendResultSetEntry - The legend result set that triggered the propagation.
      * @static
+     * @deprecated This function should be replaced, it's called too often and does too many things, see TODO.
      */
     static propagateLegendToStore(mapId: string, legendResultSetEntry: TypeLegendResultSetEntry): void;
     /**
@@ -345,6 +396,14 @@ export declare class LegendEventProcessor extends AbstractEventProcessor {
      * @static
      */
     static setAllItemsVisibility(mapId: string, layerPath: string, visibility: boolean, waitForRender: boolean): Promise<void>;
+    /**
+     * Sets the opacity of the layer and its children in the store.
+     * @param {string} mapId - The ID of the map.
+     * @param {string} layerPath - The layer path of the layer to change.
+     * @param {string | undefined} layerName - The layer name to set.
+     * @static
+     */
+    static setLayerNameInStore(mapId: string, layerPath: string, layerName: string | undefined): void;
     /**
      * Sets the opacity of the layer and its children in the store.
      * @param {string} mapId - The ID of the map.

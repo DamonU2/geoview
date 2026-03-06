@@ -206,7 +206,7 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
     static getLegendCollapsibleLayers(mapId: string): TypeOrderedLayerInfo[];
     static getAllLegendLayersCollapsed(mapId: string): boolean;
     static getMapLegendCollapsedFromOrderedLayerInfo(mapId: string, layerPath: string): boolean;
-    static getMapVisibilityFromOrderedLayerInfo(mapId: string, layerPath: string): boolean;
+    static getMapVisibilityFromOrderedLayerInfo(mapId: string, layerPath: string): boolean | undefined;
     /**
      * Checks if any parent of a layer is hidden.
      * @param {string} mapId - The ID of the map.
@@ -221,9 +221,9 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
     /**
      * Adds a layer to the map. This methods redirects to the method on the layer api.
      * @param {string} mapId - The map id.
-     * @param {TypeGeoviewLayerConfig} geoviewLayerConfig - The geoview layer configuration to add.
-     * @param {AbortSignal?} [abortSignal] - Abort signal to handle cancelling of the process.
-     * @returns {GeoViewLayerAddedResult} The result of the addition of the geoview layer.
+     * @param geoviewLayerConfig - The geoview layer configuration to add.
+     * @param abortSignal - Optional {@link AbortSignal} used to cancel the layer creation process.
+     * @returns The result of the addition of the geoview layer.
      * @throws {LayerCreatedTwiceError} When there already is a layer on the map with the provided geoviewLayerId.
      * The result contains the instanciated GeoViewLayer along with a promise that will resolve when the layer will be officially on the map.
      * @static
@@ -296,6 +296,14 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
      * @static
      */
     static setAllMapLayerVisibility(mapId: string, newVisibility: boolean): void;
+    /**
+     * Sets the visibility of the Geoview basemap layer.
+     * @param {string} mapId - The identifier of the map whose basemap layer will be updated.
+     * @param {boolean} newVisibility - The visibility state to apply to the basemap layer (`true` to show, `false` to hide).
+     * @returns {void}
+     * @static
+     */
+    static setVisibilityOfGeoviewBasemapLayers(mapId: string, newVisibility: boolean): void;
     static reorderLayer(mapId: string, layerPath: string, move: number): void;
     /**
      * Replace a layer in the orderedLayerInfo array.
@@ -384,7 +392,6 @@ export declare class MapEventProcessor extends AbstractEventProcessor {
      * @param {string} mapId - ID of map to zoom on
      * @param {string} layerPath - Path of layer to zoom to.
      * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path.
-     * @returns {void}
      * @static
      */
     static zoomToLayerVisibleScale(mapId: string, layerPath: string): void;

@@ -15,6 +15,7 @@ import type { AbstractBaseLayerEntryConfig } from '@/api/config/validation-class
 import type { EventDelegateBase } from '@/api/events/event-helper';
 import type { TypeLayerStyleConfig, TypeFeatureInfoEntry, codedValueType, rangeDomainType, TypeLocation, QueryType, TypeStyleGeometry, TypeOutfieldsType, TypeOutfields, TypeLayerStyleSettings, TypeFeatureInfoResult } from '@/api/types/map-schema-types';
 import { type TypeLayerMetadataFields, type TypeGeoviewLayerType } from '@/api/types/layer-schema-types';
+import type { GeoViewError } from '@/core/exceptions/geoview-exceptions';
 import type { TypeLegendItem } from '@/core/components/layers/types';
 import type { TypeLegend } from '@/core/stores/store-interface-and-intial-values/layer-state';
 import { AbstractBaseGVLayer } from '@/geo/layer/gv-layers/abstract-base-layer';
@@ -40,13 +41,6 @@ export declare abstract class AbstractGVLayer extends AbstractBaseGVLayer {
      * @param {AbstractBaseLayerEntryConfig} layerConfig - The layer configuration.
      */
     protected constructor(olSource: Source, layerConfig: AbstractBaseLayerEntryConfig);
-    /**
-     * Must override method to return the bounds of a layer in the given projection.
-     * @param {OLProjection} projection - The projection to get the bounds into.
-     * @param {number} stops - The number of stops to use to generate the extent.
-     * @returns {Extent} The layer bounding box.
-     */
-    abstract onGetBounds(projection: OLProjection, stops: number): Extent | undefined;
     /**
      * Overrides the parent method to return a more specific OpenLayers layer type (covariant return).
      * @override
@@ -89,40 +83,36 @@ export declare abstract class AbstractGVLayer extends AbstractBaseGVLayer {
     onFetchLegend(): Promise<TypeLegend | null>;
     /**
      * Overridable method called when the layer has started to load itself on the map.
-     * @param {Event} event - The event which is being triggered.
-     * @returns {void}
      */
-    protected onLoading(event: Event): void;
+    protected onLoading(): void;
     /**
      * Overridable method called when the layer has been loaded correctly.
-     * @param {Event} event - The event which is being triggered.
      * @returns {void}
      */
-    protected onLoaded(event: Event): void;
+    protected onLoaded(): void;
     /**
      * Overridable method called when the layer is in error and couldn't be loaded correctly.
-     * @param {Event} event - The event which is being triggered.
-     * @returns {void}
+     * @param error - The error which is being raised.
      */
-    protected onError(event: Event): void;
+    protected onError(error: GeoViewError): void;
     /**
      * Overridable method called when the layer image is in error and couldn't be loaded correctly.
-     * @param {Event} event - The event which is being triggered.
+     * @param error - The error which is being raised.
      * @returns {void}
      */
-    protected onImageLoadError(event: Event): void;
+    protected onImageLoadError(error: GeoViewError): void;
+    /**
+     * Overridable method called to get a more specific error code for all errors.
+     * @param event - The event which is being triggered.
+     * @returns A LayerFailedToLoadError error.
+     */
+    protected onErrorDecipherError(event: Event): GeoViewError;
     /**
      * Overridable method called to get a more specific error code for image load errors.
-     * @param {Event} event - The event which is being triggered.
-     * @returns {string} The error code to use for the error message to the user, default is 'layers.errorImageLoad'.
+     * @param event - The event which is being triggered.
+     * @returns A LayerImageFailedToLoadError error.
      */
-    protected onImageLoadErrorDecipherError(event: Event): string;
-    /**
-     * Method called when the layer source changes to check for errors.
-     * @param {Event} event - The event which is being triggered.
-     * @returns {void}
-     */
-    protected onSourceChange(event: Event): void;
+    protected onImageLoadErrorDecipherError(event: Event): GeoViewError;
     /**
      * Overridable function to get all feature information for all the features stored in the layer.
      * @param {OLMap} map - The Map so that we can grab the resolution/projection we want to get features on.
@@ -267,65 +257,58 @@ export declare abstract class AbstractGVLayer extends AbstractBaseGVLayer {
      */
     getFilterFromStyle(): string | undefined;
     /**
-     * Gets the bounds for the layer in the given projection.
-     * @param {OLProjection} projection - The projection to get the bounds into.
-     * @param {number} stops - The number of stops to use to generate the extent.
-     * @returns {Extent | undefined} The layer bounding box.
-     */
-    getBounds(projection: OLProjection, stops: number): Extent | undefined;
-    /**
      * Gets the temporal dimension that is associated to the layer.
-     * @returns {TimeDimension | undefined} The temporal dimension associated to the layer or undefined.
+     * @returns The temporal dimension associated to the layer or undefined.
      */
     getTimeDimension(): TimeDimension | undefined;
     /**
      * Gets the flag if layer use its time dimension, this can be use to exclude layers from time function like time slider
-     * @returns {boolean} The flag indicating if the layer should be included in time awareness functions such as the Time Slider. True by default.
+     * @returns The flag indicating if the layer should be included in time awareness functions such as the Time Slider. True by default.
      */
     getIsTimeAware(): boolean;
     /**
      * Gets the in visible range value
-     * @param {number | undefined} currentZoom - The map current zoom
-     * @returns {boolean} true if the layer is in visible range
+     * @param currentZoom - Optional. The map current zoom
+     * @returns True if the layer is in visible range
      */
     getInVisibleRange(currentZoom: number | undefined): boolean;
     /**
      * Indicates if the layer is currently queryable.
-     * @returns {boolean} The currently queryable flag.
+     * @returns The currently queryable flag.
      */
     getQueryable(): boolean;
     /**
      * Sets if the layer is currently queryable.
-     * @param {boolean} queryable - The queryable value.
+     * @param queryable - The queryable value.
      */
     setQueryable(queryable: boolean): void;
     /**
      * Indicates if the layer is currently hoverable.
-     * @returns {boolean} The currently hoverable flag.
+     * @returns The currently hoverable flag.
      */
     getHoverable(): boolean;
     /**
      * Sets if the layer is currently hoverable.
-     * @param {boolean} hoverable - The hoverable value.
+     * @param hoverable - The hoverable value.
      */
     setHoverable(hoverable: boolean): void;
     /**
      * Gets the extent of an array of features.
-     * @param {number[] | string[]} objectIds - The IDs of the features to calculate the extent from.
-     * @param {OLProjection} outProjection - The output projection for the extent.
-     * @param {string} outfield - ID field to return for services that require a value in outfields.
-     * @returns {Promise<Extent>} The extent of the features, if available
+     * @param objectIds - The IDs of the features to calculate the extent from.
+     * @param outProjection - The output projection for the extent.
+     * @param outfield - Optional. ID field to return for services that require a value in outfields.
+     * @returns The extent of the features, if available
      */
     getExtentFromFeatures(objectIds: number[] | string[], outProjection: OLProjection, outfield?: string): Promise<Extent>;
     /**
      * Gets the field type for the given field name.
-     * @param {string} fieldName  - The field name
-     * @returns {TypeOutfieldsType} The field type.
+     * @param fieldName - The field name
+     * @returns The field type.
      */
     getFieldType(fieldName: string): TypeOutfieldsType;
     /**
      * Gets the layer filters associated to the layer.
-     * @returns {LayerFilters} The filter associated to the layer or undefined.
+     * @returns The filter associated to the layer or undefined.
      */
     getLayerFilters(): LayerFilters;
     /**
@@ -424,7 +407,7 @@ export declare abstract class AbstractGVLayer extends AbstractBaseGVLayer {
      * @fires LayerMessageEvent
      * @protected
      */
-    protected emitMessage(messageKey: string, messageParams: string[], messageType?: SnackbarType, notification?: boolean): void;
+    protected emitMessage(messageKey: string, messageParams: unknown[] | undefined, messageType?: SnackbarType, notification?: boolean): void;
     /**
      * Registers a legend querying event handler.
      * @param {LegendQueryingDelegate} callback - The callback to be executed whenever the event is emitted
@@ -659,7 +642,7 @@ export type LayerDelegate = EventDelegateBase<AbstractGVLayer, undefined, void>;
  * Define an event for the delegate
  */
 export type LayerErrorEvent = {
-    error: unknown;
+    error: GeoViewError;
 };
 /**
  * Define a delegate for the event handler function signature
@@ -670,7 +653,7 @@ export type LayerErrorDelegate = EventDelegateBase<AbstractGVLayer, LayerErrorEv
  */
 export type LayerMessageEvent = {
     messageKey: string;
-    messageParams: string[];
+    messageParams: unknown[] | undefined;
     messageType: SnackbarType;
     notification: boolean;
 };
