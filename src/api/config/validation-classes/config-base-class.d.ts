@@ -525,6 +525,7 @@ export type TypeLayerEntryShell = {
     layerId?: number | string;
     layerName?: string;
     tileGrid?: TypeTileGrid;
+    tileMatrixSet?: string;
     subLayers?: TypeLayerEntryShell[];
     source?: TypeLayerEntryShellSource;
     geoviewLayerConfig?: TypeGeoviewLayerConfig;

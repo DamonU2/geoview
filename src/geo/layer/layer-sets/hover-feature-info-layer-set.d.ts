@@ -32,10 +32,8 @@ export declare class HoverFeatureInfoLayerSet extends AbstractLayerSet {
     protected onRegisterLayerCheck(layer: AbstractBaseGVLayer): boolean;
     /**
      * Overrides the behavior to apply when a hover-feature-info-layer-set wants to register a layer in its set.
-     * @param {AbstractBaseGVLayer} layer - The layer
-     * @returns {void}
-     * @override
-     * @protected
+     *
+     * @param layer - The layer
      */
     protected onRegisterLayer(layer: AbstractBaseGVLayer): void;
     /**

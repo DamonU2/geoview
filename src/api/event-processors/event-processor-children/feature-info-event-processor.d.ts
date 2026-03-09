@@ -1,4 +1,5 @@
 import type { TypeMapMouseInfo } from '@/geo/map/map-viewer';
+import type { SubscriptionDelegate } from '@/api/event-processors/abstract-event-processor';
 import { AbstractEventProcessor } from '@/api/event-processors/abstract-event-processor';
 import type { TypeFeatureInfoEntry } from '@/api/types/map-schema-types';
 import type { IFeatureInfoState, TypeFeatureInfoResultSetEntry } from '@/core/stores/store-interface-and-intial-values/feature-info-state';
@@ -11,12 +12,10 @@ export declare class FeatureInfoEventProcessor extends AbstractEventProcessor {
     static TIME_DELAY_BETWEEN_PROPAGATION_FOR_BATCH: number;
     /**
      * Overrides initialization of the GeoChart Event Processor
-     * @param {GeoviewStoreType} store - The store associated with the GeoChart Event Processor
+     * @param store - The store associated with the GeoChart Event Processor
      * @returns An array of the subscriptions callbacks which were created
-     * @override
-     * @protected
      */
-    protected onInitialize(store: GeoviewStoreType): Array<() => void> | void;
+    protected onInitialize(store: GeoviewStoreType): SubscriptionDelegate[];
     /**
      * Shortcut to get the Feature Info state for a given map id
      * @param {string} mapId - The mapId

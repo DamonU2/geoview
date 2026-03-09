@@ -2,8 +2,7 @@ import type { Coordinate } from 'ol/coordinate';
 import type { EventDelegateBase } from '@/api/events/event-helper';
 import type { QueryType, TypeResultSet } from '@/api/types/map-schema-types';
 import type { AbstractBaseGVLayer } from '@/geo/layer/gv-layers/abstract-base-layer';
-import type { PropagationType } from '@/geo/layer/layer-sets/abstract-layer-set';
-import { AbstractLayerSet } from '@/geo/layer/layer-sets/abstract-layer-set';
+import { AbstractLayerSet, type PropagationType } from '@/geo/layer/layer-sets/abstract-layer-set';
 import type { LayerApi } from '@/geo/layer/layer';
 import type { TypeFeatureInfoResultSet, TypeFeatureInfoResultSetEntry } from '@/core/stores/store-interface-and-intial-values/feature-info-state';
 /**

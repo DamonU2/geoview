@@ -1,6 +1,5 @@
 import type { EventDelegateBase } from '@/api/events/event-helper';
 import type { QueryType, TypeFeatureInfoEntry, TypeFeatureInfoResult, TypeLocation, TypeResultSet, TypeResultSetEntry } from '@/api/types/map-schema-types';
-import type { TypeLayerStatus } from '@/api/types/layer-schema-types';
 import type { ConfigBaseClass } from '@/api/config/validation-classes/config-base-class';
 import type { AbstractBaseLayerEntryConfig } from '@/api/config/validation-classes/abstract-base-layer-entry-config';
 import type { LayerApi } from '@/geo/layer/layer';
@@ -41,19 +40,26 @@ export declare abstract class AbstractLayerSet {
     /**
      * An overridable registration condition function for a layer-set to check if the registration
      * should happen for a specific geoview layer and layer path.
-     * @param {ConfigBaseClass} layerConfig - The layer config
-     * @returns {boolean} True if the layer config should be registered, false otherwise
-     * @protected
+     *
+     * @param layerConfig - The layer config
+     * @returns True if the layer config should be registered, false otherwise
      */
     protected onRegisterLayerConfigCheck(layerConfig: ConfigBaseClass): boolean;
     /**
      * An overridable registration function for a layer-set that the registration process will use to
      * create a new entry in the layer set for a specific geoview layer and layer path.
-     * @param {ConfigBaseClass} layerConfig - The layer config
+     *
+     * @param layerConfig - The layer config
+     */
+    protected onRegisterLayerConfig(layerConfig: ConfigBaseClass): void;
+    /**
+     * An overridable unregistration function for a layer-set that the registration process will use to
+     * unregister a specific layer config.
+     * @param {ConfigBaseClass | undefined} layerConfig - The layer config
      * @returns {void}
      * @protected
      */
-    protected onRegisterLayerConfig(layerConfig: ConfigBaseClass): void;
+    protected onUnregisterLayerConfig(layerConfig: ConfigBaseClass | undefined): void;
     /**
      * An overridable registration condition function for a layer-set to check if the registration
      * should happen for a specific geoview layer and layer path. By default, a layer-set always registers layers except when they are group layers.
@@ -70,38 +76,6 @@ export declare abstract class AbstractLayerSet {
      * @protected
      */
     protected onRegisterLayer(layer: AbstractBaseGVLayer): void;
-    /**
-     * An overridable unregistration function for a layer-set that the registration process will use to
-     * unregister a specific layer config.
-     * @param {ConfigBaseClass | undefined} layerConfig - The layer config
-     * @returns {void}
-     * @protected
-     */
-    protected onUnregisterLayerConfig(layerConfig: ConfigBaseClass | undefined): void;
-    /**
-     * An overridable unregistration function for a layer-set that the registration process will use to
-     * unregister a specific geoview layer.
-     * @param {AbstractBaseGVLayer | undefined} layer - The layer
-     * @returns {void}
-     * @protected
-     */
-    protected onUnregisterLayer(layer: AbstractBaseGVLayer | undefined): void;
-    /**
-     * An overridable function for a layer-set to process a layer status changed event.
-     * @param {ConfigBaseClass} layerConfig - The layer config
-     * @param {TypeLayerStatus} layerStatus - The new layer status
-     * @returns {void}
-     * @protected
-     */
-    protected onProcessLayerStatusChanged(layerConfig: ConfigBaseClass, layerStatus: TypeLayerStatus): void;
-    /**
-     * An overridable function for a layer-set to process a layer name change.
-     * @param {string} layerPath - The layer path being affected
-     * @param {string} name - The new layer name
-     * @returns {void}
-     * @protected
-     */
-    protected onProcessNameChanged(layerPath: string, name: string): void;
     /**
      * An overridable layer set updated function for a layer-set to indicate the layer set has been updated.
      * @param {string} layerPath - The layer path
