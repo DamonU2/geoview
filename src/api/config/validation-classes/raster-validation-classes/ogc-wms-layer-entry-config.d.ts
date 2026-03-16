@@ -15,31 +15,32 @@ export declare class OgcWmsLayerEntryConfig extends AbstractBaseLayerEntryConfig
     #private;
     /**
      * The class constructor.
-     * @param {OgcWmsLayerEntryConfigProps} layerConfig - The layer configuration we want to instanciate.
+     *
+     * @param layerConfig - The layer configuration we want to instanciate.
      */
     constructor(layerConfig: OgcWmsLayerEntryConfigProps);
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
-     * @returns {TypeWMSLayerConfig} The strongly-typed layer configuration specific to this layer.
-     * @override
+     *
+     * @returns The strongly-typed layer configuration specific to this layer.
      */
     getGeoviewLayerConfig(): TypeWMSLayerConfig;
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
-     * @returns {TypeSourceImageWmsInitialConfig} The strongly-typed source configuration specific to this layer entry config.
-     * @override
+     *
+     * @returns The strongly-typed source configuration specific to this layer entry config.
      */
     getSource(): TypeSourceImageWmsInitialConfig;
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
-     * @returns {TypeMetadataWMS | undefined} The strongly-typed layer configuration specific to this layer entry config.
-     * @override
+     *
+     * @returns The strongly-typed service metadata specific to this layer entry config.
      */
     getServiceMetadata(): TypeMetadataWMS | undefined;
     /**
      * Overrides the parent class's getter to provide a more specific return type (covariant return).
-     * @returns {TypeMetadataWMSCapabilityLayer | undefined} The strongly-typed layer metadata specific to this layer entry config.
-     * @override
+     *
+     * @returns The strongly-typed layer metadata specific to this layer entry config.
      */
     getLayerMetadata(): TypeMetadataWMSCapabilityLayer | undefined;
     /**
@@ -47,7 +48,8 @@ export declare class OgcWmsLayerEntryConfig extends AbstractBaseLayerEntryConfig
      * If attributions are not yet cached, this method attempts
      * to read them from the layer's metadata (via the `Attribution.Title` property)
      * and sets them accordingly. Once set, the attributions are cached in the layer.
-     * @returns {string[] | undefined} The list of layer attributions, or `undefined` if none are available.
+     *
+     * @returns The list of layer attributions, or `undefined` if none are available.
      */
     getAttributions(): string[] | undefined;
     /**

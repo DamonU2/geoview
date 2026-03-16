@@ -4,7 +4,7 @@ import type { TypeMapFeaturesConfig } from '@/core/types/global-types';
 import { type TypeGetStore, type TypeSetStore } from '@/core/stores/geoview-store';
 import type { TypeFeatureInfoEntryPartial, TypeLayerStyleConfig, TypeResultSet, TypeResultSetEntry } from '@/api/types/map-schema-types';
 import { type TemporalMode, type TimeDimension, type TimeIANA, type TypeDisplayDateFormat } from '@/core/utils/date-mgt';
-import type { TypeGeoviewLayerType, TypeLayerStatus } from '@/api/types/layer-schema-types';
+import type { TypeGeoviewLayerType, TypeLayerStatus, TypeMetadataEsriRasterFunctionInfos, TypeMosaicMethod, TypeMosaicOperation, TypeMosaicRule } from '@/api/types/layer-schema-types';
 import type { TypeVectorLayerStyles } from '@/geo/utils/renderer/geoview-renderer';
 type LayerActions = ILayerState['actions'];
 export interface ILayerState {
@@ -22,6 +22,11 @@ export interface ILayerState {
         queryLayerEsriDynamic: (layerPath: string, objectIDs: number[]) => Promise<TypeFeatureInfoEntryPartial[]>;
         getLayerDeleteInProgress: () => string;
         getLayerServiceProjection: (layerPath: string) => string | undefined;
+        getLayerRasterFunctionInfos: (layerPath: string) => TypeMetadataEsriRasterFunctionInfos[] | undefined;
+        getLayerRasterFunction: (layerPath: string) => string | undefined;
+        getLayerRasterFunctionPreviews: (layerPath: string) => Map<string, Promise<string>>;
+        getLayerAllowedMosaicMethods: (layerPath: string) => TypeMosaicMethod[] | undefined;
+        getLayerSettings: (layerPath: string) => string[];
         refreshLayer: (layerPath: string) => Promise<void>;
         reloadLayer: (layerPath: string) => void;
         toggleItemVisibility: (layerPath: string, item: TypeLegendItem) => void;
@@ -34,6 +39,11 @@ export interface ILayerState {
         setLayerOpacity: (layerPath: string, opacity: number, updateLegendLayers?: boolean) => void;
         setLayerHoverable: (layerPath: string, enable: boolean) => void;
         setLayerQueryable: (layerPath: string, enable: boolean) => void;
+        setLayerRasterFunction: (layerPath: string, rasterFunctionId: string) => void;
+        setLayerMosaicRule: (layerPath: string, mosaicRule: TypeMosaicRule | undefined) => void;
+        setLayerMosaicRuleAscending: (layerPath: string, value: boolean) => void;
+        setLayerMosaicRuleMethod: (layerPath: string, value: TypeMosaicMethod) => void;
+        setLayerMosaicRuleOperation: (layerPath: string, value: TypeMosaicOperation) => void;
         setSelectedLayerPath: (layerPath: string | undefined) => void;
         zoomToLayerExtent: (layerPath: string) => Promise<void>;
         zoomToLayerVisibleScale: (layerPath: string) => void;
@@ -135,6 +145,18 @@ export declare const useLayerDisplayDateTimezones: () => Record<string, TimeIANA
  * application's default display date timezone when none is defined.
  */
 export declare const useLayerDisplayDateTimezone: (layerPath: string) => TimeIANA;
+/**
+ * React hook that returns the raster function infos for a specific layer.
+ * @param layerPath The layer path
+ * @returns The raster function infos for the layer or undefined
+ */
+export declare const useLayerSelectorRasterFunctionInfos: (layerPath: string) => TypeMetadataEsriRasterFunctionInfos[] | undefined;
+/**
+ * React hook that returns the allowed mosaic methods for a specific layer.
+ * @param layerPath The layer path
+ * @returns The allowed mosaic methods for the layer or undefined
+ */
+export declare const useLayerSelectorAllowedMosaicMethods: (layerPath: string) => TypeMosaicMethod[] | undefined;
 export declare const useLayerSelectorId: (layerPath: string) => string | undefined;
 export declare const useLayerSelectorName: (layerPath: string) => string | undefined;
 export declare const useLayerNames: () => Record<string, string>;
@@ -153,6 +175,8 @@ export declare const useLayerSelectorIcons: (layerPath: string) => import("@/cor
 export declare const useLayerSelectorLegendQueryStatus: (layerPath: string) => LegendQueryStatus | undefined;
 export declare const useLayerSelectorCanToggle: (layerPath: string) => boolean | undefined;
 export declare const useLayerSelectorStyleConfig: (layerPath: string) => Partial<Record<"Point" | "MultiPoint" | "LineString" | "MultiLineString" | "Polygon" | "MultiPolygon", import("@/api/types/map-schema-types").TypeLayerStyleSettings>> | undefined;
+export declare const useLayerSelectorRasterFunction: (layerPath: string) => string | undefined;
+export declare const useLayerSelectorMosaicRule: (layerPath: string) => TypeMosaicRule | undefined;
 export declare const useLayerStoreActions: () => LayerActions;
 export {};
 //# sourceMappingURL=layer-state.d.ts.map
