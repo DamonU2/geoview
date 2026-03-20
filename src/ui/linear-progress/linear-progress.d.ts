@@ -1,10 +1,14 @@
 /**
- * Properties for the Progress Bar component extending Material-UI's LinearProgressProps
+ * Properties for the Progress Bar component.
+ *
+ * Extends Material-UI's LinearProgress functionality with
+ * additional accessibility support.
  */
 interface ProgressbarProps {
     className?: string;
     variant?: 'determinate' | 'indeterminate' | 'buffer' | 'query';
     value?: number;
+    'aria-label'?: string;
 }
 /**
  * Create a customized Material UI Linear Progress Bar component.

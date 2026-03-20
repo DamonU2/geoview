@@ -5,6 +5,25 @@ export declare const headingStyles: {
     fontFamily: string;
     fontWeight: number;
 };
+/**
+ * Visually hidden style pattern for screen reader-only content.
+ *
+ * This CSS pattern hides content visually while keeping it accessible
+ * to screen readers, following WCAG best practices.
+ *
+ * @see https://www.w3.org/WAI/WCAG21/Techniques/css/C7
+ */
+export declare const visuallyHidden: {
+    readonly position: "absolute";
+    readonly width: "1px";
+    readonly height: "1px";
+    readonly padding: 0;
+    readonly margin: "-1px";
+    readonly overflow: "hidden";
+    readonly clip: "rect(0, 0, 0, 0)";
+    readonly whiteSpace: "nowrap";
+    readonly border: 0;
+};
 export declare const opacity: {
     hoverOpacity: number;
     selectedOpacity: number;

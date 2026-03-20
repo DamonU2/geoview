@@ -5,7 +5,7 @@ import type { Extent } from 'ol/extent';
 import type { Projection as OLProjection } from 'ol/proj';
 import type { Map as OLMap } from 'ol';
 import type { EsriDynamicLayerEntryConfig } from '@/api/config/validation-classes/raster-validation-classes/esri-dynamic-layer-entry-config';
-import type { TypeFeatureInfoResult, rangeDomainType, codedValueType, TypeOutfieldsType, TypeFeatureInfoEntryPartial } from '@/api/types/map-schema-types';
+import type { TypeFeatureInfoResult, TypeFeatureInfoEntryPartial } from '@/api/types/map-schema-types';
 import type { TypeLayerMetadataEsriExtent } from '@/api/types/layer-schema-types';
 import type { GeometryJson } from '@/geo/layer/gv-layers/utils';
 import { AbstractGVRaster } from '@/geo/layer/gv-layers/raster/abstract-gv-raster';
@@ -88,22 +88,6 @@ export declare class GVEsriDynamic extends AbstractGVRaster {
      * @override
      */
     getHitTolerance(): number;
-    /**
-     * Overrides the return of the field type from the metadata. If the type can not be found, return 'string'.
-     * @param {string} fieldName - The field name for which we want to get the type.
-     * @returns {TypeOutfieldsType} The type of the field.
-     * @override
-     * @protected
-     */
-    protected onGetFieldType(fieldName: string): TypeOutfieldsType;
-    /**
-     * Overrides the return of the domain of the specified field.
-     * @param {string} fieldName - The field name for which we want to get the domain.
-     * @returns {null | codedValueType | rangeDomainType} The domain of the field.
-     * @override
-     * @protected
-     */
-    protected onGetFieldDomain(fieldName: string): null | codedValueType | rangeDomainType;
     /**
      * Overrides the get all feature information for all the features stored in the layer.
      * @param {OLMap} map - The Map so that we can grab the resolution/projection we want to get features on.

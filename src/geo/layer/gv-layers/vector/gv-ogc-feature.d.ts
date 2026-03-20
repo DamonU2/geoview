@@ -23,14 +23,6 @@ export declare class GVOGCFeature extends AbstractGVVector {
      */
     getLayerConfig(): OgcFeatureLayerEntryConfig;
     /**
-     * Overrides the return of the field type from the metadata. If the type can not be found, return 'string'.
-     * @param {string} fieldName - The field name for which we want to get the type.
-     * @returns {TypeOutfieldsType} The type of the field.
-     * @override
-     * @protected
-     */
-    protected onGetFieldType(fieldName: string): TypeOutfieldsType;
-    /**
      * Returns field type of the given field name using the povided OGC Feature metadata.
      * @param {TypeLayerMetadataOGC} layerMetadata - The OGC Feature metadata
      * @param {string} fieldName - The field name to get the field type information

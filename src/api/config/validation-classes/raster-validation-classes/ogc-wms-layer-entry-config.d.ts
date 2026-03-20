@@ -1,5 +1,5 @@
 import type { Extent } from 'ol/extent';
-import type { ConfigClassOrType, TypeGeoviewLayerConfig, TypeMetadataWMS, TypeMetadataWMSCapabilityLayer, TypeOfServer, TypeSourceImageWmsInitialConfig } from '@/api/types/layer-schema-types';
+import type { ConfigClassOrType, TypeGeoviewLayerConfig, TypeMetadataWMS, TypeMetadataWMSCapabilityLayer, TypeMetadataWMSCapabilityLayerStyle, TypeOfServer, TypeSourceImageWmsInitialConfig } from '@/api/types/layer-schema-types';
 import type { OgcWfsLayerEntryConfig } from '@/api/config/validation-classes/vector-validation-classes/wfs-layer-entry-config';
 import type { AbstractBaseLayerEntryConfigProps } from '@/api/config/validation-classes/abstract-base-layer-entry-config';
 import { AbstractBaseLayerEntryConfig } from '@/api/config/validation-classes/abstract-base-layer-entry-config';
@@ -83,9 +83,18 @@ export declare class OgcWmsLayerEntryConfig extends AbstractBaseLayerEntryConfig
      * If styles are not yet cached, the method reads them from the layer metadata
      * and initializes the internal style list. The styles correspond to named
      * style definitions advertised by the WMS service (from the `Style` section of the metadata).
-     * @returns {string[] | undefined} The list of available style names, or `undefined` if none are defined.
+     *
+     * @returns The list of available style names, or `undefined` if none are defined.
      */
     getStyles(): string[] | undefined;
+    /**
+     * Retrieves the full style metadata objects available for this layer.
+     * Returns the complete `TypeMetadataWMSCapabilityLayerStyle` objects from the layer metadata,
+     * which include style names, legend URLs, and other style-related information.
+     *
+     * @returns The list of available style metadata objects, or `undefined` if none are defined.
+     */
+    getStylesMetadata(): TypeMetadataWMSCapabilityLayerStyle[] | undefined;
     /**
      * Determines the style to apply for this layer.
      * Retrieves the list of available styles from the layer config/metadata and returns
