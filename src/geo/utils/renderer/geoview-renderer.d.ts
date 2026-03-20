@@ -1,9 +1,9 @@
-import { Style, Text } from 'ol/style';
+import { Style } from 'ol/style';
 import type { Geometry } from 'ol/geom';
 import type { Options as StrokeOptions } from 'ol/style/Stroke';
 import type { FeatureLike } from 'ol/Feature';
 import type Feature from 'ol/Feature';
-import type { TypeLayerStyleConfigType, TypePolygonVectorConfig, TypeIconSymbolVectorConfig, TypeLineStyle, TypeLineStringVectorConfig, TypeSimpleSymbolVectorConfig, TypeKindOfVectorSettings, TypeStyleGeometry, TypeLayerStyleSettings, TypeLayerStyleConfig, TypeLayerStyleConfigInfo, TypeLayerStyleValueCondition, TypeLayerTextConfig, TypeLayerStyleVisualVariable, TypeAliasLookup, TypeValidMapProjectionCodes, TypeOutfields } from '@/api/types/map-schema-types';
+import type { TypeLayerStyleConfigType, TypePolygonVectorConfig, TypeIconSymbolVectorConfig, TypeLineStyle, TypeLineStringVectorConfig, TypeSimpleSymbolVectorConfig, TypeKindOfVectorSettings, TypeStyleGeometry, TypeLayerStyleSettings, TypeLayerStyleConfig, TypeLayerStyleConfigInfo, TypeLayerStyleValueCondition, TypeLayerStyleVisualVariable, TypeAliasLookup, TypeOutfields } from '@/api/types/map-schema-types';
 import type { TypeLayerMetadataFields } from '@/api/types/layer-schema-types';
 import type { FillPatternLine, FillPatternSettings, FilterNodeType } from './geoview-renderer-types';
 type TypeStyleProcessor = (styleSettings: TypeLayerStyleSettings | TypeKindOfVectorSettings, feature?: Feature, options?: TypeStyleProcessorOptions) => Style | undefined;
@@ -551,7 +551,7 @@ export declare abstract class GeoviewRenderer {
      * @returns {Style | undefined} The style applied to the feature or undefined if not found.
      * @static
      */
-    static getAndCreateFeatureStyle(feature: FeatureLike, resolution: number, layerStyle: TypeLayerStyleConfig, label: string, filterEquation?: FilterNodeType[], aliasLookup?: TypeAliasLookup, layerText?: TypeLayerTextConfig, callbackWhenCreatingStyle?: (geometryType: TypeStyleGeometry, style: TypeLayerStyleConfigInfo) => void): Style | undefined;
+    static getAndCreateFeatureStyle(feature: FeatureLike, resolution: number, layerStyle: TypeLayerStyleConfig, label: string, filterEquation?: FilterNodeType[], callbackWhenCreatingStyle?: (geometryType: TypeStyleGeometry, style: TypeLayerStyleConfigInfo) => void): Style | undefined;
     /**
      * This method gets the image source from the style of the feature using the layer entry config.
      * @param {Feature} feature - The feature that need its icon to be defined.
@@ -618,59 +618,6 @@ export declare abstract class GeoviewRenderer {
     static FillPatternSettings: FillPatternSettings;
     /** Table of function to process the style settings based on the feature geometry and the kind of style settings. */
     static processStyle: Record<TypeLayerStyleConfigType, Record<TypeStyleGeometry, TypeStyleProcessor>>;
-    /**
-     * Method for getting the text style
-     * @param {FeatureLike} feature - The feature to get the text style for
-     * @param {number} resolution - The resolution of the map
-     * @param {TypeLayerStyleSettings} styleSettings - The style settings
-     * @param {TypeLayerTextConfig} layerText - The layer text configuration
-     * @param {TypeAliasLookup} aliasLookup - The alias lookup
-     * @returns {Text | undefined} The text style
-     * @static
-     */
-    static getTextStyle: (feature: FeatureLike, resolution: number, styleSettings: TypeLayerStyleSettings, layerText?: TypeLayerTextConfig, aliasLookup?: TypeAliasLookup) => Text | undefined;
-    /**
-     * Method for creating Text Style
-     * @param {FeatureLike} feature - The feature to create the text style for
-     * @param {TypeLayerTextConfig} textSettings - The text style settings
-     * @returns {Text | undefined} The text style
-     * @static
-     */
-    static createTextStyle: (feature: FeatureLike, textSettings: TypeLayerTextConfig) => Text | undefined;
-    /**
-     * Get approximate resolution for common zoom levels by projection
-     * @param {number} zoom - The zoom level (0-20)
-     * @param {TypeValidMapProjectionCodes} projection - The map projection (3857 for Web Mercator, 3978 for Canada Lambert)
-     * @returns {number} Approximate resolution for the given zoom and projection
-     * @static
-     */
-    static getApproximateResolution(zoom: number, projection?: TypeValidMapProjectionCodes): number;
-    /**
-     * Wrap text to fit within specified constraints
-     * @param {string} str - The text to wrap
-     * @param {number} width - The maximum width per line
-     * @param {number} maxLines - Maximum number of lines (optional, overrides width if needed)
-     * @returns {string} The wrapped text
-     * @static
-     */
-    static wrapText(str: string, width: number, maxLines?: number): string;
-    /**
-     * Wrap text to a specified width using word boundaries
-     * @param {string} str - The text to wrap
-     * @param {number} width - The maximum width of each line
-     * @returns {string} The wrapped text
-     * @static
-     */
-    static wrapTextByWidth(str: string, width: number): string;
-    /**
-     * Process text template by replacing field placeholders with feature values
-     * Expects somewhat clean field names, so we shouldn't need to worry about escaping special characters (Dates may still have characters after the colon)
-     * @param {string} template - The text template with {field-name} placeholders
-     * @param {FeatureLike} feature - The feature to get field values from
-     * @returns {string} The processed text with field values substituted
-     * @static
-     */
-    static processTextTemplate(template: string, feature: FeatureLike): string;
     /**
      * Builds a filter string (SQL-like or OGC-compliant) for a given layer and style configuration.
      * This method supports:

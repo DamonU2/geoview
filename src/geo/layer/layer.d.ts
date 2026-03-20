@@ -34,6 +34,8 @@ export declare class LayerApi {
     /** The value 0.21 seems rather specific, but it was the value giving us the best result during testing on layer National Forest Inventory Photo Plot Summary */
     /** It could be increased slightly if ever we need to, but it might offer worse precision depending on various layers */
     static readonly MIN_MAX_ZOOM_LEVEL_BUFFER = 0.21;
+    /** The opacity ratio to use when highlighting a layer vs the other layers */
+    static readonly HIGHLIGHT_OPACITY_RATIO = 4;
     /** Reference on the map viewer */
     mapViewer: MapViewer;
     /** Used to access geometry API to create and manage geometries */
@@ -134,6 +136,11 @@ export declare class LayerApi {
      * @returns An array containing only the group layers from the current GeoView layer collection.
      */
     getGeoviewLayersGroups(): GVGroupLayer[];
+    /**
+     * Gets all GeoView layers that are at the root.
+     * @returns An array containing only the layers at the root level of the registry.
+     */
+    getGeoviewLayersRoot(): AbstractBaseGVLayer[];
     /**
      * Returns the GeoView instance associated to the layer path.
      * @param layerPath - The layer path
@@ -255,12 +262,6 @@ export declare class LayerApi {
      */
     removeAllLayersInError(): void;
     /**
-     * Removes layer and feature highlights for a given layer.
-     * @param {string} layerPath - The path of the layer to remove highlights from.
-     * @returns {void}
-     */
-    removeLayerHighlights(layerPath: string): void;
-    /**
      * Removes a layer from the map using its layer path. The path may point to the root geoview layer
      * or a sub layer.
      * @param {string} layerPath - The path or ID of the layer to be removed
@@ -271,12 +272,17 @@ export declare class LayerApi {
      * Highlights layer or sublayer on map
      *
      * @param {string} layerPath - ID of layer to highlight
-     * @returns {void}
+     * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path.
      */
     highlightLayer(layerPath: string): void;
     /**
+     * Removes layer and feature highlights for a given layer.
+     *
+     * @param {string} layerPath - The path of the layer to remove highlights from.
+     */
+    removeLayerHighlights(layerPath: string): void;
+    /**
      * Removes layer or sublayer highlight
-     * @returns {void}
      */
     removeHighlightLayer(): void;
     /**
@@ -411,18 +417,27 @@ export declare class LayerApi {
     setLayerDateTemporalMode(layerPath: string, temporalMode: TemporalMode): void;
     /**
      * Updates the raster function for an ESRI Image layer.
-     * @param {string} layerPath - The path of the layer.
-     * @param {string | undefined} rasterFunctionId - The raster function ID to apply.
+     *
+     * @param layerPath - The path of the layer.
+     * @param rasterFunctionId - The raster function ID to apply or undefined to remove it.
      * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path.
      * @throws {LayerWrongTypeError} When the layer is not an ESRI Image layer.
      */
     setLayerRasterFunction(layerPath: string, rasterFunctionId: string | undefined): void;
     /**
      * Sets the mosaic rule for an ESRI Image layer.
-     * @param {string} layerPath - The layer path
-     * @param {TypeMosaicRule | undefined} mosaicRule - The mosaic rule to apply
+     *
+     * @param layerPath - The layer path
+     * @param mosaicRule - The mosaic rule to apply or undefined to remove it
      */
     setLayerMosaicRule(layerPath: string, mosaicRule: TypeMosaicRule | undefined): void;
+    /**
+     * Sets the WMS style for a WMS layer.
+     *
+     * @param layerPath - The layer path
+     * @param wmsStyle - The WMS style to apply
+     */
+    setLayerWmsStyle(layerPath: string, wmsStyle: string): void;
     /**
      * Changes a GeoJson Source of a GeoJSON layer at the given layer path.
      * @param {string} layerPath - The path of the layer.

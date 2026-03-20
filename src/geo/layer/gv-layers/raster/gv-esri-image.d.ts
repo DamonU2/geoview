@@ -6,7 +6,7 @@ import { Feature } from 'ol';
 import type { Projection as OLProjection } from 'ol/proj';
 import type { Map as OLMap } from 'ol';
 import type { EsriImageLayerEntryConfig } from '@/api/config/validation-classes/raster-validation-classes/esri-image-layer-entry-config';
-import type { codedValueType, rangeDomainType, TypeFeatureInfoEntry, TypeFeatureInfoResult, TypeOutfieldsType } from '@/api/types/map-schema-types';
+import type { TypeFeatureInfoEntry, TypeFeatureInfoResult } from '@/api/types/map-schema-types';
 import type { GeometryJson } from '@/geo/layer/gv-layers/utils';
 import { AbstractGVRaster } from '@/geo/layer/gv-layers/raster/abstract-gv-raster';
 import type { TypeLegend } from '@/core/stores/store-interface-and-intial-values/layer-state';
@@ -89,20 +89,6 @@ export declare class GVEsriImage extends AbstractGVRaster {
      * @returns {Promise<TypeFeatureInfoResult>} A promise of a TypeFeatureInfoResult.
      */
     protected getFeatureInfoAtLonLat(map: OLMap, lonlat: Coordinate, queryGeometry?: boolean): Promise<TypeFeatureInfoResult>;
-    /**
-     * Overrides the return of the field type from the metadata. If the type can not be found, return 'string'.
-     * @param {string} fieldName - The field name for which we want to get the type.
-     * @returns {TypeOutfieldsType} The type of the field.
-     * @override
-     */
-    protected onGetFieldType(fieldName: string): TypeOutfieldsType;
-    /**
-     * Overrides the return of the domain of the specified field.
-     * @param {string} fieldName - The field name for which we want to get the domain.
-     * @returns {null | codedValueType | rangeDomainType} The domain of the field.
-     * @override
-     */
-    protected onGetFieldDomain(fieldName: string): null | codedValueType | rangeDomainType;
     /**
      * Overrides the formatting of feature info results to skip icon rendering for pixel-based queries.
      * ESRI Image layers return pixel values, not symbolized features, so we skip the icon source step.

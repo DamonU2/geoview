@@ -2,7 +2,7 @@ import { EsriFeatureLayerEntryConfig } from '@/api/config/validation-classes/vec
 import { EsriDynamicLayerEntryConfig } from '@/api/config/validation-classes/raster-validation-classes/esri-dynamic-layer-entry-config';
 import { EsriImageLayerEntryConfig } from '@/api/config/validation-classes/raster-validation-classes/esri-image-layer-entry-config';
 import type { TypeFeatureInfoEntryPartial, TypeStyleGeometry, codedValueType, rangeDomainType, TypeOutfieldsType, DisplayDateMode } from '@/api/types/map-schema-types';
-import type { TypeMosaicRule } from '@/api/types/layer-schema-types';
+import type { TypeMosaicRule, TypeLayerMetadataFields } from '@/api/types/layer-schema-types';
 import type { ConfigBaseClass } from '@/api/config/validation-classes/config-base-class';
 import { GroupLayerEntryConfig } from '@/api/config/validation-classes/group-layer-entry-config';
 import type { EsriRelatedRecordsJsonResponseRelatedRecord } from '@/geo/layer/gv-layers/utils';
@@ -100,20 +100,24 @@ export declare class EsriUtilities {
     static esriParseFeatureInfoEntries(records: EsriRelatedRecordsJsonResponseRelatedRecord[], geometryType?: TypeStyleGeometry): TypeFeatureInfoEntryPartial[];
     /**
      * Returns the type of the specified field.
-     * @param {EsriDynamicLayerEntryConfig | EsriFeatureLayerEntryConfig | EsriImageLayerEntryConfig} layerConfig The ESRI layer config
-     * @param {string} fieldName field name for which we want to get the type.
-     * @returns {TypeOutfieldsType} The type of the field.
-     * @static
+     *
+     * For ESRI Image layers, well-known pixel fields (`PixelValue`, `ProcessedValue`, `Name`)
+     * are short-circuited to `'string'` because they have no metadata entry.
+     *
+     * @param layerConfig - The ESRI layer config, used to detect EsriImage-specific fields.
+     * @param fields - The metadata field definitions to search.
+     * @param fieldName - Field name for which we want to get the type.
+     * @returns The mapped outfield type (`'date'`, `'oid'`, `'number'`, or `'string'`).
      */
-    static esriGetFieldType(layerConfig: EsriDynamicLayerEntryConfig | EsriFeatureLayerEntryConfig | EsriImageLayerEntryConfig, fieldName: string): TypeOutfieldsType;
+    static esriGetFieldType(layerConfig: EsriDynamicLayerEntryConfig | EsriFeatureLayerEntryConfig | EsriImageLayerEntryConfig, fields: TypeLayerMetadataFields[], fieldName: string): TypeOutfieldsType;
     /**
      * Returns the domain of the specified field.
-     * @param {EsriDynamicLayerEntryConfig | EsriFeatureLayerEntryConfig | EsriImageLayerEntryConfig} layerConfig The ESRI layer config
-     * @param {string} fieldName field name for which we want to get the domain.
-     * @returns {codedValueType | rangeDomainType | null} The domain of the field.
-     * @static
+     *
+     * @param fields - The metadata field definitions to search.
+     * @param fieldName - Field name for which we want to get the domain.
+     * @returns The domain of the field, or `null` if not found.
      */
-    static esriGetFieldDomain(layerConfig: EsriDynamicLayerEntryConfig | EsriFeatureLayerEntryConfig | EsriImageLayerEntryConfig, fieldName: string): codedValueType | rangeDomainType | null;
+    static esriGetFieldDomain(fields: TypeLayerMetadataFields[], fieldName: string): codedValueType | rangeDomainType | undefined;
 }
 export type RegisterLayerEntryConfigDelegate = (config: EsriDynamicLayerEntryConfig | EsriFeatureLayerEntryConfig | GroupLayerEntryConfig) => void;
 //# sourceMappingURL=esri-layer-common.d.ts.map

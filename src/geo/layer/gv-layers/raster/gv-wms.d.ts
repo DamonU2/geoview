@@ -181,6 +181,12 @@ export declare class GVWMS extends AbstractGVRaster {
      */
     setGetFeatureInfoTolerance(value: number): void;
     /**
+     * Gets the currently active WMS style identifier.
+     *
+     * @returns The active WMS style name, or undefined if none is set.
+     */
+    getWmsStyle(): string | undefined;
+    /**
      * Sets the style id to be used by the WMS layer.
      * @param {string} wmsStyleId - The style identifier to be used.
      */

@@ -21,6 +21,7 @@ export interface TypeLegendLayer {
     bounds?: Extent;
     bounds4326?: Extent;
     controls?: TypeLayerControls;
+    deletionStartTime?: number;
     layerId: string;
     layerPath: string;
     layerAttribution?: string[];
@@ -41,11 +42,14 @@ export interface TypeLegendLayer {
     url?: string;
     hoverable?: boolean;
     queryable?: boolean;
+    hasText?: boolean;
+    textVisible?: boolean;
     icons: TypeLegendLayerItem[];
     items: TypeLegendItem[];
     children: TypeLegendLayer[];
     rasterFunction?: string;
     mosaicRule?: TypeMosaicRule;
+    wmsStyle?: string;
     opacity?: number;
     opacityMaxFromParent?: number;
     zoom?: number;

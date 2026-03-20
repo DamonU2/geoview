@@ -13,7 +13,7 @@ import type { OgcWmsLayerEntryConfig } from '@/api/config/validation-classes/ras
 import type { VectorLayerEntryConfig } from '@/api/config/validation-classes/vector-layer-entry-config';
 import type { AbstractBaseLayerEntryConfig } from '@/api/config/validation-classes/abstract-base-layer-entry-config';
 import type { EventDelegateBase } from '@/api/events/event-helper';
-import type { TypeLayerStyleConfig, TypeFeatureInfoEntry, codedValueType, rangeDomainType, TypeLocation, QueryType, TypeStyleGeometry, TypeOutfieldsType, TypeOutfields, TypeLayerStyleSettings, TypeFeatureInfoResult } from '@/api/types/map-schema-types';
+import type { TypeLayerStyleConfig, TypeFeatureInfoEntry, TypeLocation, QueryType, TypeStyleGeometry, TypeOutfieldsType, TypeOutfields, TypeLayerStyleSettings, TypeFeatureInfoResult, codedValueType, rangeDomainType } from '@/api/types/map-schema-types';
 import { type TypeLayerMetadataFields, type TypeGeoviewLayerType } from '@/api/types/layer-schema-types';
 import type { GeoViewError } from '@/core/exceptions/geoview-exceptions';
 import type { TypeLegendItem } from '@/core/components/layers/types';
@@ -175,18 +175,6 @@ export declare abstract class AbstractGVLayer extends AbstractBaseGVLayer {
      */
     protected getFeatureInfoUsingPolygon(map: OLMap, location: Coordinate[], queryGeometry?: boolean, abortController?: AbortController | undefined): Promise<TypeFeatureInfoResult>;
     /**
-     * Overridable function to return the domain of the specified field or null if the field has no domain.
-     * @param {string} fieldName - The field name for which we want to get the domain.
-     * @returns {null | codedValueType | rangeDomainType} The domain of the field.
-     */
-    protected onGetFieldDomain(fieldName: string): null | codedValueType | rangeDomainType;
-    /**
-     * Overridable function to return the type of the specified field from the metadata. If the type can not be found, return 'string'.
-     * @param {string} fieldName - The field name for which we want to get the type.
-     * @returns {TypeOutfieldsType} The type of the field.
-     */
-    protected onGetFieldType(fieldName: string): TypeOutfieldsType;
-    /**
      * Overridable function set the style according to the fetched legend information
      * @param {TypeLegend} legend - The fetched legend information
      */
@@ -302,12 +290,6 @@ export declare abstract class AbstractGVLayer extends AbstractBaseGVLayer {
      * @returns The extent of the features, if available
      */
     getExtentFromFeatures(objectIds: number[] | string[], outProjection: OLProjection, outfield?: string): Promise<Extent>;
-    /**
-     * Gets the field type for the given field name.
-     * @param fieldName - The field name
-     * @returns The field type.
-     */
-    getFieldType(fieldName: string): TypeOutfieldsType;
     /**
      * Gets the layer filters associated to the layer.
      * @returns The filter associated to the layer or undefined.
@@ -573,31 +555,35 @@ export declare abstract class AbstractGVLayer extends AbstractBaseGVLayer {
      * @param {string | string[] | undefined} [inputFormat] - The format(s) to prioritize for string inputs. Defaults to an ISO-like format.
      * @param {TimeIANA | undefined} [inputTimezone] - The timezone IANA the dates are in.
      * @param {TemporalMode | undefined} [inputTemporalMode] - When `calendar`, treats the input as a calendar-date-only value (no timezones). When 'instant', treats the input as moment in time (timezones aware).
-     * @param {(fieldName: string) => TypeOutfieldsType} callbackGetFieldType - Callback that returns the field type for a given field name.
-     * @param {(fieldName: string) => codedValueType | rangeDomainType | null} callbackGetFieldDomain - Callback that returns the coded value or range domain for a given field name.
      * @param {GetFieldValueDelegate} callbackGetFieldValue - Callback that returns the value of a field for a feature, in the correct type.
      * @returns {TypeFeatureInfoEntry[]} Array of feature info entries representing each feature with enriched metadata.
      * @description
      * Will not throw; errors are caught and logged. Returns an empty array if processing fails.
      */
-    static helperFormatFeatureInfoResult(features: Feature[], layerPath: string, schemaTag: TypeGeoviewLayerType, nameField: string | undefined, outFields: TypeOutfields[] | undefined, supportZoomTo: boolean, domainsLookup: TypeLayerMetadataFields[] | undefined, layerStyle: Partial<Record<TypeStyleGeometry, TypeLayerStyleSettings>> | undefined, inputFormat: string | string[] | undefined, inputTimezone: TimeIANA | undefined, inputTemporalMode: TemporalMode | undefined, callbackGetFieldType: (fieldName: string) => TypeOutfieldsType, callbackGetFieldDomain: (fieldName: string) => codedValueType | rangeDomainType | null, callbackGetFieldValue: GetFieldValueDelegate): TypeFeatureInfoEntry[];
+    static helperFormatFeatureInfoResult(features: Feature[], layerPath: string, schemaTag: TypeGeoviewLayerType, nameField: string | undefined, outFields: TypeOutfields[] | undefined, supportZoomTo: boolean, domainsLookup: TypeLayerMetadataFields[] | undefined, layerStyle: Partial<Record<TypeStyleGeometry, TypeLayerStyleSettings>> | undefined, inputFormat: string | string[] | undefined, inputTimezone: TimeIANA | undefined, inputTemporalMode: TemporalMode | undefined, callbackGetFieldValue: GetFieldValueDelegate): TypeFeatureInfoEntry[];
     /**
      * Retrieves and formats the value of a field from an OpenLayers feature.
-     * For fields of type `date`, the value is normalized and formatted using the
-     * date management utilities. Date values may be provided as epoch milliseconds
-     * or as date strings and are converted to a short ISO-like string.
-     * @param {Feature} feature - The OpenLayers feature containing the field values.
-     * @param {string} fieldName - The name of the field to retrieve.
-     * @param {TypeOutfieldsType} fieldType - The type of the field (e.g. `'string'`, `'number'`, `'date'`).
-     * @param {string | string[] | undefined} [inputFormat] - The format(s) to prioritize for string inputs. Defaults to an ISO-like format.
-     * @param {TimeIANA | undefined} [inputTimezone] - The IANA timezone to assume when interpreting input date values.
-     * @param {TemporalMode | undefined} [inputTemporalMode] - When `calendar`, treats the input as a calendar-date-only value (no timezones). When 'instant', treats the input as moment in time (timezones aware).
-     * @returns {unknown} The formatted field value. For date fields, this is a
-     * formatted date string; for other field types, the raw field value is returned.
+     * - For `date` fields, the raw value (epoch ms or date string) is normalized
+     *   via the date management utilities.
+     * - For fields with a `codedValue` domain, the raw code is resolved to its
+     *   human-readable name. If no matching code is found, the raw value is returned.
+     * - For all other fields, the raw value is returned as-is.
+     *
+     * @param feature - The OpenLayers feature containing the field values.
+     * @param fieldName - The name of the field to retrieve.
+     * @param fieldType - The data type of the field (e.g. `'string'`, `'number'`, `'date'`, `'oid'`).
+     * @param fieldDomain - Optional domain metadata. When present and of type `codedValue`,
+     * the raw field value is mapped to the corresponding coded-value name.
+     * @param inputFormat - Optional format(s) to prioritize when parsing date string inputs.
+     * @param inputTimezone - Optional IANA timezone to assume when interpreting date values.
+     * @param inputTemporalMode - Optional temporal mode. `'calendar'` treats dates as
+     * timezone-agnostic calendar dates; `'instant'` treats them as timezone-aware moments.
+     * @returns The processed field value: a formatted date for date fields, the decoded
+     * name for coded-value domains, or the raw value otherwise.
      */
-    static helperGetFieldValue(feature: Feature, fieldName: string, fieldType: TypeOutfieldsType, inputFormat: string | string[] | undefined, inputTimezone: TimeIANA | undefined, inputTemporalMode: TemporalMode | undefined): unknown;
+    static helperGetFieldValue(feature: Feature, fieldName: string, fieldType: TypeOutfieldsType, fieldDomain: codedValueType | rangeDomainType | undefined, inputFormat: string | string[] | undefined, inputTimezone: TimeIANA | undefined, inputTemporalMode: TemporalMode | undefined): unknown;
 }
-export type GetFieldValueDelegate = (feature: Feature, fieldName: string, fieldType: TypeOutfieldsType, inputFormat: string | string[] | undefined, inputTimezone: TimeIANA | undefined, inputTemporalMode: TemporalMode | undefined) => unknown;
+export type GetFieldValueDelegate = (feature: Feature, fieldName: string, fieldType: TypeOutfieldsType, fieldDomain: codedValueType | rangeDomainType | undefined, inputFormat: string | string[] | undefined, inputTimezone: TimeIANA | undefined, inputTemporalMode: TemporalMode | undefined) => unknown;
 /**
  * Define an event for the delegate
  */
