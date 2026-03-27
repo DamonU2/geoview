@@ -14,7 +14,8 @@ export declare abstract class AbstractBaseGVLayer {
     loadedOnce: boolean;
     /**
      * Constructs a GeoView base layer to manage an OpenLayer layer, including group layers.
-     * @param {ConfigBaseClass} layerConfig - The layer configuration.
+     *
+     * @param layerConfig - The layer configuration
      */
     protected constructor(layerConfig: ConfigBaseClass);
     /**
@@ -24,14 +25,17 @@ export declare abstract class AbstractBaseGVLayer {
      */
     protected abstract onGetAttributions(): string[];
     /**
-     * Must override method to get the layer bounds
+     * Must override method to get the layer bounds.
      *
-     * @returns A promise of layer bounding box.
+     * @param projection - The projection to get the bounds into
+     * @param stops - The number of stops to use to generate the extent
+     * @returns A promise that resolves with the layer bounding box or undefined when not found
      */
     protected abstract onGetBounds(projection: OLProjection, stops: number): Promise<Extent | undefined>;
     /**
-     * Must override method to refresh a layer
-     * @param projection - Optional, the projection to refresh to.
+     * Must override method to refresh a layer.
+     *
+     * @param projection - Optional projection to refresh to
      */
     protected abstract onRefresh(projection: OLProjection | undefined): void;
     /**
@@ -77,21 +81,24 @@ export declare abstract class AbstractBaseGVLayer {
      * When the layer is a GVLayer, its layer bounds are returned.
      * When the layer is a GVGroup, an Extent union of all layers bounds in the group is returned.
      *
-     * @param projection - The projection to get the bounds into.
-     * @param stops - The number of stops to use to generate the extent.
-     * @returns A promise of layer bounding box.
+     * @param projection - The projection to get the bounds into
+     * @param stops - The number of stops to use to generate the extent
+     * @returns A promise that resolves with the layer bounding box or undefined when not found
      */
     getBounds(projection: OLProjection, stops: number): Promise<Extent | undefined>;
     /**
      * Refreshes the layer by calling the overridable function 'onRefresh'.
+     *
      * When the layer is a GVLayer its layer source is refreshed.
      * When the layer is a GVGroup, all layers in the group are refreshed.
      *
-     * @param projection - Optional, the projection to refresh to.
+     * @param projection - Optional projection to refresh to
      */
     refresh(projection: OLProjection | undefined): void;
     /**
      * A quick getter to help identify which layer class the current instance is coming from.
+     *
+     * @returns The name of the class
      */
     getClassName(): string;
     /**
@@ -166,11 +173,12 @@ export declare abstract class AbstractBaseGVLayer {
     /**
      * Returns the direct parent `GVGroupLayer` of this layer, if any.
      *
-     * @returns The direct parent group layer, or `undefined` if this layer is not
-     *   contained within any group.
-     * @description This method searches through the provided root group layer collection to
+     * This method searches through the provided root group layer collection to
      * determine which group directly contains this layer. If the layer is nested
      * within multiple groups, only the immediate parent group is returned.
+     *
+     * @returns The direct parent group layer, or `undefined` if this layer is not
+     *   contained within any group.
      */
     getParent(): GVGroupLayer | undefined;
     /**
@@ -186,12 +194,13 @@ export declare abstract class AbstractBaseGVLayer {
      * the hierarchy until the root group layer is reached or a group has already been visited
      * (not supposed to happen).
      *
+     * This method traverses upward through the parent chain starting
+     * from the immediate parent of this layer. A protection mechanism prevents infinite
+     * loops in case of circular parent references.
+     *
      * @returns An array of parent {@link GVGroupLayer} instances, ordered from
      * the immediate parent to the top-most ancestor. Returns an empty array
      * if the layer has no parent.
-     * @description This method traverses upward through the parent chain starting
-     * from the immediate parent of this layer. A protection mechanism prevents infinite
-     * loops in case of circular parent references.
      */
     getParents(): GVGroupLayer[];
     /**
@@ -336,7 +345,9 @@ export declare abstract class AbstractBaseGVLayer {
     offLayerZIndexChanged(callback: LayerZIndexChangedDelegate): void;
     /**
      * Recursively searches the layer tree to find the parent GVGroupLayer
-     * of a given layer. The search begins from the provided list of layers,
+     * of a given layer.
+     *
+     * The search begins from the provided list of layers,
      * which should represent the root-level layer collection.
      * This method walks top-down through all nested GVGroupLayers until it
      * finds the group whose children contain the specified layer.
