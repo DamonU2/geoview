@@ -1,6 +1,9 @@
 import type { IGeoViewColors, IGeoViewFontSizes } from '@/ui/style/types';
+/** Default font family stack for GeoView UI components */
 export declare const font = "'Roboto', 'Helvetica', 'Arial', sans-serif";
+/** Default base font size multiplier in rem units */
 export declare const defaultFontSize = 1;
+/** Heading typography styles with bold weight */
 export declare const headingStyles: {
     fontFamily: string;
     fontWeight: number;
@@ -24,6 +27,7 @@ export declare const visuallyHidden: {
     readonly whiteSpace: "nowrap";
     readonly border: 0;
 };
+/** Opacity values for interactive states (hover, selected, disabled, focus, activated) */
 export declare const opacity: {
     hoverOpacity: number;
     selectedOpacity: number;
@@ -31,6 +35,8 @@ export declare const opacity: {
     focusOpacity: number;
     activatedOpacity: number;
 };
+/** Default GeoView color palette with primary, secondary, and semantic colors */
 export declare const geoViewColors: IGeoViewColors;
+/** GeoView font size scale from xs to xxl with dynamic multiplier entries */
 export declare const geoViewFontSizes: IGeoViewFontSizes;
 //# sourceMappingURL=default.d.ts.map

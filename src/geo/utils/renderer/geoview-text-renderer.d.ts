@@ -1,6 +1,6 @@
 import { Text } from 'ol/style';
 import type { FeatureLike } from 'ol/Feature';
-import type { TypeLayerStyleSettings, TypeLayerStyleConfig, TypeLayerTextConfig, TypeAliasLookup, TypeValidMapProjectionCodes } from '@/api/types/map-schema-types';
+import type { TypeLayerStyleSettings, TypeLayerStyleConfig, TypeLayerTextConfig, TypeAliasLookup } from '@/api/types/map-schema-types';
 import type { VectorLayerEntryConfig } from '@/api/config/validation-classes/vector-layer-entry-config';
 export declare class GeoviewTextRenderer {
     /**
@@ -25,7 +25,7 @@ export declare class GeoviewTextRenderer {
      * @param styleSettings - The style settings
      * @param layerText - The layer text configuration
      * @param aliasLookup - The alias lookup
-     * @returns The text style
+     * @returns The text style or undefined if no text style should be applied
      */
     static getTextStyle: (feature: FeatureLike, resolution: number, styleSettings: TypeLayerStyleSettings, layerText?: TypeLayerTextConfig, aliasLookup?: TypeAliasLookup) => Text | undefined;
     /**
@@ -33,17 +33,9 @@ export declare class GeoviewTextRenderer {
      *
      * @param feature - The feature to create the text style for
      * @param textSettings - The text style settings
-     * @returns The text style
+     * @returns The text style or undefined if no text style should be applied
      */
     static createTextStyle: (feature: FeatureLike, textSettings: TypeLayerTextConfig) => Text | undefined;
-    /**
-     * Get approximate resolution for common zoom levels by projection
-     *
-     * @param zoom - The zoom level (0-20)
-     * @param projection - The map projection (3857 for Web Mercator, 3978 for Canada Lambert)
-     * @returns Approximate resolution for the given zoom and projection
-     */
-    static getApproximateResolution(zoom: number, projection?: TypeValidMapProjectionCodes): number;
     /**
      * Wrap text to fit within specified constraints
      *
@@ -62,8 +54,10 @@ export declare class GeoviewTextRenderer {
      */
     static wrapTextByWidth(str: string, width: number): string;
     /**
-     * Process text template by replacing field placeholders with feature values
-     * Expects somewhat clean field names, so we shouldn't need to worry about escaping special characters (Dates may still have characters after the colon)
+     * Process text template by replacing field placeholders with feature values.
+     *
+     * Expects somewhat clean field names, so we shouldn't need to worry about escaping special characters
+     * (Dates may still have characters after the colon).
      *
      * @param template - The text template with {field-name} placeholders
      * @param feature - The feature to get field values from
