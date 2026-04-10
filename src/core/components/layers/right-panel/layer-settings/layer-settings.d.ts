@@ -1,4 +1,4 @@
-import type { TypeLegendLayer } from '../../types';
+import type { TypeLegendLayer } from '@/core/components/layers/types';
 interface LayerSettingsPanelProps {
     layerDetails: TypeLegendLayer;
 }

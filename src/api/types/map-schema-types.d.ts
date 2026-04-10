@@ -299,6 +299,27 @@ export type TypePointMarker = {
     /** Projection code if coordinates are not in lon/lat */
     projectionCode?: number;
 };
+/**
+ *  Definition of map state to attach to the map object for reference.
+ */
+export type TypeMapState = {
+    currentProjection: number;
+    currentZoom: number;
+    mapCenterCoordinates: Coordinate;
+    mapExtent: Extent;
+    rotation: number;
+    singleClickedPosition: TypeMapMouseInfo;
+    pointerPosition: TypeMapMouseInfo;
+};
+/**
+ * Type used to define the map mouse information
+ * */
+export type TypeMapMouseInfo = {
+    lonlat: Coordinate;
+    pixel: Coordinate;
+    projected: Coordinate;
+    dragging: boolean;
+};
 export declare const MAP_CONFIG_SCHEMA_PATH = "https://cgpv/schema#/definitions/TypeMapFeaturesInstance";
 /** The default geocore url */
 export declare const CONFIG_GEOCORE_URL = "https://geocore.api.geo.ca";
