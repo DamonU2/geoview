@@ -57,68 +57,68 @@ export interface IUIState {
  * @returns The initialized UI State
  */
 export declare function initializeUIState(set: TypeSetStore, get: TypeGetStore): IUIState;
-/** Hooks the current focus-trap item from the UI state. */
-export declare const useUIActiveFocusItem: () => FocusItemProps;
-/** Hooks the active app-bar tab state. */
-export declare const useUIActiveAppBarTab: () => ActiveAppBarTabType;
-/** Hooks the active footer-bar tab state. */
-export declare const useUIActiveFooterBarTab: () => ActiveFooterBarTabType;
-/** Hooks whether the GeoView-level keyboard focus trap is active. */
-export declare const useUIActiveTrapGeoView: () => boolean;
-/** Hooks the app-bar component identifiers. */
-export declare const useUIAppbarComponents: () => TypeValidAppBarCoreProps[];
-/** Hooks the footer-bar component identifiers. */
-export declare const useUIFooterBarComponents: () => TypeValidFooterBarTabsCoreProps[];
-/** Hooks the core package component identifiers. */
-export declare const useUICorePackagesComponents: () => TypeValidMapCorePackageProps[];
-/** Hooks the footer panel resize value. */
-export declare const useUIFooterPanelResizeValue: () => number;
-/** Hooks the list of hidden tab identifiers. */
-export declare const useUIHiddenTabs: () => string[];
-/** Hooks the nav-bar component identifiers. */
-export declare const useUINavbarComponents: () => TypeValidNavBarProps[];
 /**
  * Gets the active footer-bar tab from the store.
  *
  * @param mapId - The map id.
  * @returns The active footer-bar tab state.
  */
-export declare const getStoreActiveFooterBarTab: (mapId: string) => ActiveFooterBarTabType;
+export declare const getStoreUIActiveFooterBarTab: (mapId: string) => ActiveFooterBarTabType;
+/** Hooks the active footer-bar tab state. */
+export declare const useStoreUIActiveFooterBarTab: () => ActiveFooterBarTabType;
 /**
  * Gets the active app-bar tab from the store.
  *
  * @param mapId - The map id.
  * @returns The active app-bar tab state.
  */
-export declare const getStoreActiveAppBarTab: (mapId: string) => ActiveAppBarTabType;
+export declare const getStoreUIActiveAppBarTab: (mapId: string) => ActiveAppBarTabType;
+/** Hooks the active app-bar tab state. */
+export declare const useStoreUIActiveAppBarTab: () => ActiveAppBarTabType;
 /**
  * Gets the footer-bar component identifiers from the store.
  *
  * @param mapId - The map id.
  * @returns The array of footer-bar component props.
  */
-export declare const getStoreFooterBarComponents: (mapId: string) => TypeValidFooterBarTabsCoreProps[];
+export declare const getStoreUIFooterBarComponents: (mapId: string) => TypeValidFooterBarTabsCoreProps[];
+/** Hooks the footer-bar component identifiers. */
+export declare const useStoreUIFooterBarComponents: () => TypeValidFooterBarTabsCoreProps[];
 /**
  * Gets the app-bar component identifiers from the store.
  *
  * @param mapId - The map id.
  * @returns The array of app-bar component props.
  */
-export declare const getStoreAppBarComponents: (mapId: string) => TypeValidAppBarCoreProps[];
+export declare const getStoreUIAppBarComponents: (mapId: string) => TypeValidAppBarCoreProps[];
+/** Hooks the app-bar component identifiers. */
+export declare const useStoreUIAppbarComponents: () => TypeValidAppBarCoreProps[];
 /**
  * Gets the nav-bar component identifiers from the store.
  *
  * @param mapId - The map id.
  * @returns The array of nav-bar component props.
  */
-export declare const getStoreNavBarComponents: (mapId: string) => TypeValidNavBarProps[];
+export declare const getStoreUINavBarComponents: (mapId: string) => TypeValidNavBarProps[];
+/** Hooks the nav-bar component identifiers. */
+export declare const useStoreUINavbarComponents: () => TypeValidNavBarProps[];
 /**
  * Gets the core package component identifiers from the store.
  *
  * @param mapId - The map id.
  * @returns The array of core package component props.
  */
-export declare const getStoreCorePackageComponents: (mapId: string) => TypeValidMapCorePackageProps[];
+export declare const getStoreUICorePackageComponents: (mapId: string) => TypeValidMapCorePackageProps[];
+/** Hooks the core package component identifiers. */
+export declare const useStoreUICorePackagesComponents: () => TypeValidMapCorePackageProps[];
+/** Hooks the current focus-trap item from the UI state. */
+export declare const useStoreUIActiveFocusItem: () => FocusItemProps;
+/** Hooks whether the GeoView-level keyboard focus trap is active. */
+export declare const useStoreUIActiveTrapGeoView: () => boolean;
+/** Hooks the footer panel resize value. */
+export declare const useStoreUIFooterPanelResizeValue: () => number;
+/** Hooks the list of hidden tab identifiers. */
+export declare const useStoreUIHiddenTabs: () => string[];
 /**
  * Sets the active footer bar tab.
  *

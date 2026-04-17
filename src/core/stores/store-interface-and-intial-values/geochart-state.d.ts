@@ -36,28 +36,6 @@ export interface IGeochartState {
  */
 export declare function initializeGeochartState(set: TypeSetStore, get: TypeGetStore): IGeochartState;
 /**
- * Hook that returns the geochart chart configurations.
- *
- * Uses optional chaining because this hook may be called from components
- * outside the GeoChart plugin where the geochartState may be undefined.
- *
- * @returns The geochart configurations keyed by layer path, or undefined.
- */
-export declare const useGeochartConfigs: () => GeoChartStoreByLayerPath | undefined;
-/** Hook that returns the geochart layer data array. */
-export declare const useGeochartLayerDataArray: () => TypeGeochartResultSetEntry[];
-/**
- * Hook that returns the batched geochart layer data array.
- *
- * Uses optional chaining because this hook may be called from components
- * outside the GeoChart plugin where the geochartState may be undefined.
- *
- * @returns The batched geochart result set entries, or undefined.
- */
-export declare const useGeochartLayerDataArrayBatch: () => TypeGeochartResultSetEntry[] | undefined;
-/** Hook that returns the currently selected geochart layer path. */
-export declare const useGeochartSelectedLayerPath: () => string;
-/**
  * Checks whether the geochart plugin state has been initialized for the given map.
  *
  * @param mapId - The map identifier.
@@ -72,6 +50,8 @@ export declare const isStoreGeochartInitialized: (mapId: string) => boolean;
  * @throws {PluginStateUninitializedError} When the Geochart plugin is uninitialized.
  */
 export declare const getStoreGeochartSelectedLayerPath: (mapId: string) => string;
+/** Hook that returns the currently selected geochart layer path. */
+export declare const useStoreGeochartSelectedLayerPath: () => string;
 /**
  * Gets the geochart chart configurations for the given map.
  *
@@ -80,6 +60,15 @@ export declare const getStoreGeochartSelectedLayerPath: (mapId: string) => strin
  * @throws {PluginStateUninitializedError} When the Geochart plugin is uninitialized.
  */
 export declare const getStoreGeochartChartsConfig: (mapId: string) => GeoChartStoreByLayerPath;
+/**
+ * Hook that returns the geochart chart configurations.
+ *
+ * Uses optional chaining because this hook may be called from components
+ * outside the GeoChart plugin where the geochartState may be undefined.
+ *
+ * @returns The geochart configurations keyed by layer path, or undefined.
+ */
+export declare const useStoreGeochartChartsConfig: () => GeoChartStoreByLayerPath | undefined;
 /**
  * Gets the geochart layer data array for the given map.
  *
@@ -96,6 +85,15 @@ export declare const getStoreGeochartLayerDataArray: (mapId: string) => TypeGeoc
  * @throws {PluginStateUninitializedError} When the Geochart plugin is uninitialized.
  */
 export declare const getStoreGeochartLayerDataArrayBatchLayerPathBypass: (mapId: string) => string;
+/**
+ * Hook that returns the batched geochart layer data array.
+ *
+ * Uses optional chaining because this hook may be called from components
+ * outside the GeoChart plugin where the geochartState may be undefined.
+ *
+ * @returns The batched geochart result set entries, or undefined.
+ */
+export declare const useStoreGeochartLayerDataArrayBatch: () => TypeGeochartResultSetEntry[] | undefined;
 /**
  * Sets the geochart chart configurations in the store.
  *

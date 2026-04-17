@@ -29,7 +29,7 @@ import type { TransformOptions } from '@/geo/interaction/transform/transform';
 import { Transform } from '@/geo/interaction/transform/transform';
 import type { EventDelegateBase } from '@/api/events/event-helper';
 import { ModalApi } from '@/ui';
-import { type TimeIANA } from '@/core/utils/date-mgt';
+import type { TimeIANA } from '@/core/utils/date-mgt';
 import type { TypeMapFeaturesConfig, TypeHTMLElement } from '@/core/types/global-types';
 import type { TypeClickMarker } from '@/core/components/click-marker/click-marker';
 import { Notifications } from '@/core/utils/notifications';
@@ -437,6 +437,14 @@ export declare class MapViewer {
      * @param legend - The legend to check
      */
     updateIconImageCache(legend: TypeLegend): void;
+    /**
+     * Waits for the map to be ready before resolving the promise.
+     *
+     * This function checks if the map is already ready, and if not, it waits for the onMapReady event to be triggered.
+     *
+     * @returns A promise that resolves when the map is ready.
+     */
+    waitForMapReady(): Promise<void>;
     /**
      * Waits until all GeoView layers reach the specified status before resolving the promise.
      *

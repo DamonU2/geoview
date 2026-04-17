@@ -14,7 +14,7 @@ import type { VectorLayerEntryConfig } from '@/api/config/validation-classes/vec
 import type { AbstractBaseLayerEntryConfig } from '@/api/config/validation-classes/abstract-base-layer-entry-config';
 import type { EventDelegateBase } from '@/api/events/event-helper';
 import type { TypeLayerStyleConfig, TypeFeatureInfoEntry, TypeLocation, QueryType, TypeStyleGeometry, TypeOutfieldsType, TypeOutfields, TypeLayerStyleSettings, TypeFeatureInfoResult, codedValueType, rangeDomainType } from '@/api/types/map-schema-types';
-import { type TypeLayerMetadataFields, type TypeGeoviewLayerType } from '@/api/types/layer-schema-types';
+import type { TypeLayerMetadataFields, TypeGeoviewLayerType } from '@/api/types/layer-schema-types';
 import type { GeoViewError } from '@/core/exceptions/geoview-exceptions';
 import type { TypeLegendItem } from '@/core/components/layers/types';
 import type { TypeLegend } from '@/core/stores/store-interface-and-intial-values/layer-state';

@@ -52,23 +52,15 @@ export interface IDataTableState {
  * @returns The initialized DataTable State
  */
 export declare function initialDataTableState(set: TypeSetStore, get: TypeGetStore): IDataTableState;
-/** Hook that returns the aggregated feature info result set entries for all layers. */
-export declare const useDataTableAllFeaturesDataArray: () => TypeAllFeatureInfoResultSetEntry[];
-/** Hook that returns the table filters record keyed by layer path. */
-export declare const useDataTableFilters: () => Record<string, string>;
 /**
- * Hook that returns the table filter for a specific layer.
- *
- * @param layerPath - The layer path to get the filter for.
- * @returns The filter string for the layer, or undefined if not set.
+ * Gets filter(s) for a layer.
+ * @param mapId - The map id of the state to act on
+ * @param layerPath - The path of the layer
+ * @returns The data table filter(s) for the layer
  */
-export declare const useDataTableFilterSelector: (layerPath: string) => string | undefined;
-/** Hook that returns the currently selected data table layer path. */
-export declare const useDataTableSelectedLayerPath: () => string;
-/** Hook that returns the per-layer data table settings record. */
-export declare const useDataTableLayerSettings: () => Record<string, IDataTableSettings>;
-/** Hook that returns the currently selected feature in the data table. */
-export declare const useDataTableSelectedFeature: () => TypeFeatureInfoEntry | null;
+export declare const getStoreDataTableFilters: (mapId: string) => Record<string, string> | undefined;
+/** Hook that returns the table filters record keyed by layer path. */
+export declare const useStoreDataTableFilters: () => Record<string, string>;
 /**
  * Gets filter(s) for a layer.
  * @param mapId - The map id of the state to act on
@@ -77,12 +69,30 @@ export declare const useDataTableSelectedFeature: () => TypeFeatureInfoEntry | n
  */
 export declare const getStoreTableFilter: (mapId: string, layerPath: string) => string | undefined;
 /**
+ * Hook that returns the table filter for a specific layer.
+ *
+ * @param layerPath - The layer path to get the filter for.
+ * @returns The filter string for the layer, or undefined if not set.
+ */
+export declare const useStoreTableFilter: (layerPath: string) => string | undefined;
+/**
  * Gets the selected data table layer path for the given map.
  *
  * @param mapId - The map identifier.
  * @returns The selected layer path, or an empty string if none is selected.
  */
 export declare const getStoreDataTableSelectedLayerPath: (mapId: string) => string;
+/** Hook that returns the currently selected data table layer path. */
+export declare const useStoreDataTableSelectedLayerPath: () => string;
+/**
+ * Gets the aggregated feature info array for all layers in the data table.
+ *
+ * @param mapId - The map identifier.
+ * @returns The array of feature info result set entries.
+ */
+export declare const getStoreDataTableAllFeaturesDataArray: (mapId: string) => TypeAllFeatureInfoResultSetEntry[];
+/** Hook that returns the aggregated feature info result set entries for all layers. */
+export declare const useStoreDataTableAllFeaturesDataArray: () => TypeAllFeatureInfoResultSetEntry[];
 /**
  * Gets whether the data table is filtered to the current map extent for a specific layer.
  *
@@ -91,13 +101,10 @@ export declare const getStoreDataTableSelectedLayerPath: (mapId: string) => stri
  * @returns True if map extent filtering is enabled, or undefined if the layer has no settings.
  */
 export declare const getStoreMapFilteredRecord: (mapId: string, layerPath: string) => boolean | undefined;
-/**
- * Gets the aggregated feature info array for all layers in the data table.
- *
- * @param mapId - The map identifier.
- * @returns The array of feature info result set entries.
- */
-export declare const getStoreDataTableAllFeaturesArray: (mapId: string) => TypeAllFeatureInfoResultSetEntry[];
+/** Hook that returns the per-layer data table settings record. */
+export declare const useStoreDataTableLayerSettings: () => Record<string, IDataTableSettings>;
+/** Hook that returns the currently selected feature in the data table. */
+export declare const useStoreDataTableSelectedFeature: () => TypeFeatureInfoEntry | null;
 /**
  * Initializes default data table settings for a layer in the store.
  *

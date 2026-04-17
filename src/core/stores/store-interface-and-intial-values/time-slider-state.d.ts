@@ -57,14 +57,6 @@ export interface ITimeSliderState {
  * @returns The initialized TimeSlider State
  */
 export declare function initializeTimeSliderState(set: TypeSetStore, get: TypeGetStore): ITimeSliderState;
-/** Hooks the full set of time-slider layers. Safe to call outside the TimeSlider plugin (optional chaining). */
-export declare const useTimeSliderLayers: () => TimeSliderLayerSet | undefined;
-/** Hooks the time-slider values for a specific layer path. Safe to call outside the TimeSlider plugin. */
-export declare const useTimeSliderLayersSelector: (layerPath: string) => TypeTimeSliderValues | undefined;
-/** Hooks the currently selected layer path in the time slider. */
-export declare const useTimeSliderSelectedLayerPath: () => string;
-/** Hooks the slider filter string for a specific layer path. Safe to call outside the TimeSlider plugin. */
-export declare const useTimeSliderFiltersSelector: (layerPath: string) => string | undefined;
 /**
  * Checks whether the TimeSlider plugin state has been initialized for the given map.
  *
@@ -80,6 +72,8 @@ export declare const isStoreTimeSliderInitialized: (mapId: string) => boolean;
  * @throws {PluginStateUninitializedError} When the TimeSlider plugin is uninitialized.
  */
 export declare const getStoreTimeSliderLayers: (mapId: string) => TimeSliderLayerSet;
+/** Hooks the full set of time-slider layers. Safe to call outside the TimeSlider plugin (optional chaining). */
+export declare const useStoreTimeSliderLayers: () => TimeSliderLayerSet | undefined;
 /**
  * Gets the time-slider values for a specific layer path.
  *
@@ -89,6 +83,8 @@ export declare const getStoreTimeSliderLayers: (mapId: string) => TimeSliderLaye
  * @throws {PluginStateUninitializedError} When the TimeSlider plugin is uninitialized.
  */
 export declare const getStoreTimeSliderLayer: (mapId: string, layerPath: string) => TypeTimeSliderValues | undefined;
+/** Hooks the time-slider values for a specific layer path. Safe to call outside the TimeSlider plugin. */
+export declare const useStoreTimeSliderLayer: (layerPath: string) => TypeTimeSliderValues | undefined;
 /**
  * Gets the currently selected layer path from the time slider.
  *
@@ -96,7 +92,9 @@ export declare const getStoreTimeSliderLayer: (mapId: string, layerPath: string)
  * @returns The selected layer path.
  * @throws {PluginStateUninitializedError} When the TimeSlider plugin is uninitialized.
  */
-export declare const getStoreTimeSliderSelectedLayer: (mapId: string) => string;
+export declare const getStoreTimeSliderSelectedLayerPath: (mapId: string) => string;
+/** Hooks the currently selected layer path in the time slider. */
+export declare const useStoreTimeSliderSelectedLayerPath: () => string;
 /**
  * Gets all slider filter expressions keyed by layer path.
  *
@@ -114,6 +112,8 @@ export declare const getStoreTimeSliderFilters: (mapId: string) => Record<string
  * @throws {PluginStateUninitializedError} When the TimeSlider plugin is uninitialized.
  */
 export declare const getStoreTimeSliderFilter: (mapId: string, layerPath: string) => string | undefined;
+/** Hooks the slider filter string for a specific layer path. Safe to call outside the TimeSlider plugin. */
+export declare const useStoreTimeSliderFilter: (layerPath: string) => string | undefined;
 /**
  * Sets the selected layer path in the time slider store.
  *

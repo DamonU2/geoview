@@ -3,12 +3,12 @@ import type Overlay from 'ol/Overlay';
 import type { Extent } from 'ol/extent';
 import type { Size } from 'ol/size';
 import type { TypeBasemapOptions, TypeHighlightColors, TypeInteraction, TypeMapViewSettings, TypeValidMapProjectionCodes, TypeZoomAndCenter, TypeFeatureInfoEntry, TypePointMarker, TypeMapMouseInfo, TypeMapState, TypeCorePackagesConfig, TypeGlobalSettings, TypeViewSettings, TypeValidNavBarProps, TypeFooterBarProps, TypeAppBarProps, TypeOverviewMapProps, TypeValidMapComponentProps, TypeValidMapCorePackageProps, TypeExternalPackagesProps, TypeServiceUrls, TypeValidVersions } from '@/api/types/map-schema-types';
-import { type TypeSetStore, type TypeGetStore } from '@/core/stores/geoview-store';
+import type { MapConfigLayerEntry } from '@/api/types/layer-schema-types';
+import type { TypeSetStore, TypeGetStore } from '@/core/stores/geoview-store';
 import type { TypeMapFeaturesConfig } from '@/core/types/global-types';
 import type { TypeClickMarker } from '@/core/components/click-marker/click-marker';
 import type { TypeHoverFeatureInfo } from './feature-info-state';
 import type { TypeMapStateForExportLayout } from '@/core/components/export/utilities';
-import { type MapConfigLayerEntry } from '@/api/types/layer-schema-types';
 /**
  * Represents the Map Zustand store slice.
  *
@@ -93,6 +93,7 @@ export interface IMapState {
         setHoverable: (layerPath: string, hoverable: boolean) => void;
         setLegendCollapsed: (layerPath: string, newValue?: boolean) => void;
         setQueryable: (layerPath: string, queryable: boolean) => void;
+        updateOrderedLayerInfoByPath: (layerPath: string, updates: Partial<TypeOrderedLayerInfo>) => void;
         setClickMarker: (coord: number[] | undefined) => void;
         setHoverFeatureInfo: (hoverFeatureInfo: TypeHoverFeatureInfo) => void;
     };
@@ -115,145 +116,6 @@ export declare const utilFindMapLayerAndChildrenFromOrderedInfo: (layerPath: str
  * @returns The initialized Map State
  */
 export declare function initializeMapState(set: TypeSetStore, get: TypeGetStore): IMapState;
-/** Selects the map attribution strings from the store. */
-export declare const useMapAttribution: () => string[];
-/** Selects the initial basemap options from the store. */
-export declare const useMapBasemapOptions: () => TypeBasemapOptions;
-/** Selects the current basemap options from the store. */
-export declare const useMapCurrentBasemapOptions: () => TypeBasemapOptions;
-/** Selects the map center coordinates from the store. */
-export declare const useMapCenterCoordinates: () => Coordinate;
-/** Selects the click marker state from the store. */
-export declare const useMapClickMarker: () => TypeClickMarker | undefined;
-/** Selects the click coordinates from the store. */
-export declare const useMapClickCoordinates: () => TypeMapMouseInfo | undefined;
-/** Selects the current map extent from the store. */
-export declare const useMapExtent: () => Extent | undefined;
-/** Selects whether the map has a geoview basemap layer from the store. */
-export declare const useMapHasGeoviewBasemapLayer: () => boolean;
-/** Selects the feature highlight color settings from the store. */
-export declare const useMapFeatureHighlightColor: () => TypeHighlightColors;
-/** Selects whether the map is fixed to north from the store. */
-export declare const useMapFixNorth: () => boolean;
-/** Selects the initial layer filters from the store. */
-export declare const useMapInitialFilters: () => Record<string, string>;
-/** Selects the initial view settings from the store. */
-export declare const useMapInitialView: () => TypeMapViewSettings;
-/** Selects the map interaction mode from the store. */
-export declare const useMapInteraction: () => TypeInteraction;
-/** Selects whether the mouse is inside the map from the store. */
-export declare const useMapIsMouseInsideMap: () => boolean;
-/** Selects the hover feature info from the store. */
-export declare const useMapHoverFeatureInfo: () => TypeHoverFeatureInfo;
-/** Selects whether the map is loaded from the store. */
-export declare const useMapLoaded: () => boolean;
-/** Selects whether the map is displayed from the store. */
-export declare const useMapDisplayed: () => boolean;
-/** Selects whether the north arrow is enabled from the store. */
-export declare const useMapNorthArrow: () => boolean;
-/** Selects the north arrow element state from the store. */
-export declare const useMapNorthArrowElement: () => TypeNorthArrow;
-/** Selects whether the overview map is enabled from the store. */
-export declare const useMapOverviewMap: () => boolean;
-/** Selects the zoom level at which the overview map hides from the store. */
-export declare const useMapOverviewMapHideZoom: () => number;
-/** Selects the current pointer position from the store. */
-export declare const useMapPointerPosition: () => TypeMapMouseInfo | undefined;
-/** Selects the point markers grouped by name from the store. */
-export declare const useMapPointMarkers: () => Record<string, TypePointMarker[]>;
-/** Selects the current map projection code from the store. */
-export declare const useMapProjection: () => TypeValidMapProjectionCodes;
-/** Selects the current map projection as an EPSG string from the store. */
-export declare const useMapProjectionEPSG: () => string;
-/** Selects the map rotation angle from the store. */
-export declare const useMapRotation: () => number;
-/** Selects the map scale information from the store. */
-export declare const useMapScale: () => TypeScaleInfo;
-/** Selects the map size from the store. */
-export declare const useMapSize: () => Size;
-/** Selects the ordered layer paths from the store. */
-export declare const useMapOrderedLayers: () => string[];
-/** Selects the visible layer paths from the store. */
-export declare const useMapVisibleLayers: () => string[];
-/** Selects the current zoom level from the store. */
-export declare const useMapZoom: () => number;
-/**
- * Selects the union of visible and in-range layer paths.
- *
- * Used by data-table, details, geochart, and time-slider left panel components.
- *
- * @returns The deduplicated array of layer paths that are visible or in visible range
- */
-export declare const useMapAllVisibleandInRangeLayers: () => string[];
-/**
- * Selects the visibility state of a single layer.
- *
- * @param layerPath - The layer path to check visibility for
- * @returns True if the layer is visible, false otherwise
- */
-export declare const useMapSelectorLayerVisibility: (layerPath: string) => boolean;
-/**
- * Selects whether any of the given layer paths are visible.
- *
- * @param layerPaths - The layer paths to check visibility for
- * @returns True if at least one layer is visible, false otherwise
- */
-export declare const useMapSelectorLayerArrayVisibility: (layerPaths: string[]) => boolean;
-/**
- * Selects whether any parent of the given layer is hidden.
- *
- * @param layerPath - The layer path to check parent visibility for
- * @returns True if any parent layer is hidden
- */
-export declare const useMapSelectorLayerParentHidden: (layerPath: string) => boolean;
-/**
- * Selects whether a layer is within its visible zoom range.
- *
- * @param layerPath - The layer path to check
- * @returns True if the layer is in visible range
- */
-export declare const useMapSelectorLayerInVisibleRange: (layerPath: string) => boolean;
-/**
- * Selects whether a layer is effectively hidden on the map.
- *
- * A layer is hidden if any parent is hidden, or if it is out of visible range, or if it is not visible.
- *
- * @param layerPath - The layer path to check
- * @returns True if the layer is hidden on the map
- */
-export declare const useMapSelectorIsLayerHiddenOnMap: (layerPath: string) => boolean;
-/**
- * Selects the legend collapsed state for a given layer.
- *
- * @param layerPath - The layer path to check
- * @returns True if the layer legend is collapsed
- */
-export declare const useMapSelectorLayerLegendCollapsed: (layerPath: string) => boolean;
-/**
- * Selects the queryable state for multiple layer paths.
- *
- * @param layerPaths - The layer paths to check queryable state for
- * @returns A record mapping each layer path to its queryable state
- */
-export declare const useMapSelectorLayerQueryable: (layerPaths: string[]) => Record<string, boolean>;
-/**
- * Selects whether all layers are visible (excluding errored layers).
- *
- * @returns True if all non-errored layers are visible
- */
-export declare const useMapAllLayersVisibleToggle: () => boolean;
-/**
- * Selects whether there are any layers with collapsible legends.
- *
- * @returns True if at least one layer has a collapsible legend
- */
-export declare const useMapHasCollapsibleLayersToggle: () => boolean;
-/**
- * Selects whether all collapsible layer legends are collapsed.
- *
- * @returns True if all collapsible legends are collapsed, or if there are no collapsible layers
- */
-export declare const useMapAllLayersCollapsedToggle: () => boolean;
 /**
  * Returns the map state as a serializable JSON object.
  *
@@ -272,8 +134,29 @@ export declare const getStoreMapStateForExportLayout: (mapId: string) => TypeMap
 export declare const getStoreMapOrderedLayerInfo: (mapId: string) => TypeOrderedLayerInfo[];
 /** Returns the ordered layer info for a specific layer path, or undefined if not found. */
 export declare const getStoreMapOrderedLayerInfoByPath: (mapId: string, layerPath: string) => TypeOrderedLayerInfo | undefined;
+/** Returns the legend collapsed state for all layers, defaulting to true if not found. */
+export declare const getStoreMapLegendCollapsedSet: (mapId: string) => Record<string, boolean>;
 /** Returns the legend collapsed state for a layer, defaulting to true if not found. */
 export declare const getStoreMapLegendCollapsedByPath: (mapId: string, layerPath: string) => boolean;
+/**
+ * Selects the legend collapsed state for a given layer.
+ *
+ * @param layerPath - The layer path to check
+ * @returns True if the layer legend is collapsed
+ */
+export declare const useStoreMapLegendCollapsedByPath: (layerPath: string) => boolean;
+/**
+ * Selects whether all collapsible layer legends are collapsed.
+ *
+ * @returns True if all collapsible legends are collapsed, or if there are no collapsible layers
+ */
+export declare const useStoreMapAllLayersCollapsedToggle: () => boolean;
+/**
+ * Selects whether there are any layers with collapsible legends.
+ *
+ * @returns True if at least one layer has a collapsible legend
+ */
+export declare const useStoreMapHasCollapsibleLayersToggle: () => boolean;
 /** Returns the visibility state of a layer, or undefined if the layer is not found. */
 export declare const getStoreMapVisibilityByPath: (mapId: string, layerPath: string) => boolean | undefined;
 /** Returns whether any parent of the given layer is hidden. */
@@ -293,26 +176,101 @@ export declare const getStoreMapLayerPaths: (mapId: string) => string[];
 export declare const getStoreMapOrderedLayerIndexByPath: (mapId: string, layerPath: string) => number;
 /** Returns the initial filter string for a layer path, or undefined if none is set. */
 export declare const getStoreMapInitialFilter: (mapId: string, layerPath: string) => string | undefined;
+/** Selects the initial layer filters from the store. */
+export declare const useStoreMapInitialFilters: () => Record<string, string>;
 /** Returns the layer paths of all layers currently in their visible zoom range. */
 export declare const getStoreMapLayersInVisibleRange: (mapId: string) => string[];
+/**
+ * Selects the visibility state of a single layer.
+ *
+ * @param layerPath - The layer path to check visibility for
+ * @returns True if the layer is visible, false otherwise
+ */
+export declare const useStoreMapLayerVisibility: (layerPath: string) => boolean;
+/**
+ * Selects whether any of the given layer paths are visible.
+ *
+ * @param layerPaths - The layer paths to check visibility for
+ * @returns True if at least one layer is visible, false otherwise
+ */
+export declare const useStoreMapLayerArrayVisibility: (layerPaths: string[]) => boolean;
+/**
+ * Selects whether a layer is within its visible zoom range.
+ *
+ * @param layerPath - The layer path to check
+ * @returns True if the layer is in visible range
+ */
+export declare const useStoreMapLayerInVisibleRange: (layerPath: string) => boolean;
+/**
+ * Selects whether all layers are visible (excluding errored layers).
+ *
+ * @returns True if all non-errored layers are visible
+ */
+export declare const useStoreMapAllLayersVisibleToggle: () => boolean;
 /** Returns whether a layer is effectively hidden on the map (parent hidden, out of range, or not visible). */
 export declare const getStoreMapIsLayerHiddenOnMap: (mapId: string, layerPath: string) => boolean;
+/**
+ * Selects whether a layer is effectively hidden on the map.
+ *
+ * A layer is hidden if any parent is hidden, or if it is out of visible range, or if it is not visible.
+ *
+ * @param layerPath - The layer path to check
+ * @returns True if the layer is hidden on the map
+ */
+export declare const useStoreMapIsLayerHiddenOnMap: (layerPath: string) => boolean;
+/**
+ * Selects the hidden-on-map state for all layers.
+ *
+ * @returns A record mapping each layer path to whether it is hidden on the map
+ */
+export declare const useStoreMapIsLayerHiddenOnMapSet: () => Record<string, boolean>;
+/**
+ * Selects whether any parent of the given layer is hidden.
+ *
+ * @param layerPath - The layer path to check parent visibility for
+ * @returns True if any parent layer is hidden
+ */
+export declare const useStoreMapIsParentLayerHiddenOnMap: (layerPath: string) => boolean;
+/**
+ * Selects the parent-hidden state for all layers.
+ *
+ * @returns A record mapping each layer path to whether any of its parents are hidden
+ */
+export declare const useStoreMapIsParentLayerHiddenOnMapSet: () => Record<string, boolean>;
 /** Returns the current map projection code. */
 export declare const getStoreMapCurrentProjection: (mapId: string) => TypeValidMapProjectionCodes;
+/** Selects the current map projection code from the store. */
+export declare const useStoreMapCurrentProjection: () => TypeValidMapProjectionCodes;
 /** Returns the current map projection as an EPSG string. */
 export declare const getStoreMapCurrentProjectionEPSG: (mapId: string) => string;
+/** Selects the current map projection as an EPSG string from the store. */
+export declare const useStoreMapCurrentProjectionEPSG: () => string;
 /** Returns the current pointer position, or undefined if unavailable. */
 export declare const getStoreMapPointerPosition: (mapId: string) => TypeMapMouseInfo | undefined;
+/** Selects the current pointer position from the store. */
+export declare const useStoreMapPointerPosition: () => TypeMapMouseInfo | undefined;
+/** Returns the current pointer position, or undefined if unavailable. */
+export declare const getStoreMapClickCoordinates: (mapId: string) => TypeMapMouseInfo | undefined;
+/** Selects the click coordinates from the store. */
+export declare const useStoreMapClickCoordinates: () => TypeMapMouseInfo | undefined;
 /** Returns the current basemap options. */
 export declare const getStoreMapCurrentBasemapOptions: (mapId: string) => TypeBasemapOptions;
+/** Selects the current basemap options from the store. */
+export declare const useStoreMapCurrentBasemapOptions: () => TypeBasemapOptions;
 /** Returns the basemap options, falling back to initial options if current are not set. */
 export declare const getStoreMapBasemapOptions: (mapId: string) => TypeBasemapOptions;
+/** Selects the initial basemap options from the store. */
+export declare const useStoreMapBasemapOptions: () => TypeBasemapOptions;
 /** Returns the home view settings for the map. */
 export declare const getStoreMapHomeView: (mapId: string) => TypeMapViewSettings;
 /** Returns the initial view settings for the map, or undefined if not set. */
 export declare const getStoreMapInitialView: (mapId: string) => TypeMapViewSettings | undefined;
+/** Selects the initial view settings from the store. */
+export declare const useStoreMapInitialView: () => TypeMapViewSettings;
 /** Returns the current map rotation angle in radians. */
 export declare const getStoreMapRotation: (mapId: string) => number;
+/** Selects the map rotation angle from the store. */
+export declare const useStoreMapRotation: () => number;
 /** Returns the geolocator search area with coordinates and optional bounding box. */
 export declare const getStoreMapGeolocatorSearchArea: (mapId: string) => {
     coords: Coordinate;
@@ -320,18 +278,75 @@ export declare const getStoreMapGeolocatorSearchArea: (mapId: string) => {
 } | undefined;
 /** Returns the feature highlight color settings. */
 export declare const getStoreMapFeatureHighlightColor: (mapId: string) => TypeHighlightColors;
+/** Selects the feature highlight color settings from the store. */
+export declare const useStoreMapFeatureHighlightColor: () => TypeHighlightColors;
 /** Returns the hover feature info state. */
 export declare const getStoreMapHoverFeatureInfo: (mapId: string) => TypeHoverFeatureInfo;
+/** Selects the hover feature info from the store. */
+export declare const useStoreMapHoverFeatureInfo: () => TypeHoverFeatureInfo;
 /** Returns the point markers grouped by name. */
 export declare const getStoreMapPointMarkers: (mapId: string) => Record<string, TypePointMarker[]>;
+/** Selects the point markers grouped by name from the store. */
+export declare const useStoreMapPointMarkers: () => Record<string, TypePointMarker[]>;
 /** Returns the current map interaction mode. */
 export declare const getStoreMapInteraction: (mapId: string) => TypeInteraction;
+/** Selects the map interaction mode from the store. */
+export declare const useStoreMapInteraction: () => TypeInteraction;
 /** Returns the array of currently highlighted features. */
 export declare const getStoreMapHighlightedFeatures: (mapId: string) => TypeFeatureInfoEntry[];
 /** Returns highlighted features matching the given feature UID. */
 export declare const getStoreMapHighlightedFeaturesByUid: (mapId: string, featureUid: string | undefined) => TypeFeatureInfoEntry[];
 /** Returns the ordered layer info entries that have collapsible legends. */
 export declare const getStoreMapLegendCollapsibleLayers: (mapId: string) => TypeOrderedLayerInfo[];
+/** Selects the map attribution strings from the store. */
+export declare const useStoreMapAttribution: () => string[];
+/** Selects the map center coordinates from the store. */
+export declare const useStoreMapCenterCoordinates: () => Coordinate;
+/** Selects the click marker state from the store. */
+export declare const useStoreMapClickMarker: () => TypeClickMarker | undefined;
+/** Selects the current map extent from the store. */
+export declare const useStoreMapExtent: () => Extent | undefined;
+/** Selects whether the map has a geoview basemap layer from the store. */
+export declare const useStoreMapHasGeoviewBasemapLayer: () => boolean;
+/** Selects whether the map is fixed to north from the store. */
+export declare const useStoreMapFixNorth: () => boolean;
+/** Selects whether the mouse is inside the map from the store. */
+export declare const useStoreMapIsMouseInsideMap: () => boolean;
+/** Selects whether the map is loaded from the store. */
+export declare const useStoreMapLoaded: () => boolean;
+/** Selects whether the map is displayed from the store. */
+export declare const useStoreMapDisplayed: () => boolean;
+/** Selects whether the north arrow is enabled from the store. */
+export declare const useStoreMapNorthArrow: () => boolean;
+/** Selects the north arrow element state from the store. */
+export declare const useStoreMapNorthArrowElement: () => TypeNorthArrow;
+/** Selects the zoom level at which the overview map hides from the store. */
+export declare const useStoreMapOverviewMapHideZoom: () => number;
+/** Selects the map scale information from the store. */
+export declare const useStoreMapScale: () => TypeScaleInfo;
+/** Selects the map size from the store. */
+export declare const useStoreMapSize: () => Size;
+/** Selects the ordered layer paths from the store. */
+export declare const useStoreMapOrderedLayers: () => string[];
+/** Selects the visible layer paths from the store. */
+export declare const useStoreMapVisibleLayers: () => string[];
+/**
+ * Selects the union of visible and in-range layer paths.
+ *
+ * Used by data-table, details, geochart, and time-slider left panel components.
+ *
+ * @returns The deduplicated array of layer paths that are visible or in visible range
+ */
+export declare const useStoreMapAllVisibleandInRangeLayers: () => string[];
+/** Selects the current zoom level from the store. */
+export declare const useStoreMapZoom: () => number;
+/**
+ * Selects the queryable state for multiple layer paths.
+ *
+ * @param layerPaths - The layer paths to check queryable state for
+ * @returns A record mapping each layer path to its queryable state
+ */
+export declare const useStoreMapLayerQueryable: (layerPaths: string[]) => Record<string, boolean>;
 /**
  * Returns the map config state for the given map.
  *
@@ -357,6 +372,8 @@ export declare const getStoreMapConfigFooterBar: (mapId: string) => TypeFooterBa
 export declare const getStoreMapConfigAppBar: (mapId: string) => TypeAppBarProps | undefined;
 /** Returns the overview map configuration from the map config. */
 export declare const getStoreMapConfigOverviewMap: (mapId: string) => TypeOverviewMapProps | undefined;
+/** Selects whether the overview map is enabled from the store. */
+export declare const useStoreMapOverviewMap: () => boolean;
 /** Returns the enabled map components from the map config. */
 export declare const getStoreMapConfigComponents: (mapId: string) => TypeValidMapComponentProps[] | undefined;
 /** Returns the enabled core packages from the map config. */
