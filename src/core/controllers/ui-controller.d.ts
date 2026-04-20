@@ -1,6 +1,6 @@
-import { type TypeDisplayLanguage, type TypeDisplayTheme } from '@/api/types/map-schema-types';
+import type { TypeDisplayLanguage, TypeDisplayTheme } from '@/api/types/map-schema-types';
 import { AbstractMapViewerController } from '@/core/controllers/base/abstract-map-viewer-controller';
-import { type ActiveAppBarTabType, type FocusItemProps } from '@/core/stores/store-interface-and-intial-values/ui-state';
+import { type FocusItemProps } from '@/core/stores/store-interface-and-intial-values/ui-state';
 import { type TimeIANA } from '@/core/utils/date-mgt';
 import type { TypeHTMLElement } from '@/core/types/global-types';
 import type { SnackbarType } from '@/core/utils/notifications';
@@ -53,12 +53,6 @@ export declare class UIController extends AbstractMapViewerController {
      * @param tab - The tab identifier to activate, or undefined to deactivate
      */
     setActiveFooterBarTab(tab: string | undefined): void;
-    /**
-     * Gets the active app bar tab from the store.
-     *
-     * @returns The active app bar tab info.
-     */
-    getActiveAppBarTab(): ActiveAppBarTabType;
     /**
      * Sets the active app bar tab with its open and focus trap states.
      *
@@ -183,11 +177,4 @@ export declare class UIController extends AbstractMapViewerController {
      */
     createGuide(): Promise<void>;
 }
-/**
- * Hook to access the UI controller from the controller context.
- *
- * @returns The UI controller instance
- * @throws {Error} When used outside of a ControllerContext.Provider.
- */
-export declare function useUIController(): UIController;
 //# sourceMappingURL=ui-controller.d.ts.map

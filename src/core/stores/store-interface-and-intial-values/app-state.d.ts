@@ -3,7 +3,7 @@ import type { TypeInitialGeoviewLayerType } from '@/api/types/layer-schema-types
 import type { TypeSetStore, TypeGetStore } from '@/core/stores/geoview-store';
 import type { NotificationDetailsType } from '@/core/components/notifications/notifications';
 import type { TypeMapFeaturesConfig } from '@/core/types/global-types';
-import { type TimeIANA, type TypeDisplayDateDefaults } from '@/core/utils/date-mgt';
+import type { TimeIANA, TypeDisplayDateDefaults } from '@/core/utils/date-mgt';
 /**
  * Represents the application-level Zustand store slice.
  *
@@ -72,46 +72,42 @@ export interface IAppState {
  * @returns The initialized App State
  */
 export declare function initializeAppState(set: TypeSetStore, get: TypeGetStore): IAppState;
-/** Hook that returns whether the circular progress indicator is active. */
-export declare const useAppCircularProgressActive: () => boolean;
-/** Hook that returns whether the crosshairs overlay is active. */
-export declare const useAppCrosshairsActive: () => boolean;
-/** Hook that returns the list of disabled layer types. */
-export declare const useAppDisabledLayerTypes: () => TypeInitialGeoviewLayerType[];
-/** Hook that returns the current display language. */
-export declare const useAppDisplayLanguage: () => TypeDisplayLanguage;
-/** Hook that returns the current display date mode. */
-export declare const useAppDisplayDateMode: () => DisplayDateMode;
-/** Hook that returns the current display date timezone. */
-export declare const useDisplayDateTimezone: () => TimeIANA;
-/** Hook that returns the current display theme. */
-export declare const useAppDisplayTheme: () => TypeDisplayTheme;
-/** Hook that returns whether fullscreen mode is active. */
-export declare const useAppFullscreenActive: () => boolean;
-/** Hook that returns the geolocator service URL. */
-export declare const useAppGeolocatorServiceURL: () => string | undefined;
-/** Hook that returns the metadata service URL. */
-export declare const useAppMetadataServiceURL: () => string | undefined;
-/** Hook that returns the root GeoView HTML element for the current map. */
-export declare const useAppGeoviewHTMLElement: () => HTMLElement;
-/** Hook that returns the current map container height in pixels. */
-export declare const useAppHeight: () => number;
-/** Hook that returns the base URL for GeoView static assets. */
-export declare const useAppGeoviewAssetsURL: () => string;
-/** Hook that returns the guide content object. */
-export declare const useAppGuide: () => TypeGuideObject | undefined;
-/** Hook that returns the list of active notifications. */
-export declare const useAppNotifications: () => NotificationDetailsType[];
-/** Hook that returns whether unsymbolized features should be displayed. */
-export declare const useAppShowUnsymbolizedFeatures: () => boolean;
 /**
- * Hook that returns the shell container HTML element for the current map.
+ * Gets whether the circular progress indicator is active for the given map.
  *
- * Queries the DOM for the element whose id starts with `shell-{mapId}`.
- *
- * @returns The shell container element.
+ * @param mapId - The map identifier.
+ * @returns True if the progress indicator is active.
  */
-export declare const useAppShellContainer: () => HTMLElement;
+export declare const getStoreAppIsCircularProgressActive: (mapId: string) => boolean;
+/** Hook that returns whether the circular progress indicator is active. */
+export declare const useStoreAppIsCircularProgressActive: () => boolean;
+/**
+ * Gets whether the crosshairs overlay is active for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns True if crosshairs are active.
+ */
+export declare const getStoreAppIsCrosshairsActive: (mapId: string) => boolean;
+/** Hook that returns whether the crosshairs overlay is active. */
+export declare const useStoreAppIsCrosshairsActive: () => boolean;
+/**
+ * Gets the disabled layer types for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The list of disabled layer types.
+ */
+export declare const getStoreAppDisabledLayerTypes: (mapId: string) => TypeInitialGeoviewLayerType[];
+/** Hook that returns the list of disabled layer types. */
+export declare const useStoreAppDisabledLayerTypes: () => TypeInitialGeoviewLayerType[];
+/**
+ * Gets the display language for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The display language.
+ */
+export declare const getStoreAppDisplayLanguage: (mapId: string) => TypeDisplayLanguage;
+/** Hook that returns the current display language. */
+export declare const useStoreAppDisplayLanguage: () => TypeDisplayLanguage;
 /**
  * Hook that returns the display language for a specific map by its id.
  *
@@ -121,7 +117,16 @@ export declare const useAppShellContainer: () => HTMLElement;
  * @param mapId - The map identifier.
  * @returns The display language for the given map.
  */
-export declare const useAppDisplayLanguageById: (mapId: string) => TypeDisplayLanguage;
+export declare const useStoreAppDisplayLanguageById: (mapId: string) => TypeDisplayLanguage;
+/**
+ * Gets the display theme for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The display theme.
+ */
+export declare const getStoreAppDisplayTheme: (mapId: string) => TypeDisplayTheme;
+/** Hook that returns the current display theme. */
+export declare const useStoreAppDisplayTheme: () => TypeDisplayTheme;
 /**
  * Hook that returns the display theme for a specific map by its id.
  *
@@ -131,21 +136,16 @@ export declare const useAppDisplayLanguageById: (mapId: string) => TypeDisplayLa
  * @param mapId - The map identifier.
  * @returns The display theme for the given map.
  */
-export declare const useAppDisplayThemeById: (mapId: string) => TypeDisplayTheme;
-/**
- * Gets the disabled layer types for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The list of disabled layer types.
- */
-export declare const getStoreDisabledLayerTypes: (mapId: string) => TypeInitialGeoviewLayerType[];
+export declare const useStoreAppDisplayThemeById: (mapId: string) => TypeDisplayTheme;
 /**
  * Gets the display date mode for the given map.
  *
  * @param mapId - The map identifier.
  * @returns The display date mode.
  */
-export declare const getStoreDisplayDateMode: (mapId: string) => DisplayDateMode;
+export declare const getStoreAppDisplayDateMode: (mapId: string) => DisplayDateMode;
+/** Hook that returns the current display date mode. */
+export declare const useStoreAppDisplayDateMode: () => DisplayDateMode;
 /**
  * Gets the display date timezone for the given map.
  *
@@ -153,97 +153,97 @@ export declare const getStoreDisplayDateMode: (mapId: string) => DisplayDateMode
  * @returns The IANA timezone string.
  */
 export declare const getStoreDisplayDateTimezone: (mapId: string) => TimeIANA;
-/**
- * Gets the display language for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The display language.
- */
-export declare const getStoreDisplayLanguage: (mapId: string) => TypeDisplayLanguage;
-/**
- * Gets the display theme for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The display theme.
- */
-export declare const getStoreDisplayTheme: (mapId: string) => TypeDisplayTheme;
-/**
- * Gets the default date format settings derived from the current display date mode.
- *
- * @param mapId - The map identifier.
- * @returns The default date display settings.
- */
-export declare const getStoreDisplayDateFormatDefault: (mapId: string) => TypeDisplayDateDefaults;
-/**
- * Gets the geolocator service URL for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The geolocator service URL, or undefined if not configured.
- */
-export declare const getStoreGeolocatorServiceURL: (mapId: string) => string | undefined;
-/**
- * Gets the GeoView assets base URL for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The assets base URL.
- */
-export declare const getStoreGeoviewAssetsURL: (mapId: string) => string;
-/**
- * Gets the root GeoView HTML element for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The HTML element hosting the map.
- */
-export declare const getStoreGeoviewHTMLElement: (mapId: string) => HTMLElement;
-/**
- * Gets the guide content object for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The guide object, or undefined if not set.
- */
-export declare const getStoreGuide: (mapId: string) => TypeGuideObject | undefined;
-/**
- * Gets the map container height for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The height in pixels.
- */
-export declare const getStoreHeight: (mapId: string) => number;
-/**
- * Gets whether the circular progress indicator is active for the given map.
- *
- * @param mapId - The map identifier.
- * @returns True if the progress indicator is active.
- */
-export declare const getStoreIsCircularProgressActive: (mapId: string) => boolean;
-/**
- * Gets whether the crosshairs overlay is active for the given map.
- *
- * @param mapId - The map identifier.
- * @returns True if crosshairs are active.
- */
-export declare const getStoreIsCrosshairsActive: (mapId: string) => boolean;
+/** Hook that returns the current display date timezone. */
+export declare const useStoreDisplayDateTimezone: () => TimeIANA;
 /**
  * Gets whether fullscreen mode is active for the given map.
  *
  * @param mapId - The map identifier.
  * @returns True if fullscreen is active.
  */
-export declare const getStoreIsFullscreenActive: (mapId: string) => boolean;
+export declare const getStoreAppIsFullscreenActive: (mapId: string) => boolean;
+/** Hook that returns whether fullscreen mode is active. */
+export declare const useStoreAppIsFullscreenActive: () => boolean;
+/**
+ * Gets the geolocator service URL for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The geolocator service URL, or undefined if not configured.
+ */
+export declare const getStoreAppGeolocatorServiceURL: (mapId: string) => string | undefined;
+/** Hook that returns the geolocator service URL. */
+export declare const useStoreAppGeolocatorServiceURL: () => string | undefined;
 /**
  * Gets the metadata service URL for the given map.
  *
  * @param mapId - The map identifier.
  * @returns The metadata service URL, or undefined if not configured.
  */
-export declare const getStoreMetadataServiceURL: (mapId: string) => string | undefined;
+export declare const getStoreAppMetadataServiceURL: (mapId: string) => string | undefined;
+/** Hook that returns the metadata service URL. */
+export declare const useStoreAppMetadataServiceURL: () => string | undefined;
+/**
+ * Gets the root GeoView HTML element for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The HTML element hosting the map.
+ */
+export declare const getStoreAppGeoviewHTMLElement: (mapId: string) => HTMLElement;
+/** Hook that returns the root GeoView HTML element for the current map. */
+export declare const useStoreAppGeoviewHTMLElement: () => HTMLElement;
+/**
+ * Gets the map container height for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The height in pixels.
+ */
+export declare const getStoreAppHeight: (mapId: string) => number;
+/** Hook that returns the current map container height in pixels. */
+export declare const useStoreAppHeight: () => number;
+/**
+ * Gets the GeoView assets base URL for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The assets base URL.
+ */
+export declare const getStoreAppGeoviewAssetsURL: (mapId: string) => string;
+/** Hook that returns the base URL for GeoView static assets. */
+export declare const useStoreAppGeoviewAssetsURL: () => string;
+/**
+ * Gets the guide content object for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The guide object, or undefined if not set.
+ */
+export declare const getStoreAppGuide: (mapId: string) => TypeGuideObject | undefined;
+/** Hook that returns the guide content object. */
+export declare const useStoreAppGuide: () => TypeGuideObject | undefined;
 /**
  * Gets the list of active notifications for the given map.
  *
  * @param mapId - The map identifier.
  * @returns The array of notifications.
  */
-export declare const getStoreNotifications: (mapId: string) => NotificationDetailsType[];
+export declare const getStoreAppNotifications: (mapId: string) => NotificationDetailsType[];
+/** Hook that returns the list of active notifications. */
+export declare const useStoreAppNotifications: () => NotificationDetailsType[];
+/**
+ * Gets whether unsymbolized features should be displayed for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns True if unsymbolized features should be shown.
+ */
+export declare const getStoreAppShowUnsymbolizedFeatures: (mapId: string) => boolean;
+/** Hook that returns whether unsymbolized features should be displayed. */
+export declare const useStoreAppShowUnsymbolizedFeatures: () => boolean;
+/**
+ * Hook that returns the shell container HTML element for the current map.
+ *
+ * Queries the DOM for the element whose id starts with `shell-{mapId}`.
+ *
+ * @returns The shell container element.
+ */
+export declare const useStoreAppShellContainer: () => HTMLElement;
 /**
  * Gets whether to show highlight bounding boxes around layer features for the given map.
  *
@@ -252,12 +252,12 @@ export declare const getStoreNotifications: (mapId: string) => NotificationDetai
  */
 export declare const getStoreShowLayerHighlightLayerBbox: (mapId: string) => boolean;
 /**
- * Gets whether unsymbolized features should be displayed for the given map.
+ * Gets the default date format settings derived from the current display date mode.
  *
  * @param mapId - The map identifier.
- * @returns True if unsymbolized features should be shown.
+ * @returns The default date display settings.
  */
-export declare const getStoreShowUnsymbolizedFeatures: (mapId: string) => boolean;
+export declare const getStoreDisplayDateFormatDefault: (mapId: string) => TypeDisplayDateDefaults;
 /**
  * Sets the circular progress indicator active state.
  *

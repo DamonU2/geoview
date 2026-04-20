@@ -1,9 +1,8 @@
-import type { TypeLegendLayer } from '@/core/components/layers/types';
 import type { TypeContainerBox } from '@/core/types/global-types';
 /**
  * Properties for the LegendFullscreen component.
  * @interface LegendFullscreenProps
- * @property {TypeLegendLayer[]} layersList - Array of legend layers to display in fullscreen mode.
+ * @property {string[]} layerPaths - Array of layer paths to display in fullscreen mode.
  * @property {string} mapId - The unique identifier of the map.
  * @property {TypeContainerBox} containerType - The type of container where the legend is displayed.
  * @property {boolean} isOpen - Controls whether the fullscreen dialog is open.
@@ -11,7 +10,7 @@ import type { TypeContainerBox } from '@/core/types/global-types';
  * @property {React.RefObject<HTMLButtonElement>} buttonRef - Reference to the fullscreen button for focus restoration.
  */
 interface LegendFullscreenProps {
-    layersList: TypeLegendLayer[];
+    layerPaths: string[];
     mapId: string;
     containerType: TypeContainerBox;
     isOpen: boolean;
@@ -44,13 +43,8 @@ export declare function LegendFullscreenButton({ containerType, onClick, buttonR
  * Manages layer collapse state by expanding all layers when entering fullscreen and
  * restoring the previous collapse state when exiting.
  * @param props - The component properties.
- * @param props.layersList - Array of legend layers to display.
- * @param props.mapId - The unique identifier of the map.
- * @param props.containerType - The type of container where the legend is displayed.
- * @param props.isOpen - Controls whether the fullscreen dialog is open.
- * @param props.onClose - Callback function invoked when the dialog is closed.
  * @returns The fullscreen legend dialog component.
  */
-export declare function LegendFullscreen({ layersList, mapId, containerType, isOpen, onClose, buttonRef }: LegendFullscreenProps): JSX.Element;
+export declare function LegendFullscreen({ layerPaths, mapId, containerType, isOpen, onClose, buttonRef }: LegendFullscreenProps): JSX.Element;
 export {};
 //# sourceMappingURL=legend-fullscreen.d.ts.map

@@ -19,15 +19,12 @@ export interface ISwiperState {
 }
 /**
  * Initializes a Swiper state object.
+ *
  * @param set - The store set callback function
  * @param get - The store get callback function
  * @returns The Swiper state object
  */
 export declare function initializeSwiperState(set: TypeSetStore, get: TypeGetStore): ISwiperState;
-/** Hooks the swiper layer paths from the store. */
-export declare const useSwiperLayerPaths: () => string[];
-/** Hooks the swiper orientation from the store. */
-export declare const useSwiperOrientation: () => string;
 /**
  * Checks whether the Swiper plugin state has been initialized for the given map.
  *
@@ -43,6 +40,18 @@ export declare const isStoreSwiperInitialized: (mapId: string) => boolean;
  * @throws {PluginStateUninitializedError} When the Swiper plugin is uninitialized.
  */
 export declare const getStoreSwiperLayerPaths: (mapId: string) => string[];
+/** Hooks the swiper layer paths from the store. */
+export declare const useStoreSwiperLayerPaths: () => string[];
+/**
+ * Gets the swiper orientation from the store.
+ *
+ * @param mapId - The map id to read swiper layer paths from.
+ * @returns The array of layer paths participating in the swiper.
+ * @throws {PluginStateUninitializedError} When the Swiper plugin is uninitialized.
+ */
+export declare const getStoreSwiperOrientation: (mapId: string) => SwipeOrientation;
+/** Hooks the swiper orientation from the store. */
+export declare const useStoreSwiperOrientation: () => SwipeOrientation;
 /**
  * Sets the swiper layer paths in the store.
  *

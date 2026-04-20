@@ -2,9 +2,9 @@ import type { Extent } from 'ol/extent';
 import type { Projection as OLProjection } from 'ol/proj';
 import type { TypeLayersViewDisplayState, TypeLegendItem, TypeLegendLayer } from '@/core/components/layers/types';
 import type { TypeMapFeaturesConfig } from '@/core/types/global-types';
-import { type TypeGetStore, type TypeSetStore } from '@/core/stores/geoview-store';
+import type { TypeGetStore, TypeSetStore } from '@/core/stores/geoview-store';
 import type { TypeLayerStyleConfig, TypeResultSet, TypeResultSetEntry } from '@/api/types/map-schema-types';
-import { type TemporalMode, type TimeDimension, type TimeIANA, type TypeDisplayDateFormat } from '@/core/utils/date-mgt';
+import type { TemporalMode, TimeDimension, TimeIANA, TypeDisplayDateFormat } from '@/core/utils/date-mgt';
 import type { TypeGeoviewLayerType, TypeLayerStatus, TypeMetadataEsriRasterFunctionInfos, TypeMetadataWMSCapabilityLayerStyle, TypeMosaicMethod, TypeMosaicRule } from '@/api/types/layer-schema-types';
 import type { TypeVectorLayerStyles } from '@/geo/utils/renderer/geoview-renderer';
 import type { AbstractBaseGVLayer } from '@/geo/layer/gv-layers/abstract-base-layer';
@@ -18,8 +18,6 @@ import type { AbstractBaseGVLayer } from '@/geo/layer/gv-layers/abstract-base-la
 export interface ILayerState {
     /** The layer path of the currently highlighted layer. */
     highlightedLayer: string;
-    /** The full legend layer object for the currently selected layer. */
-    selectedLayer: TypeLegendLayer;
     /** The layer path of the currently selected layer, or undefined if none is selected. */
     selectedLayerPath?: string;
     /** The array of legend layer objects representing the full layer tree. */
@@ -42,6 +40,7 @@ export interface ILayerState {
         setSelectedLayerPath: (layerPath: string | undefined) => void;
         setLayersAreLoading: (areLoading: boolean) => void;
         setLayerDeletionStartTime: (layerPath: string, startTime: number | undefined) => void;
+        updateLayerByPath: (layerPath: string, updater: (layer: TypeLegendLayer) => TypeLegendLayer) => void;
     };
 }
 /**
@@ -52,193 +51,64 @@ export interface ILayerState {
  * @returns The initialized Layer State
  */
 export declare function initializeLayerState(set: TypeSetStore, get: TypeGetStore): ILayerState;
-/** Hook that returns the highlighted layer path. */
-export declare const useLayerHighlightedLayer: () => string;
-/** Hook that returns the full legend layers array. */
-export declare const useLayerLegendLayers: () => TypeLegendLayer[];
-/** Hook that returns the selected legend layer object. */
-export declare const useLayerSelectedLayer: () => TypeLegendLayer;
-/** Hook that returns the selected layer path. */
-export declare const useLayerSelectedLayerPath: () => string | null | undefined;
-/** Hook that returns the current layers panel display state. */
-export declare const useLayerDisplayState: () => TypeLayersViewDisplayState;
-/** Hook that returns whether layers are currently loading. */
-export declare const useLayerAreLayersLoading: () => boolean;
 /**
- * Hook that returns the selected legend layer by looking it up from the legend layers array.
+ * Gets the full legend layers array for the given map.
  *
- * @returns The selected legend layer, or undefined if none is selected.
+ * GV This getter shouldn't have a hook equivalent, favor precise hooks for specific properties instead to
+ * GV avoid unnecessary re-renders of the full layers tree when any single layer property changes.
+ * GV See examples below for how to create these precise hooks using the createLayerSelectorHook factory.
+ *
+ * @param mapId - The map identifier.
+ * @returns The legend layers array.
  */
-export declare const useSelectedLayer: () => TypeLegendLayer | undefined;
+export declare const getStoreLayerLegendLayers: (mapId: string) => TypeLegendLayer[];
 /**
- * Hook that returns the icon set (image URLs) for a specific layer.
+ * Gets the layer paths for the given map.
  *
- * For WMS layers, returns canvas icon images; for other types, returns item icons.
- *
- * @param layerPath - The layer path to get icons for.
- * @returns An array of icon image strings.
+ * @param mapId - The map identifier.
+ * @returns The layer paths array.
  */
-export declare const useLayerIconLayerSet: (layerPath: string) => string[];
-/**
- * React hook that returns if the temporal modes for the layers.
- *
- * @returns The temporal mode of the dates for the layer.
- */
-export declare const useLayerDateTemporalModes: () => Record<string, TemporalMode>;
-/**
- * React hook that returns if the temporal mode of the dates for the layer.
- *
- * @param layerPath - Unique path identifying the layer in the legend state.
- * @returns The temporal mode of the dates for the layer. Default: DateMgt.DEFAULT_TEMPORAL_MODE.
- */
-export declare const useLayerDateTemporalMode: (layerPath: string | undefined) => TemporalMode;
-/**
- * React hook that returns if the display date formats for the layers.
- *
- * @returns The display date format of the dates for the layer.
- */
-export declare const useLayerDisplayDateFormats: () => Record<string, TypeDisplayDateFormat>;
-/**
- * React hook that returns the display date format for a specific layer.
- * The hook first attempts to resolve a layer-specific display date format
- * using the provided layer path. If the layer does not define its own
- * display date format (or cannot be found), the application-wide display
- * date format for the current map is returned as a fallback.
- *
- * @param layerPath - Unique path identifying the layer in the legend state.
- * @returns The display date format to use for the layer, falling back to the
- * application's default display date format when none is defined.
- */
-export declare const useLayerDisplayDateFormat: (layerPath: string | undefined) => TypeDisplayDateFormat;
-/**
- * React hook that returns the display date format for a specific layer.
- * The hook first attempts to resolve a layer-specific display date format
- * using the provided layer path. If the layer does not define its own
- * display date format (or cannot be found), the application-wide display
- * date format for the current map is returned as a fallback.
- *
- * @param layerPath - Unique path identifying the layer in the legend state.
- * @returns The display date format to use for the layer, falling back to the
- * application's default display date format when none is defined.
- */
-export declare const useLayerDisplayDateFormatShort: (layerPath: string | undefined) => TypeDisplayDateFormat;
-/**
- * React hook that returns if the display date timezones for the layers.
- *
- * @returns The display date timezone of the dates for the layer.
- */
-export declare const useLayerDisplayDateTimezones: () => Record<string, TimeIANA>;
-/**
- * React hook that returns the display date timezone for a specific layer.
- * The hook first attempts to resolve a layer-specific display date timezone
- * using the provided layer path. If the layer does not define its own
- * display date timezone (or cannot be found), the application-wide display
- * date timezone for the current map is returned as a fallback.
- *
- * @param layerPath - Unique path identifying the layer in the legend state.
- * @returns The display date timezone to use for the layer, falling back to the
- * application's default display date timezone when none is defined.
- */
-export declare const useLayerDisplayDateTimezone: (layerPath: string | undefined) => TimeIANA;
-/** Hook that returns the layer id for a specific layer. */
-export declare const useLayerSelectorId: (layerPath: string) => string | undefined;
-/** Hook that returns the layer name for a specific layer. */
-export declare const useLayerSelectorName: (layerPath: string) => string | undefined;
-/**
- * Hook that returns a record of layer names for all layers.
- *
- * @returns A record of layer names keyed by layer path.
- */
-export declare const useLayerNames: () => Record<string, string>;
-/** Hook that returns the layer status for a specific layer. */
-export declare const useLayerSelectorStatus: (layerPath: string) => TypeLayerStatus | undefined;
-/**
- * Hook that returns a record of layer statuses for all layers.
- *
- * @returns A record of layer statuses keyed by layer path, defaulting to 'newInstance'.
- */
-export declare const useLayerStatuses: () => Record<string, TypeLayerStatus>;
-/** Hook that returns the deletion start time for a specific layer. */
-export declare const useLayerSelectorDeletionStartTime: (layerPath: string) => number | undefined;
-/** Hook that returns the layer filter for a specific layer. */
-export declare const useLayerSelectorFilter: (layerPath: string) => string | undefined;
-/** Hook that returns the layer filter class for a specific layer. */
-export declare const useLayerSelectorFilterClass: (layerPath: string) => string | undefined;
-/** Hook that returns the schema tag for a specific layer. */
-export declare const useLayerSelectorSchemaTag: (layerPath: string) => TypeGeoviewLayerType | undefined;
-/** Hook that returns the entry type for a specific layer. */
-export declare const useLayerSelectorEntryType: (layerPath: string) => import("@/api/types/layer-schema-types").TypeLayerEntryType | undefined;
-/** Hook that returns the bounds extent for a specific layer. */
-export declare const useLayerSelectorBounds: (layerPath: string) => Extent | undefined;
-/** Hook that returns the EPSG:4326 bounds for a specific layer. */
-export declare const useLayerSelectorBounds4326: (layerPath: string) => Extent | undefined;
-/** Hook that returns the controls configuration for a specific layer. */
-export declare const useLayerSelectorControls: (layerPath: string) => import("@/api/types/layer-schema-types").TypeLayerControls | undefined;
-/** Hook that returns the children layers for a specific layer. */
-export declare const useLayerSelectorChildren: (layerPath: string) => TypeLegendLayer[] | undefined;
-/** Hook that returns the legend items for a specific layer. */
-export declare const useLayerSelectorItems: (layerPath: string) => TypeLegendItem[] | undefined;
-/** Hook that returns the legend icons for a specific layer. */
-export declare const useLayerSelectorIcons: (layerPath: string) => import("@/core/components/layers/types").TypeLegendLayerItem[] | undefined;
-/** Hook that returns the legend query status for a specific layer. */
-export declare const useLayerSelectorLegendQueryStatus: (layerPath: string) => LegendQueryStatus | undefined;
-/** Hook that returns whether toggling is allowed for a specific layer. */
-export declare const useLayerSelectorCanToggle: (layerPath: string) => boolean | undefined;
-/** Hook that returns the style configuration for a specific layer. */
-export declare const useLayerSelectorStyleConfig: (layerPath: string) => Partial<Record<"Point" | "MultiPoint" | "LineString" | "MultiLineString" | "Polygon" | "MultiPolygon", import("@/api/types/map-schema-types").TypeLayerStyleSettings>> | undefined;
-/** Hook that returns the raster function for a specific layer. */
-export declare const useLayerSelectorRasterFunction: (layerPath: string) => string | undefined;
-/** Hook that returns the mosaic rule for a specific layer. */
-export declare const useLayerSelectorMosaicRule: (layerPath: string) => TypeMosaicRule | undefined;
-/** Hook that returns the WMS style for a specific layer. */
-export declare const useLayerSelectorWmsStyle: (layerPath: string) => string | undefined;
-/** Hook that returns the available WMS styles metadata for a specific layer. */
-export declare const useLayerSelectorWmsStyles: (layerPath: string) => TypeMetadataWMSCapabilityLayerStyle[] | undefined;
-/** Hook that returns if the layer has text. */
-export declare const useLayerSelectorHasText: (layerPath: string) => boolean | undefined;
-/** Hook that returns the text visibility for a specific layer. */
-export declare const useLayerSelectorTextVisibility: (layerPath: string) => boolean | undefined;
-/** Hook that returns the raster function infos for a specific layer. */
-export declare const useLayerSelectorRasterFunctionInfos: (layerPath: string) => TypeMetadataEsriRasterFunctionInfos[] | undefined;
-/** Hook that returns the allowed mosaic methods for a specific layer. */
-export declare const useLayerSelectorAllowedMosaicMethods: (layerPath: string) => TypeMosaicMethod[] | undefined;
-/** Hook that returns the time dimension for a specific layer. */
-export declare const useLayerTimeDimension: (layerPath: string) => TimeDimension | undefined;
+export declare const getStoreLayerLayerPaths: (mapId: string) => string[];
+/** Hook that returns only the top-level layer paths. Re-renders only when layers are added, removed, or reordered. */
+export declare const useStoreLayerLayerPaths: () => string[];
 /**
  * Gets the selected layer path for the given map.
  *
  * @param mapId - The map identifier.
  * @returns The selected layer path, or undefined if none is selected.
  */
-export declare const getStoreLayerStateSelectedLayerPath: (mapId: string) => string | undefined;
+export declare const getStoreLayerSelectedLayerPath: (mapId: string) => string | undefined;
+/** Hook that returns the selected layer path. */
+export declare const useStoreLayerSelectedLayerPath: () => string | null | undefined;
+/** Hook that returns the layer name of the currently selected layer. Primitive string so Object.is prevents spurious re-renders. */
+export declare const useStoreLayerSelectedLayerName: () => string | undefined;
 /**
  * Gets the highlighted layer path for the given map.
  *
  * @param mapId - The map identifier.
  * @returns The highlighted layer path.
  */
-export declare const getStoreLayerStateHighlightedLayer: (mapId: string) => string;
+export declare const getStoreLayerHighlightedLayer: (mapId: string) => string;
+/** Hook that returns the highlighted layer path. */
+export declare const useStoreLayerHighlightedLayer: () => string;
 /**
  * Gets the layers panel display state for the given map.
  *
  * @param mapId - The map identifier.
  * @returns The display state.
  */
-export declare const getStoreLayerStateDisplayState: (mapId: string) => TypeLayersViewDisplayState;
+export declare const getStoreLayerDisplayState: (mapId: string) => TypeLayersViewDisplayState;
+/** Hook that returns the current layers panel display state. */
+export declare const useStoreLayerDisplayState: () => TypeLayersViewDisplayState;
 /**
  * Gets whether layers are currently loading for the given map.
  *
  * @param mapId - The map identifier.
  * @returns True if layers are loading.
  */
-export declare const getStoreLayerStateAreLayersLoading: (mapId: string) => boolean;
-/**
- * Gets the full legend layers array for the given map.
- *
- * @param mapId - The map identifier.
- * @returns The legend layers array.
- */
-export declare const getStoreLayerStateLegendLayers: (mapId: string) => TypeLegendLayer[];
+export declare const getStoreLayerAreLayersLoading: (mapId: string) => boolean;
+/** Hook that returns whether layers are currently loading. */
+export declare const useStoreLayerAreLayersLoading: () => boolean;
 /**
  * Gets a specific legend layer by its path for the given map.
  *
@@ -246,7 +116,16 @@ export declare const getStoreLayerStateLegendLayers: (mapId: string) => TypeLege
  * @param layerPath - The layer path to look up.
  * @returns The matching legend layer, or undefined if not found.
  */
-export declare const getStoreLayerStateLegendLayerByPath: (mapId: string, layerPath: string) => TypeLegendLayer | undefined;
+export declare const getStoreLayerLegendLayerByPath: (mapId: string, layerPath: string) => TypeLegendLayer | undefined;
+/**
+ * Gets the selected layer path for the given map.
+ *
+ * @param mapId - The map identifier.
+ * @returns The selected layer path, or undefined if none is selected.
+ */
+export declare const getStoreLayerId: (mapId: string, layerPath: string) => string | undefined;
+/** Hook that returns the layer id for a specific layer. */
+export declare const useStoreLayerId: (layerPath: string) => string | undefined;
 /**
  * Gets the bounds extent for a specific layer.
  *
@@ -254,7 +133,9 @@ export declare const getStoreLayerStateLegendLayerByPath: (mapId: string, layerP
  * @param layerPath - The layer path to look up.
  * @returns The layer bounds extent, or undefined.
  */
-export declare const getStoreLayerStateLayerBounds: (mapId: string, layerPath: string) => Extent | undefined;
+export declare const getStoreLayerBounds: (mapId: string, layerPath: string) => Extent | undefined;
+/** Hook that returns the bounds extent for a specific layer. */
+export declare const useStoreLayerBounds: (layerPath: string) => Extent | undefined;
 /**
  * Gets the layer status for a specific layer.
  *
@@ -262,7 +143,93 @@ export declare const getStoreLayerStateLayerBounds: (mapId: string, layerPath: s
  * @param layerPath - The layer path to look up.
  * @returns The layer status, or undefined.
  */
-export declare const getStoreLayerStateLayerStatus: (mapId: string, layerPath: string) => TypeLayerStatus | undefined;
+export declare const getStoreLayerStatus: (mapId: string, layerPath: string) => TypeLayerStatus | undefined;
+/** Hook that returns the layer status for a specific layer. */
+export declare const useStoreLayerStatus: (layerPath: string) => TypeLayerStatus | undefined;
+/**
+ * Hook that returns a record of layer statuses for all layers.
+ *
+ * @returns A record of layer statuses keyed by layer path, defaulting to 'newInstance'.
+ */
+export declare const useStoreLayerStatusSet: () => Record<string, TypeLayerStatus>;
+/**
+ * Gets the WMS style for a specific layer.
+ *
+ * @param mapId - The map identifier.
+ * @param layerPath - The layer path to look up.
+ * @returns The WMS style name, or undefined.
+ */
+export declare const getStoreLayerWmsStyle: (mapId: string, layerPath: string) => string | undefined;
+/** Hook that returns the WMS style for a specific layer. */
+export declare const useStoreLayerWmsStyle: (layerPath: string) => string | undefined;
+/**
+ * Gets the available WMS styles metadata for a specific layer.
+ *
+ * @param mapId - The map identifier.
+ * @param layerPath - The layer path to look up.
+ * @returns The WMS styles metadata, or undefined.
+ */
+export declare const getStoreLayerWmsStyles: (mapId: string, layerPath: string) => TypeMetadataWMSCapabilityLayerStyle[] | undefined;
+/** Hook that returns the available WMS styles metadata for a specific layer. */
+export declare const useStoreLayerWmsStyles: (layerPath: string) => TypeMetadataWMSCapabilityLayerStyle[] | undefined;
+/**
+ * Gets the mosaic rule for a specific layer.
+ *
+ * @param mapId - The map identifier.
+ * @param layerPath - The layer path to look up.
+ * @returns The mosaic rule, or undefined.
+ */
+export declare const getStoreLayerMosaicRule: (mapId: string, layerPath: string) => TypeMosaicRule | undefined;
+/** Hook that returns the mosaic rule for a specific layer. */
+export declare const useStoreLayerMosaicRule: (layerPath: string) => TypeMosaicRule | undefined;
+/**
+ * Gets the raster function for a specific layer.
+ *
+ * @param mapId - The map identifier.
+ * @param layerPath - The layer path to look up.
+ * @returns The raster function name, or undefined.
+ */
+export declare const getStoreLayerRasterFunction: (mapId: string, layerPath: string) => string | undefined;
+/** Hook that returns the raster function for a specific layer. */
+export declare const useStoreLayerRasterFunction: (layerPath: string) => string | undefined;
+/**
+ * Gets the raster function infos for a specific layer.
+ *
+ * @param mapId - The map identifier.
+ * @param layerPath - The layer path to look up.
+ * @returns The raster function infos, or undefined.
+ */
+export declare const getStoreLayerRasterFunctionInfos: (mapId: string, layerPath: string) => TypeMetadataEsriRasterFunctionInfos[] | undefined;
+/** Hook that returns the raster function infos for a specific layer. */
+export declare const useStoreLayerRasterFunctionInfos: (layerPath: string) => TypeMetadataEsriRasterFunctionInfos[] | undefined;
+/**
+ * Gets the allowed mosaic methods for a specific layer.
+ *
+ * @param mapId - The map identifier.
+ * @param layerPath - The layer path to look up.
+ * @returns The allowed mosaic methods, or undefined.
+ */
+export declare const getStoreLayerAllowedMosaicMethods: (mapId: string, layerPath: string) => TypeMosaicMethod[] | undefined;
+/** Hook that returns the allowed mosaic methods for a specific layer. */
+export declare const useStoreLayerAllowedMosaicMethods: (layerPath: string) => TypeMosaicMethod[] | undefined;
+/**
+ * Gets the time dimension for a specific layer.
+ *
+ * @param mapId - The map identifier.
+ * @param layerPath - The layer path to look up.
+ * @returns The time dimension, or undefined.
+ */
+export declare const getStoreLayerTimeDimension: (mapId: string, layerPath: string) => TimeDimension | undefined;
+/** Hook that returns the time dimension for a specific layer. */
+export declare const useStoreLayerTimeDimension: (layerPath: string) => TimeDimension | undefined;
+/**
+ * Gets the available style settings for a layer.
+ *
+ * @param mapId - The map identifier.
+ * @param layerPath - The layer path.
+ * @returns Array of available style setting types.
+ */
+export declare const getStoreLayerStyleSettings: (mapId: string, layerPath: string) => string[];
 /**
  * Gets a specific legend item by name for a layer.
  *
@@ -272,6 +239,102 @@ export declare const getStoreLayerStateLayerStatus: (mapId: string, layerPath: s
  * @returns The matching legend item, or undefined.
  */
 export declare const getStoreLayerItemVisibility: (mapId: string, layerPath: string, name: string) => TypeLegendItem | undefined;
+/** Hook that returns the EPSG:4326 bounds for a specific layer. */
+export declare const useStoreLayerBounds4326: (layerPath: string) => Extent | undefined;
+/** Hook that returns whether toggling is allowed for a specific layer. */
+export declare const useStoreLayerCanToggle: (layerPath: string) => boolean | undefined;
+/**
+ * Selects whether all sublayers of a layer are visible.
+ *
+ * Reads from both layerState (children tree) and mapState (visibleLayers).
+ *
+ * @param layerPath - The layer path to check
+ * @returns True if all children and descendants are visible
+ */
+export declare const useStoreLayerAllChildrenVisible: (layerPath: string) => boolean;
+/**
+ * Selects the child layer paths for a specific layer.
+ *
+ * Uses useStableSelector with shallowObjectEqual so the component only re-renders
+ * when children are added, removed, or reordered — not when a descendant's property changes.
+ *
+ * @param layerPath - The layer path to look up
+ * @returns The child layer paths, or undefined if no children exist
+ */
+export declare const useStoreLayerChildPaths: (layerPath: string) => string[] | undefined;
+/**
+ * Selects whether any layer in the subtree (including the layer itself) has visibility disabled.
+ *
+ * @param layerPath - The layer path to check
+ * @returns True if any node in the subtree has controls.visibility === false
+ */
+export declare const useStoreLayerHasDisabledVisibility: (layerPath: string) => boolean;
+/** Hook that returns the controls configuration for a specific layer. */
+export declare const useStoreLayerControls: (layerPath: string) => import("@/api/types/layer-schema-types").TypeLayerControls | undefined;
+/** Hook that returns the deletion start time for a specific layer. */
+export declare const useStoreLayerDeletionStartTime: (layerPath: string) => number | undefined;
+/** Hook that returns the entry type for a specific layer. */
+export declare const useStoreLayerEntryType: (layerPath: string) => import("@/api/types/layer-schema-types").TypeLayerEntryType | undefined;
+/** Hook that returns if the layer has text. */
+export declare const useStoreLayerHasText: (layerPath: string) => boolean | undefined;
+/** Hook that returns the layer filter for a specific layer. */
+export declare const useStoreLayerFilter: (layerPath: string) => string | undefined;
+/** Hook that returns the layer filter class for a specific layer. */
+export declare const useStoreLayerFilterClass: (layerPath: string) => string | undefined;
+/** Hook that returns the legend query status for a specific layer. */
+export declare const useStoreLayerLegendQueryStatus: (layerPath: string) => LegendQueryStatus | undefined;
+/** Hook that returns the legend icons for a specific layer. */
+export declare const useStoreLayerIcons: (layerPath: string) => import("@/core/components/layers/types").TypeLegendLayerItem[] | undefined;
+/** Hook that returns the legend items for a specific layer. */
+export declare const useStoreLayerItems: (layerPath: string) => TypeLegendItem[] | undefined;
+/** Hook that returns the schema tag for a specific layer. */
+export declare const useStoreLayerSchemaTag: (layerPath: string) => TypeGeoviewLayerType | undefined;
+/** Hook that returns the style configuration for a specific layer. */
+export declare const useStoreLayerStyleConfig: (layerPath: string) => Partial<Record<"Point" | "MultiPoint" | "LineString" | "MultiLineString" | "Polygon" | "MultiPolygon", import("@/api/types/map-schema-types").TypeLayerStyleSettings>> | undefined;
+/** Hook that returns the text visibility for a specific layer. */
+export declare const useStoreLayerTextVisibility: (layerPath: string) => boolean | undefined;
+/** Hook that returns the layer attribution for a specific layer. */
+export declare const useStoreLayerAttribution: (layerPath: string) => string[] | undefined;
+/** Hook that returns the layer opacity for a specific layer. */
+export declare const useStoreLayerOpacity: (layerPath: string) => number | undefined;
+/** Hook that returns the max opacity inherited from parent for a specific layer. */
+export declare const useStoreLayerOpacityMaxFromParent: (layerPath: string) => number | undefined;
+/** Hook that returns the hoverable flag for a specific layer. */
+export declare const useStoreLayerHoverable: (layerPath: string) => boolean | undefined;
+/** Hook that returns the queryable flag for a specific layer. */
+export declare const useStoreLayerQueryable: (layerPath: string) => boolean | undefined;
+/** Hook that returns the URL for a specific layer. */
+export declare const useStoreLayerUrl: (layerPath: string) => string | undefined;
+/** Hook that returns the layer name for a specific layer. */
+export declare const useStoreLayerName: (layerPath: string) => string | undefined;
+/**
+ * Hook that returns a record of layer names for all layers.
+ *
+ * @returns A record of layer names keyed by layer path.
+ */
+export declare const useStoreLayerNameSet: () => Record<string, string>;
+/**
+ * Hook that returns the icon set (image URLs) for a specific layer.
+ *
+ * For WMS layers, returns canvas icon images; for other types, returns item icons.
+ *
+ * @param layerPath - The layer path to get icons for.
+ * @returns An array of icon image strings.
+ */
+export declare const useStoreLayerIconLayerSet: (layerPath: string) => string[];
+/**
+ * React hook that returns if the temporal mode of the dates for the layer.
+ *
+ * @param layerPath - Unique path identifying the layer in the legend state.
+ * @returns The temporal mode of the dates for the layer. Default: DateMgt.DEFAULT_TEMPORAL_MODE.
+ */
+export declare const useStoreLayerDateTemporalMode: (layerPath: string | undefined) => TemporalMode;
+/**
+ * React hook that returns if the temporal modes for the layers.
+ *
+ * @returns The temporal mode of the dates for the layer.
+ */
+export declare const useStoreLayerDateTemporalModeSet: () => Record<string, TemporalMode>;
 /**
  * Gets the display date format for a specific layer.
  *
@@ -281,69 +344,63 @@ export declare const getStoreLayerItemVisibility: (mapId: string, layerPath: str
  */
 export declare const getStoreLayerDisplayDateFormat: (mapId: string, layerPath: string) => TypeDisplayDateFormat | undefined;
 /**
- * Gets the WMS style for a specific layer.
+ * React hook that returns the display date format for a specific layer.
  *
- * @param mapId - The map identifier.
- * @param layerPath - The layer path to look up.
- * @returns The WMS style name, or undefined.
+ * The hook first attempts to resolve a layer-specific display date format
+ * using the provided layer path. If the layer does not define its own
+ * display date format (or cannot be found), the application-wide display
+ * date format for the current map is returned as a fallback.
+ *
+ * @param layerPath - Unique path identifying the layer in the legend state.
+ * @returns The display date format to use for the layer, falling back to the
+ * application's default display date format when none is defined.
  */
-export declare const getStoreLayerWmsStyle: (mapId: string, layerPath: string) => string | undefined;
+export declare const useStoreLayerDisplayDateFormat: (layerPath: string | undefined) => TypeDisplayDateFormat;
 /**
- * Gets the available WMS styles metadata for a specific layer.
+ * React hook that returns if the display date formats for the layers.
  *
- * @param mapId - The map identifier.
- * @param layerPath - The layer path to look up.
- * @returns The WMS styles metadata, or undefined.
+ * @returns The display date format of the dates for the layer.
  */
-export declare const getStoreLayerWmsStyles: (mapId: string, layerPath: string) => TypeMetadataWMSCapabilityLayerStyle[] | undefined;
+export declare const useStoreLayerDisplayDateFormatSet: () => Record<string, TypeDisplayDateFormat>;
 /**
- * Gets the mosaic rule for a specific layer.
+ * React hook that returns the display date format for a specific layer.
  *
- * @param mapId - The map identifier.
- * @param layerPath - The layer path to look up.
- * @returns The mosaic rule, or undefined.
+ * The hook first attempts to resolve a layer-specific display date format
+ * using the provided layer path. If the layer does not define its own
+ * display date format (or cannot be found), the application-wide display
+ * date format for the current map is returned as a fallback.
+ *
+ * @param layerPath - Unique path identifying the layer in the legend state.
+ * @returns The display date format to use for the layer, falling back to the
+ * application's default display date format when none is defined.
  */
-export declare const getStoreLayerMosaicRule: (mapId: string, layerPath: string) => TypeMosaicRule | undefined;
+export declare const useStoreLayerDisplayDateFormatShort: (layerPath: string | undefined) => TypeDisplayDateFormat;
 /**
- * Gets the raster function for a specific layer.
+ * React hook that returns the display date timezone for a specific layer.
  *
- * @param mapId - The map identifier.
- * @param layerPath - The layer path to look up.
- * @returns The raster function name, or undefined.
+ * The hook first attempts to resolve a layer-specific display date timezone
+ * using the provided layer path. If the layer does not define its own
+ * display date timezone (or cannot be found), the application-wide display
+ * date timezone for the current map is returned as a fallback.
+ *
+ * @param layerPath - Unique path identifying the layer in the legend state.
+ * @returns The display date timezone to use for the layer, falling back to the
+ * application's default display date timezone when none is defined.
  */
-export declare const getStoreLayerRasterFunction: (mapId: string, layerPath: string) => string | undefined;
+export declare const useStoreLayerDisplayDateTimezone: (layerPath: string | undefined) => TimeIANA;
 /**
- * Gets the raster function infos for a specific layer.
+ * React hook that returns if the display date timezones for the layers.
  *
- * @param mapId - The map identifier.
- * @param layerPath - The layer path to look up.
- * @returns The raster function infos, or undefined.
+ * @returns The display date timezone of the dates for the layer.
  */
-export declare const getStoreLayerRasterFunctionInfos: (mapId: string, layerPath: string) => TypeMetadataEsriRasterFunctionInfos[] | undefined;
+export declare const useStoreLayerDisplayDateTimezoneSet: () => Record<string, TimeIANA>;
 /**
- * Gets the allowed mosaic methods for a specific layer.
+ * Hook that returns the available style settings for a layer.
  *
- * @param mapId - The map identifier.
- * @param layerPath - The layer path to look up.
- * @returns The allowed mosaic methods, or undefined.
- */
-export declare const getStoreLayerAllowedMosaicMethods: (mapId: string, layerPath: string) => TypeMosaicMethod[] | undefined;
-/**
- * Gets the time dimension for a specific layer.
- *
- * @param mapId - The map identifier.
- * @param layerPath - The layer path to look up.
- * @returns The time dimension, or undefined.
- */
-export declare const getStoreLayerTimeDimension: (mapId: string, layerPath: string) => TimeDimension | undefined;
-/**
- * Gets the available style settings for a layer.
- *
- * @param mapId - The map identifier.
- * @param layerPath - The layer path.
+ * @param layerPath - The layer path to get settings for.
  * @returns Array of available style setting types.
  */
-export declare const getStoreLayerStyleSettings: (mapId: string, layerPath: string) => string[];
+export declare const useStoreLayerStyleSettings: (layerPath: string) => string[];
 /**
  * Sets the layers panel display state in the store.
  *
