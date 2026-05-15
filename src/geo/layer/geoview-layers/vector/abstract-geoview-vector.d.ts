@@ -17,7 +17,6 @@ export declare abstract class AbstractGeoViewVector extends AbstractGeoViewLayer
     static readonly EXCLUDED_HEADERS_GEN: string[];
     static readonly EXCLUDED_HEADERS_STYLE: string[];
     static readonly EXCLUDED_HEADERS: string[];
-    static readonly NAME_FIELD_KEYWORDS: string[];
     static readonly MAX_ESRI_FEATURES = 200000;
     /**
      * Mustoverride function to load vector features for a layer during vector source creation.
