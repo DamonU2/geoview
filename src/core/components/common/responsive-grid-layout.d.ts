@@ -20,7 +20,7 @@ interface ResponsiveGridLayoutProps {
 interface ResponsiveGridLayoutExposedMethods {
     setIsRightPanelVisible: (isVisible: boolean) => void;
     setRightPanelFocus: () => void;
-    closeBtnRef?: React.RefObject<HTMLButtonElement>;
+    closeBtnRef?: React.RefObject<HTMLButtonElement | null>;
 }
 /**
  * Two-panel responsive grid layout with guide, enlarge, and fullscreen support.
