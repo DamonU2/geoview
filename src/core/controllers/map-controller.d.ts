@@ -12,6 +12,7 @@ import type { TypeFeatureStyle } from '@/geo/layer/geometry/geometry-types';
 import type { Draw } from '@/geo/interaction/draw';
 import type { TypeClickMarker } from '@/core/components/click-marker/click-marker';
 import type { FitOptions } from 'ol/View';
+import type { EventDelegateBase } from '@/api/events/event-helper';
 /**
  * Controller responsible for Map interactions.
  */
@@ -149,9 +150,18 @@ export declare class MapController extends AbstractMapViewerController {
      * Converts a map coordinate to a pixel position.
      *
      * @param coord - The map coordinate
-     * @returns The pixel position on the map viewport
+     * @returns The pixel position on the map viewport, or undefined if the map is not yet initialized
      */
-    getPixelFromCoordinate(coord: Coordinate): Pixel;
+    getPixelFromCoordinate(coord: Coordinate): Pixel | undefined;
+    /**
+     * Gets the current map center as a TypeMapMouseInfo object.
+     *
+     * Useful as a fallback when the pointer position store has not been set yet
+     * (e.g., when the crosshair is first activated and the user hasn't panned).
+     *
+     * @returns The map center position info
+     */
+    getMapCenterPosition(): TypeMapMouseInfo;
     /**
      * Sets the click coordinates in the store and emits a single click event in WCAG mode.
      *
@@ -342,5 +352,48 @@ export declare class MapController extends AbstractMapViewerController {
      * @returns The init draw interactions object
      */
     initDrawInteractions(geomGroupKey: string, type: string, style: TypeFeatureStyle): Draw;
+    /**
+     * Sets the active measurement Draw interaction for keyboard accessibility.
+     *
+     * When activating, suppresses hover and click-marker handlers (like drawer does).
+     * When deactivating, restores them.
+     *
+     * @param draw - The Draw interaction to register, or undefined to unregister
+     */
+    setActiveMeasurementDraw(draw: Draw | undefined): void;
+    /**
+     * Gets the active measurement Draw interaction.
+     *
+     * @returns The active measurement Draw interaction, or undefined if none
+     */
+    getActiveMeasurementDraw(): Draw | undefined;
+    /**
+     * Registers a geolocator search event callback.
+     *
+     * @param callback - The callback to be executed whenever the event is emitted
+     * @returns The callback delegate that was registered
+     */
+    onGeolocatorSearch(callback: GeolocatorSearchDelegate): GeolocatorSearchDelegate;
+    /**
+     * Unregisters a geolocator search event callback.
+     *
+     * @param callback - The callback to stop being called whenever the event is emitted
+     */
+    offGeolocatorSearch(callback: GeolocatorSearchDelegate): void;
 }
+/**
+ * Event for the geolocator search delegate.
+ */
+export type GeolocatorSearchEvent = {
+    /** The search description string. */
+    searchItem: string;
+    /** The lon/lat coordinates of the selected result. */
+    coords: Coordinate;
+    /** Optional bounding box extent of the selected result. */
+    bbox?: Extent;
+};
+/**
+ * Delegate for the geolocator search event handler function signature.
+ */
+export type GeolocatorSearchDelegate = EventDelegateBase<MapController, GeolocatorSearchEvent, void>;
 //# sourceMappingURL=map-controller.d.ts.map
