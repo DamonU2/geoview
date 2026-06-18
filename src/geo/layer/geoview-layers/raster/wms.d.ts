@@ -59,11 +59,10 @@ export declare class WMS extends AbstractGeoViewRaster {
     /**
      * Overrides the way a geoview layer config initializes its layer entries.
      *
-     * @param abortSignal - Optional {@link AbortSignal} used to cancel the layer creation process
      * @returns A promise that resolves once the layer entries have been initialized
      * @throws {LayerServiceMetadataUnableToFetchError} When the metadata fetch fails or contains an error
      */
-    protected onInitLayerEntries(abortSignal?: AbortSignal): Promise<TypeGeoviewLayerConfig>;
+    protected onInitLayerEntries(): Promise<TypeGeoviewLayerConfig>;
     /**
      * Overrides the validation of a layer entry config.
      *
@@ -97,6 +96,14 @@ export declare class WMS extends AbstractGeoViewRaster {
      * @throws {LayerDataAccessPathMandatoryError} When the Data Access Path was undefined, likely because initDataAccessPath wasn't called
      */
     createImageWMSSource(layerConfig: OgcWmsLayerEntryConfig): ImageWMS;
+    /**
+     * Fetches the service metadata for a WMS layer, handling both standard WMS GetCapabilities requests and direct XML metadata access.
+     *
+     * @param updateMetadataAccessPath - Whether to update the layer's metadata access path if a proxy is required to fetch the metadata
+     * @param abortSignal - Optional {@link AbortSignal} used to cancel the layer creation process
+     * @returns A promise that resolves to the parsed metadata object, or `undefined` if metadata could not be retrieved or no capabilities were found.
+     */
+    protected fetchServiceMetadataWMS(updateMetadataAccessPath: boolean, abortSignal?: AbortSignal): Promise<TypeMetadataWMS | undefined>;
     /**
      * Creates a complete configuration object for a WMS GeoView layer.
      *

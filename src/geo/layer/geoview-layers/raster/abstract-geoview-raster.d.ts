@@ -1,4 +1,5 @@
 import { AbstractGeoViewLayer } from '@/geo/layer/geoview-layers/abstract-geoview-layers';
+import type { CallbackNewMetadataDelegate } from '@/geo/utils/utilities';
 /**
  * The AbstractGeoViewRaster class.
  */
@@ -14,12 +15,21 @@ export declare abstract class AbstractGeoViewRaster extends AbstractGeoViewLayer
      */
     protected onFetchServiceMetadata<T>(abortSignal?: AbortSignal): Promise<T>;
     /**
+     * Fetches and processes service metadata for the raster layer.
+     *
+     * @param abortSignal - Optional {@link AbortSignal} used to cancel the layer creation process.
+     * @returns A promise that resolves to the parsed metadata object, or `undefined` if metadata could not be retrieved or no capabilities were found.
+     * @throws {LayerServiceMetadataUnableToFetchError} When the metadata fetch fails or contains an error.
+     */
+    protected fetchServiceMetadataRaster<T>(abortSignal?: AbortSignal): Promise<T>;
+    /**
      * Fetches and validates metadata from a given URL for a GeoView raster layer.
      *
      * If the URL does not end with `.json`, the query string `?f=json` is appended to request JSON format.
      * The response is parsed and checked for service-level errors. If an error is found, an exception is thrown.
      *
      * @param url - The base URL to fetch the metadata from (e.g., ArcGIS REST endpoint).
+     * @param callbackNewMetadataUrl - Optional callback executed when a proxy had to be used to fetch the metadata
      * @param abortSignal - Optional {@link AbortSignal} used to cancel the layer creation process.
      * @returns A promise resolving to the parsed JSON metadata response.
      * @throws {RequestTimeoutError} When the request exceeds the timeout duration.
@@ -27,7 +37,7 @@ export declare abstract class AbstractGeoViewRaster extends AbstractGeoViewLayer
      * @throws {ResponseError} When the response is not OK (non-2xx).
      * @throws {ResponseEmptyError} When the JSON response is empty.
      */
-    static fetchMetadata<T>(url: string, abortSignal?: AbortSignal): Promise<T>;
+    static fetchMetadata<T>(url: string, callbackNewMetadataUrl?: CallbackNewMetadataDelegate, abortSignal?: AbortSignal): Promise<T>;
     /**
      * Throws a LayerServiceMetadataUnableToFetchError if the provided metadata has an error in its content.
      *

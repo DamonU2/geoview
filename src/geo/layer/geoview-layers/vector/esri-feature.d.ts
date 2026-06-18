@@ -56,11 +56,10 @@ export declare class EsriFeature extends AbstractGeoViewVector {
     /**
      * Overrides the way a geoview layer config initializes its layer entries.
      *
-     * @param abortSignal - Optional {@link AbortSignal} used to cancel the layer creation process
      * @returns A promise that resolves once the layer entries have been initialized
      * @throws {LayerServiceMetadataUnableToFetchError} When the metadata fetch fails or contains an error
      */
-    protected onInitLayerEntries(abortSignal?: AbortSignal): Promise<TypeGeoviewLayerConfig>;
+    protected onInitLayerEntries(): Promise<TypeGeoviewLayerConfig>;
     /**
      * This method validates recursively the configuration of the layer entries to ensure that it is a feature layer identified
      * with a numeric layerId and creates a group entry when a layer is a group.
@@ -96,6 +95,19 @@ export declare class EsriFeature extends AbstractGeoViewVector {
      * @returns The GV Layer
      */
     protected onCreateGVLayer(layerConfig: EsriFeatureLayerEntryConfig): GVEsriFeature;
+    /**
+     * Fetches and processes service metadata for the EsriFeature layer.
+     *
+     * Resolves with the Json object or undefined when no metadata is to be expected for a particular layer type.
+     * Returns TypeMetadataEsriDynamic | TypeMetadataEsriDynamicLayer | TypeMetadataEsriFeature because sometimes
+     * the url is MapServer/?f=json, sometimes MapServer/{layerId}?f=json and sometimes FeatureServer/?f=json
+     * which all return different payloads.
+     *
+     * @param abortSignal - Optional {@link AbortSignal} used to cancel the layer creation process
+     * @returns A promise that resolves with the metadata or undefined when no metadata for the particular layer type
+     * @throws {LayerServiceMetadataUnableToFetchError} When the metadata fetch fails or contains an error
+     */
+    protected fetchServiceMetadataEsriFeature(abortSignal?: AbortSignal): Promise<TypeMetadataEsriDynamic | TypeMetadataEsriDynamicLayer | TypeMetadataEsriFeature>;
     /**
      * Initializes a GeoView layer configuration for a Esri Feature layer.
      *

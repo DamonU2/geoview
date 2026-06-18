@@ -1,6 +1,7 @@
 import type BaseLayer from 'ol/layer/Base';
 import type { GeoJSONObject } from 'ol/format/GeoJSON';
 import type { FitOptions } from 'ol/View';
+import type { Projection as OLProjection } from 'ol/proj';
 import { type Extent, type TypeFeatureInfoEntryPartial } from '@/api/types/map-schema-types';
 import type { TypeGeoviewLayerConfig, TypeLayerEntryConfig, TypeLayerStatus, TypeMosaicMethod, TypeMosaicOperation, TypeMosaicRule } from '@/api/types/layer-schema-types';
 import type { EventDelegateBase } from '@/api/events/event-helper';
@@ -192,9 +193,9 @@ export declare class LayerController extends AbstractMapViewerController {
      * Gets the max extent of all layers on the map, or of a provided subset of layers.
      *
      * @param layerIds - Identifiers or layerPaths of layers to get max extents from
-     * @returns A promise that resolves with the overall extent or undefined when no bounds are found
+     * @returns The overall extent or undefined when no bounds are found
      */
-    getExtentOfMultipleLayers(layerIds?: string[]): Promise<Extent | undefined>;
+    getExtentOfMultipleLayers(layerIds?: string[]): Extent | undefined;
     /**
      * Gets the extent of a feature or group of features.
      *
@@ -204,6 +205,7 @@ export declare class LayerController extends AbstractMapViewerController {
      * @returns A promise that resolves with the extent of the features
      * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path
      * @throws {LayerWrongTypeError} When the layer was of wrong type
+     * @throws {NotImplementedError} When the underlying layer type does not implement extent-from-features (propagated from `getExtentFromFeatures()`)
      */
     getExtentFromFeatures(layerPath: string, objectIds: number[], outfield?: string): Promise<Extent>;
     /**
@@ -271,6 +273,7 @@ export declare class LayerController extends AbstractMapViewerController {
      * @param queryable - The value to set for the queryable property
      * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path
      * @throws {LayerWrongTypeError} When the layer was of wrong type
+     * @throws {LayerNotQueryableError} When the underlying source is not queryable
      */
     setLayerQueryable(layerPath: string, queryable: boolean): void;
     /**
@@ -533,6 +536,7 @@ export declare class LayerController extends AbstractMapViewerController {
      * @param item - The legend item whose visibility will be toggled
      * @param waitForRender - If true, the returned promise resolves only after the layer has completed its next render cycle
      * @returns A promise that resolves once the visibility change has been applied
+     * @throws {LayerStyleGeometryNotFoundError} When the geometry type of the item doesn't match any geometry type in the layer style configuration (propagated from `setItemVisibility()`)
      */
     toggleItemVisibility(layerPath: string, item: TypeLegendItem, waitForRender: boolean): Promise<void>;
     /**
@@ -557,6 +561,7 @@ export declare class LayerController extends AbstractMapViewerController {
      * @returns A promise that resolves once all item visibilities have been updated and the layer has rendered if requested
      * @throws {LayerNotFoundError} When the layer couldn't be found at the given layer path
      * @throws {LayerWrongTypeError} When the layer was of wrong type
+     * @throws {LayerStyleGeometryNotFoundError} When the geometry type of an item doesn't match any geometry type in the layer style configuration (propagated from `setItemVisibility()`)
      */
     setAllItemsVisibility(layerPath: string, visible: boolean, waitForRender: boolean): Promise<void>;
     /**
@@ -720,6 +725,17 @@ export declare class LayerController extends AbstractMapViewerController {
      * @param layerPath - Unique path identifying the layer within the map
      */
     deleteLayerAbort(layerPath: string): void;
+    /**
+     * Starts bounds calculation and stores bounds as they get calculated.
+     *
+     * Uses a fire-and-forget pattern and handles completion or failure in promise handlers.
+     *
+     * @param mapId - The unique identifier of the map instance
+     * @param gvLayer - The layer from which bounds recalculation should begin
+     * @param projection - The projection to initialize the bounds into
+     * @param stops - Number of interpolation stops for bounds initialization
+     */
+    static initBoundsForLayerAndParentsAndForget(mapId: string, gvLayer: AbstractBaseGVLayer, projection: OLProjection, stops: number): void;
     /**
      * Registers a layer item visibility toggled event handler.
      *
