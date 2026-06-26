@@ -30,6 +30,8 @@ export declare abstract class AbstractGVLayer extends AbstractBaseGVLayer {
     static readonly DEFAULT_HIT_TOLERANCE: number;
     /** The default loading period before we show a message to the user about a layer taking a long time to render on map. */
     static readonly DEFAULT_LOADING_PERIOD: number;
+    /** Quiescence period after a tile source change with no tile-load activity before remaining in-flight tiles are treated as orphans and force-closed. */
+    static readonly TILE_LOADING_QUIESCENCE_PERIOD: number;
     /** Keywords used to identify name fields in the layer's outfields when none specified. */
     static readonly NAME_FIELD_KEYWORDS: string[];
     /**

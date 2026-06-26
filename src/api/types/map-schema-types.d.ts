@@ -427,6 +427,8 @@ export type TypeOutfields = {
     alias: string;
     type: TypeOutfieldsType;
     domain?: codedValueType | rangeDomainType;
+    /** Whether this field appears in summary views. Default = true. */
+    summary?: boolean;
 };
 /** The types supported by the outfields object. */
 export type TypeOutfieldsType = 'string' | 'date' | 'number' | 'url' | 'oid';
