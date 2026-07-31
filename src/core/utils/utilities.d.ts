@@ -4,10 +4,15 @@ import type { TypeGuideObject } from '@/core/stores/states/app-state';
 import type { TypeHTMLElement } from '@/core/types/global-types';
 /** Result of a URL reachability ping check. */
 export type PingResult = {
+    /** Whether the URL has valid syntax. */
     isValid: boolean;
+    /** Whether the server responded successfully. */
     isReachable: boolean;
+    /** Whether the request required a proxy to succeed. */
     needsProxy: boolean;
+    /** The HTTP status code from the server response, or null if no response. */
     status: number | null;
+    /** Optional error message describing why the check failed. */
     error?: string;
 };
 /** Represents RGBA color as [Red, Green, Blue, Alpha]. */
@@ -265,6 +270,17 @@ export declare function addUiComponent(targetDivId: string, component: React.Rea
  */
 export declare function sanitizeHtmlContent(contentHtml: string): string;
 /**
+ * Checks if a string contains HTML tags using a lightweight regex pattern.
+ *
+ * This is a structural check that detects the presence of HTML elements,
+ * not a validation check. Use this when you need to decide whether to
+ * parse HTML content, avoiding redundant parsing operations.
+ *
+ * @param text - The string to check
+ * @returns True if the string contains HTML tags, false otherwise
+ */
+export declare function containsHtmlTags(text: string): boolean;
+/**
  * Enhances links accessibility by adding screen reader announcements for external links.
  *
  * Uses DOM parsing to safely inject visually-hidden span elements with announcement text
@@ -355,7 +371,7 @@ export declare function exportFile(dataUrl: string, name: string, format?: 'pdf'
  * @param patterns - A single RegExp or an array of RegExp patterns to match in sequence
  * @returns The value found at the end of the matching path, or undefined if not found
  */
-export declare function findPropertyByRegexPath<T = Record<string, unknown>>(objectItem: unknown | undefined, patterns: RegExp | RegExp[]): T | undefined;
+export declare function findPropertyByRegexPath<T = Record<string, unknown>>(objectItem: unknown | undefined, patterns: RegExp | RegExp[]): T | T[] | undefined;
 /**
  * Check string to see if it is an image.
  *
