@@ -130,6 +130,14 @@ export declare function shallowArrayEqual<T>(a: T[], b: T[]): boolean;
  */
 export declare function getLocalizedMessage(language: TypeDisplayLanguage, messageKey: string, params?: Record<string, unknown> | undefined): string;
 /**
+ * Translates an optional tooltip value with tri-state semantics.
+ *
+ * @param t - Translation function from i18next
+ * @param tooltip - Tooltip value (translation key, null to disable, or undefined for fallback)
+ * @returns Translated string, null (disabled), or undefined (fallback to aria-label)
+ */
+export declare function translateTooltip(t: (key: string) => string, tooltip: string | null | undefined): string | null | undefined;
+/**
  * Deep merge objects together. Latest object will overwrite value on previous one
  * if property exist.
  *
