@@ -49,7 +49,7 @@ export declare const NAV_BAR_BUTTON_GROUP_MAX_HEIGHT = "340px";
  *
  * Measured via ResizeObserver on the actual map container element (mapTargetElement), NOT the browser viewport.
  */
-export declare const OVERVIEW_MAP_MIN_CONTAINER_WIDTH = 900;
+export declare const OVERVIEW_MAP_MIN_CONTAINER_WIDTH = 700;
 /**
  * Minimum map container height (in pixels) required to render overview map.
  *
