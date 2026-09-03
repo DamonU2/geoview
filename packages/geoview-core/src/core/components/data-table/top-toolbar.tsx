@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 import { useCallback } from 'react';
 
+import type { SxProps } from '@mui/material';
 import type { MRT_TableInstance as MRTTableInstance, MRT_ColumnDef } from 'material-react-table';
 import {
   MRT_GlobalFilterTextField as MRTGlobalFilterTextField,
@@ -126,7 +127,12 @@ function TopToolbar(props: TopToolbarProps<DataTableRow>): JSX.Element {
   // #endregion
 
   return (
-    <Box className="data-table-top-toolbar" role="region" aria-label={t('dataTable.tableControls')} sx={sxClasses.toolbarContainer}>
+    <Box
+      className="data-table-top-toolbar"
+      role="region"
+      aria-label={t('dataTable.tableControls')}
+      sx={[sxClasses.toolbarContainer, sxClasses.dataTableTopToolbar] as SxProps}
+    >
       <Box sx={sxClasses.toolbarRow}>
         <Box component="p" role="status" className="filter-results-summary" sx={sxClasses.selectedRows} aria-live="polite">
           {toolbarMessage}

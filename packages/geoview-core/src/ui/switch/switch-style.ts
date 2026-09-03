@@ -17,6 +17,9 @@ export const getSxClasses = (theme: Theme): SxStyles => ({
       outline: `2px solid ${theme.palette.common.black}`,
       outlineOffset: '4px',
     },
+    '& .MuiSwitch-root': {
+      overflow: 'visible',
+    },
     '& .MuiSwitch-switchBase.Mui-focusVisible': {
       color: theme.palette.primary.contrastText,
       background: theme.palette.geoViewColor?.primary.main,
