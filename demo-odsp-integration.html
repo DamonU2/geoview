@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>OSDP Integration - Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link href="https://fonts.googleapis.com/css?family=Roboto|Montserrat:200,300,400,900|Merriweather" rel="stylesheet"/><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/><link rel="stylesheet" href="css/style.css"/><script src="cgpv-main.js"></script></head><body><div class="header-table"><table><tbody><tr><td><img class="header-logo" alt="logo" src="./img/Logo.png"/></td><td class="header-title"><h1><strong>OSDP Integration</strong></h1></td></tr><tr><td><a href="./demos.html">Main</a><br/></td></tr></tbody></table><table><tbody><tr><td><p>Demonstration of Open Science Data Portal Integration</p></td></tr></tbody></table></div><div class="map-title-holder"><h4 id="HMap1">OSDP Integration</h4></div><div id="Map1" data-lang="en"></div><div><button id="createMap" style="margin: 10px">Create Map</button> <button id="deleteMap" style="margin: 10px">Delete map div</button> <button id="addMap" style="margin: 10px">Create map div</button> <button id="refreshMap" style="margin: 10px">Refresh map</button> <button id="updateState" style="margin: 10px">Update State</button></div><script src="codedoc.js"></script><script>// Empty map config
+      const initialConfig = {
+        "map": {
+          "interaction": "dynamic",
+          "viewSettings": {
+            "projection": 3857
+          },
+          "basemapOptions": {
+            "basemapId": "transport",
+            "shaded": false,
+            "labeled": true
+          },
+          "listOfGeoviewLayerConfig": []
+        },
+        "components": ["overview-map"],
+        "navBar": ["zoom", "fullscreen", "home", "location", "basemap-select"],
+              "appBar": {
+                "tabs": {
+                  "core": ["geolocator", "export"]
+                }
+              },
+        "footerBar": {
+          "tabs": {
+            "core": ["legend", "layers", "details", "data-table", "time-slider", "geochart"]
+          }
+        },
+        "corePackages": [],
+        "theme": "geo.ca"
+      };
+      
+      // Create Button============================================================================================================
+      const createMapButton = document.getElementById('createMap');
+
+      // add an event listener when a button is clicked
+      createMapButton.addEventListener('click', function (e) {
+        // delete old map
+        cgpv.api.maps['Map1']?.remove(true);
+
+        // create new map in a new dom node
+        const newDiv = document.createElement('div');
+        const a = document.createAttribute('id');
+        a.value = 'Map1';
+        newDiv.setAttributeNode(a);
+
+        newDiv.style.width = '600px';
+        newDiv.style.minHeight = '400px';
+        newDiv.dataset.height = '400px';
+
+        document.getElementById('mapSection').appendChild(newDiv);
+
+        // create map
+        // TODO: the delete has a timeout so we need to wait before trying to recreate the map...
+        // TO.DOCONT: this should be cleaner
+        setTimeout(() => {
+          cgpv.api.createMapFromConfig('sandboxMap', document.getElementById('configGeoview').value)
+            .then(() => listenToLegendLayerSetChanges('sandboxMap-state', 'sandboxMap'));
+          }, 1500);
+      });
+
+      
+      // initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
+      cgpv.init(() => {
+      });</script></body></html>
