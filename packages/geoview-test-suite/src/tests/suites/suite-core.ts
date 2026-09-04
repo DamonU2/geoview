@@ -49,6 +49,15 @@ export class GVTestSuiteCore extends GVAbstractTestSuite {
   }
 
   /**
+   * Gets the total number of tests including those that are planned but not yet in the pipeline nor executed.
+   *
+   * @returns The total number of tests including those that are planned but not yet in the pipeline nor executed.
+   */
+  override getTestsTotalFinal(): number {
+    return 14;
+  }
+
+  /**
    * Overrides the debug hook for running a subset of tests during development.
    *
    * GV DEBUG SECTION TO NOT HAVE TO TEST EVERYTHING EVERYTIME
@@ -56,7 +65,11 @@ export class GVTestSuiteCore extends GVAbstractTestSuite {
    * @returns A promise that resolves when the debug tests are completed
    */
   protected override onLaunchTestSuiteDEBUG(): Promise<unknown> {
-    return Promise.resolve();
+    const pDevTest0 = this.#coreTester.testProxyGetWMTSServiceMetadata();
+    const pDevTest1 = this.#coreTester.testProxyGetWMTSServiceMetadataBadUrl();
+
+    // Resolve when all
+    return Promise.all([pDevTest0, pDevTest1]);
   }
 
   /**
@@ -64,30 +77,56 @@ export class GVTestSuiteCore extends GVAbstractTestSuite {
    *
    * @returns A promise that resolves when tests are completed
    */
-  protected override onLaunchTestSuite(): Promise<unknown> {
+  protected override async onLaunchTestSuite(): Promise<unknown> {
+    // Keep if running sequentially
+    const isRunningSequentially = this.getIsRunningSequentially();
+
     // Test validateAndPingUrl (simple)
     const pSimplePingValid = this.#coreTester.testSimplePingValidReachable();
+    if (isRunningSequentially) await pSimplePingValid;
+
     const pSimplePingXyz = this.#coreTester.testSimplePingXyzTileUrl();
+    if (isRunningSequentially) await pSimplePingXyz;
+
     const pSimplePingXyz401 = this.#coreTester.testSimplePingXyzTileUrlUnauthorized();
+    if (isRunningSequentially) await pSimplePingXyz401;
 
     // Test validateAndPingUrlOGC (OGC-aware)
     const pPingInvalidFormat = this.#coreTester.testValidateAndPingUrlInvalidFormat();
+    if (isRunningSequentially) await pPingInvalidFormat;
+
     const pPingUnreachable = this.#coreTester.testValidateAndPingUrlUnreachable();
+    if (isRunningSequentially) await pPingUnreachable;
+
     const pPingWmsService = this.#coreTester.testValidateAndPingUrlWmsService();
+    if (isRunningSequentially) await pPingWmsService;
 
     const pGeometryCollectionLegendStyles = this.#coreTester.testGeometryCollectionLegendStyles();
+    if (isRunningSequentially) await pGeometryCollectionLegendStyles;
 
     // Test GeoUtilities service metadata functions
     const pWmsMetadata = this.#coreTester.testProxyGetWMSServiceMetadata();
+    if (isRunningSequentially) await pWmsMetadata;
+
     const pWmsMetadataBadUrl = this.#coreTester.testProxyGetWMSServiceMetadataBadUrl();
+    if (isRunningSequentially) await pWmsMetadataBadUrl;
+
     const pWfsMetadata = this.#coreTester.testProxyGetWFSServiceMetadata();
+    if (isRunningSequentially) await pWfsMetadata;
+
     const pWfsMetadataBadUrl = this.#coreTester.testProxyGetWFSServiceMetadataBadUrl();
+    if (isRunningSequentially) await pWfsMetadataBadUrl;
+
     const pWmtsMetadata = this.#coreTester.testProxyGetWMTSServiceMetadata();
+    if (isRunningSequentially) await pWmtsMetadata;
+
     const pWmtsMetadataBadUrl = this.#coreTester.testProxyGetWMTSServiceMetadataBadUrl();
+    if (isRunningSequentially) await pWmtsMetadataBadUrl;
 
     // Test GeoUtilities fetch with proxy fallback
     // const pFetchJsonProxy = this.#coreTester.testFetchJsonWithProxyFallback();
     const pFetchJsonProxyBadUrl = this.#coreTester.testFetchJsonWithProxyFallbackBadUrl();
+    if (isRunningSequentially) await pFetchJsonProxyBadUrl;
 
     // Resolve when all
     return Promise.all([

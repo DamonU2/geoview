@@ -1,7 +1,7 @@
 import type { EventDelegateBase } from 'geoview-core/api/events/event-helper';
 import EventHelper from 'geoview-core/api/events/event-helper';
-import { isLocalhost } from 'geoview-core/core/utils/utilities';
-import type { AbstractTester, FailureEvent, SuccessEvent, TestEvent, TestUpdatedEvent } from './abstract-tester';
+import { formatDuration } from 'geoview-core/core/utils/utilities';
+import type { AbstractTester, FailureEvent, SkippedEvent, SuccessEvent, TestEvent, TestUpdatedEvent } from './abstract-tester';
 import { TestSuiteCannotExecuteError, TestSuiteRunningError } from './exceptions';
 
 /**
@@ -23,8 +23,26 @@ export abstract class AbstractTestSuite {
   /** Callback delegates for the test failure event */
   #onTestersTestFailureHandlers: TesterFailureDelegate[] = [];
 
+  /** Callback delegates for the test skipped event */
+  #onTestersTestSkippedHandlers: TesterSkippedDelegate[] = [];
+
+  /** Indicates whether the plugin is running on a VPN */
+  #isRunningOnVPN = false;
+
+  /** Indicates whether the plugin is running the heavy tests */
+  #isRunningHeavyTests = false;
+
+  /** Indicates whether the test suite should force sequential execution of tests */
+  #isRunningSequentially = false;
+
   /** Indicates if the test suite should only run the DEBUG tests */
-  DEBUG_RUN_ONLY_DEBUG_FUNCTION = false;
+  DEBUG_RUN_ONLY_DEBUG_FUNCTION = false; // true or false or isLocalhost()
+
+  /** Datetime when the latest test suite launch started. */
+  #launchStartedAt?: Date;
+
+  /** Datetime when the latest test suite launch ended. */
+  #launchEndedAt?: Date;
 
   // #region OVERRIDES
 
@@ -37,6 +55,9 @@ export abstract class AbstractTestSuite {
    * Mustoverride function to provide a description, in Html format, for the Test Suite.
    */
   abstract getDescriptionAsHtml(): string;
+
+  /** Mustoverride function to provide the exact number of tester test calls in the full onLaunchTestSuite implementation; debug-only calls are excluded. */
+  abstract getTestsTotalFinal(): number;
 
   /**
    * Overridable function called when the test suite is about to launch, to validate if it can be executed on the given map.
@@ -130,6 +151,16 @@ export abstract class AbstractTestSuite {
   }
 
   /**
+   * Gets the total number of currently done successful tests in the Suite.
+   *
+   * @returns The total number of tests done
+   */
+  getTestsDoneSkipped(): number {
+    // Return the total completed tests across all testers
+    return this.#testers.reduce((total, tester) => total + tester.getTestsDoneSkipped(), 0);
+  }
+
+  /**
    * Gets the total number of currently done failed tests in the Suite.
    *
    * @returns The total number of tests done
@@ -149,12 +180,110 @@ export abstract class AbstractTestSuite {
   }
 
   /**
-   * Gets if all the tests are done and successfully.
+   * Gets if all the tests are done and successfully or skipped.
    *
    * @returns Indicate if the tests are all done and finished successfully
    */
   getTestsDoneAllSuccess(): boolean {
     return this.getTestsDoneAll() && this.#testers.every((tester) => tester.getTestsDoneAllSuccess());
+  }
+
+  /**
+   * Gets whether the test suite is running on a VPN.
+   *
+   * @returns Whether the environment is running on VPN
+   */
+  getIsRunningOnVPN(): boolean {
+    return this.#isRunningOnVPN;
+  }
+
+  /**
+   * Sets whether the test suite is running on a VPN.
+   *
+   * @param isRunningOnVPN - Whether the environment is running on VPN
+   */
+  setIsRunningOnVPN(isRunningOnVPN: boolean): void {
+    this.#isRunningOnVPN = isRunningOnVPN;
+  }
+
+  /**
+   * Gets whether the test suite is running heavy tests.
+   *
+   * @returns Whether the environment is running heavy tests
+   */
+  getIsRunningHeavyTests(): boolean {
+    return this.#isRunningHeavyTests;
+  }
+
+  /**
+   * Sets whether the test suite is running heavy tests.
+   *
+   * @param isHeavyTests - Whether the environment is running heavy tests
+   */
+  setIsRunningHeavyTests(isRunningHeavyTests: boolean): void {
+    this.#isRunningHeavyTests = isRunningHeavyTests;
+  }
+
+  /**
+   * Gets whether sequential execution is forced for tests in this suite.
+   *
+   * @returns Whether tests in this suite are forced to run sequentially
+   */
+  getIsRunningSequentially(): boolean {
+    return this.#isRunningSequentially;
+  }
+
+  /**
+   * Sets whether sequential execution is forced for tests in this suite.
+   *
+   * @param isRunningSequentially - Whether tests in this suite should be forced to run sequentially
+   */
+  setIsRunningSequentially(isRunningSequentially: boolean): void {
+    this.#isRunningSequentially = isRunningSequentially;
+  }
+
+  /**
+   * Gets the datetime when the latest test suite launch started.
+   *
+   * @returns The latest launch start datetime, or undefined if never launched
+   */
+  getLaunchStartedAt(): Date | undefined {
+    return this.#launchStartedAt;
+  }
+
+  /**
+   * Gets the datetime when the latest test suite launch ended.
+   *
+   * @returns The latest launch end datetime, or undefined if launch is in progress or never launched
+   */
+  getLaunchEndedAt(): Date | undefined {
+    return this.#launchEndedAt;
+  }
+
+  /**
+   * Gets the duration of the latest test suite launch in milliseconds.
+   *
+   * @returns The latest launch duration in milliseconds, or undefined if start or end time is unavailable
+   */
+  getDurationMs(): number {
+    if (this.#launchStartedAt && this.#launchEndedAt) {
+      return this.#launchEndedAt.getTime() - this.#launchStartedAt.getTime();
+    }
+    return 0;
+  }
+
+  /**
+   * Gets the formatted duration of the latest test suite launch.
+   *
+   * @returns The latest launch duration formatted as a string, or an empty string if start or end time is unavailable
+   */
+  getDurationFormatted(): string {
+    // Get the duration
+    const duration = this.getDurationMs();
+    if (!duration) return '';
+
+    // Return the duration formatted
+    return formatDuration(duration);
   }
 
   /**
@@ -171,6 +300,7 @@ export abstract class AbstractTestSuite {
     tester.onStepUpdated(this.#handleTesterTestStepUpdated.bind(this));
     tester.onSuccess(this.#handleTesterSuccess.bind(this));
     tester.onFailure(this.#handleTesterFailure.bind(this));
+    tester.onSkipped(this.#handleTesterSkipped.bind(this));
   }
 
   /**
@@ -190,17 +320,26 @@ export abstract class AbstractTestSuite {
     // Validates the Test Suite can execute
     if (!(await this.onCanExecuteTestSuite())) throw new TestSuiteCannotExecuteError();
 
-    // Prepare to launch the test suite
-    await this.onPrepareLaunchTestSuite();
+    // Track launch timing for this execution.
+    this.#launchStartedAt = new Date();
+    this.#launchEndedAt = undefined;
 
-    // If only running the debug tests
-    if (this.DEBUG_RUN_ONLY_DEBUG_FUNCTION && isLocalhost()) {
-      // Launching the debug test suite first to see if we proceed with the full tests or not
-      return this.onLaunchTestSuiteDEBUG();
+    try {
+      // Prepare to launch the test suite
+      await this.onPrepareLaunchTestSuite();
+
+      // If only running the debug tests
+      if (this.DEBUG_RUN_ONLY_DEBUG_FUNCTION) {
+        // Launching the debug test suite first to see if we proceed with the full tests or not
+        return await this.onLaunchTestSuiteDEBUG();
+      }
+
+      // Launching full test suite
+      return await this.onLaunchTestSuite();
+    } finally {
+      // Record the end time whether launch succeeded or failed.
+      this.#launchEndedAt = new Date();
     }
-
-    // Launching full test suite
-    return this.onLaunchTestSuite();
   }
 
   /**
@@ -267,6 +406,18 @@ export abstract class AbstractTestSuite {
   #handleTesterFailure(sender: AbstractTester, event: FailureEvent): void {
     // Re-emit
     this.#emitFailure({ ...event, tester: sender });
+  }
+
+  /**
+   * Handles a test skipped event emitted by a tester,
+   * and re-emits it with additional tester context.
+   *
+   * @param sender - The tester instance that encountered the skip
+   * @param event - The event containing the test and the associated error
+   */
+  #handleTesterSkipped(sender: AbstractTester, event: SkippedEvent): void {
+    // Re-emit
+    this.#emitSkipped({ ...event, tester: sender });
   }
 
   // #endregion PRIVATE METHODS
@@ -393,6 +544,36 @@ export abstract class AbstractTestSuite {
     EventHelper.offEvent(this.#onTestersTestFailureHandlers, callback);
   }
 
+  /**
+   * Emits an event to all handlers.
+   *
+   * @param event - The event to emit
+   */
+  #emitSkipped(event: TesterSkippedEvent): void {
+    // Emit the event for all handlers
+    EventHelper.emitEvent(this, this.#onTestersTestSkippedHandlers, event);
+  }
+
+  /**
+   * Registers a skipped event handler.
+   *
+   * @param callback - The callback to be executed whenever the event is emitted
+   */
+  onSkipped(callback: TesterSkippedDelegate): void {
+    // Register the event handler
+    EventHelper.onEvent(this.#onTestersTestSkippedHandlers, callback);
+  }
+
+  /**
+   * Unregisters a skipped event handler.
+   *
+   * @param callback - The callback to stop being called whenever the event is emitted
+   */
+  offSkipped(callback: TesterSkippedDelegate): void {
+    // Unregister the event handler
+    EventHelper.offEvent(this.#onTestersTestSkippedHandlers, callback);
+  }
+
   // #endregion EVENTS
 }
 
@@ -427,3 +608,11 @@ export interface TesterFailureEvent extends FailureEvent {
 
 /** Define a delegate for the event handler function signature. */
 export type TesterFailureDelegate = EventDelegateBase<AbstractTestSuite, TesterFailureEvent, void>;
+
+/** Define an event for the delegate. */
+export interface TesterSkippedEvent extends SkippedEvent {
+  tester: AbstractTester;
+}
+
+/** Define a delegate for the event handler function signature. */
+export type TesterSkippedDelegate = EventDelegateBase<AbstractTestSuite, TesterSkippedEvent, void>;

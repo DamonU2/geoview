@@ -21,7 +21,7 @@ import type { TestStepLevel } from './test-step';
 import { TestStep } from './test-step';
 import type { EventDelegateBase } from 'geoview-core/api/events/event-helper';
 import EventHelper from 'geoview-core/api/events/event-helper';
-import { generateId } from 'geoview-core/core/utils/utilities';
+import { formatDuration, generateId } from 'geoview-core/core/utils/utilities';
 
 export class Test<T = unknown> {
   /** A unique id for the test */
@@ -41,6 +41,42 @@ export class Test<T = unknown> {
 
   /** The assertion result when the test has executed its run. */
   #result?: T;
+
+  /** The start time of the test. */
+  #timeStart?: Date;
+
+  /** The end time of the test. */
+  #timeEnd?: Date;
+
+  /** The start time of the test execution. */
+  #timeStartTest?: Date;
+
+  /** The end time of the test execution. */
+  #timeEndTest?: Date;
+
+  /** The start time of the assertion phase. */
+  #timeStartAssert?: Date;
+
+  /** The end time of the assertion phase. */
+  #timeEndAssert?: Date;
+
+  /** The start time of the finalization phase. */
+  #timeStartFinalize?: Date;
+
+  /** The end time of the finalization phase. */
+  #timeEndFinalize?: Date;
+
+  /** Accumulated estimated starvation time in milliseconds. */
+  #estimatedStarvationMs = 0;
+
+  /** The handle for the heartbeat setTimeout, used to cancel on stop. */
+  #heartbeatHandle: ReturnType<typeof setTimeout> | undefined;
+
+  /** The last heartbeat timestamp from performance.now(). */
+  #lastHeartbeat = 0;
+
+  /** The reason why the test was skipped, if applicable. */
+  #skippedReason?: string;
 
   /** The error which occurred during the test if any. */
   #error?: Error;
@@ -217,28 +253,318 @@ export class Test<T = unknown> {
     this.#error = error;
   }
 
-  // #region STATIC
-
-  // #region PRIMITIVES
+  /**
+   * Gets the reason why the test was skipped.
+   *
+   * @returns The skipped reason, or undefined if the test was not skipped
+   */
+  getSkippedReason(): string | undefined {
+    return this.#skippedReason;
+  }
 
   /**
-   * Rounds a number to the specified precision.
+   * Sets the reason why the test was skipped.
    *
-   * @param value - The number to round
-   * @param precision - The number of decimal places
-   * @returns The rounded value
+   * @param reason - The reason the test was skipped
    */
-  static #roundToPrecision(value: number, precision: number): number {
-    const multiplier = Math.pow(10, precision);
-    return Math.round(value * multiplier) / multiplier;
+  setSkippedReason(reason: string): void {
+    this.#skippedReason = reason;
   }
+
+  /**
+   * Gets the start time of the test.
+   *
+   * @returns The start time, or undefined if the test has not started
+   */
+  getTimeStart(): Date | undefined {
+    return this.#timeStart;
+  }
+
+  /**
+   * Sets the start time of the test.
+   *
+   * @param date - The start time to set
+   */
+  setTimeStart(date: Date): void {
+    this.#timeStart = date;
+  }
+
+  /**
+   * Gets the start time of the test execution (right before the callback).
+   *
+   * @returns The test execution start time, or undefined if not set
+   */
+  getTimeStartTest(): Date | undefined {
+    return this.#timeStartTest;
+  }
+
+  /**
+   * Sets the start time of the test execution (right before the callback).
+   *
+   * @param date - The test execution start time to set
+   */
+  setTimeStartTest(date: Date): void {
+    this.#timeStartTest = date;
+  }
+
+  /**
+   * Gets the end time of the test execution (right after the callback resolves).
+   *
+   * @returns The test execution end time, or undefined if not set
+   */
+  getTimeEndTest(): Date | undefined {
+    return this.#timeEndTest;
+  }
+
+  /**
+   * Sets the end time of the test execution (right after the callback resolves).
+   *
+   * @param date - The test execution end time to set
+   */
+  setTimeEndTest(date: Date): void {
+    this.#timeEndTest = date;
+  }
+
+  /**
+   * Gets the end time of the test.
+   *
+   * @returns The end time, or undefined if the test has not ended
+   */
+  getTimeEnd(): Date | undefined {
+    return this.#timeEnd;
+  }
+
+  /**
+   * Sets the end time of the test.
+   *
+   * @param date - The end time to set
+   */
+  setTimeEnd(date: Date): void {
+    this.#timeEnd = date;
+  }
+
+  /**
+   * Gets the duration of the test in milliseconds.
+   *
+   * @returns The duration in milliseconds, or undefined if the test has not started or ended
+   */
+  getDurationMs(): number | undefined {
+    if (!this.#timeStart || !this.#timeEnd) return undefined;
+    return this.#timeEnd.getTime() - this.#timeStart.getTime();
+  }
+
+  /**
+   * Gets the total test duration as a compact human-readable string.
+   *
+   * @returns The formatted duration, or an empty string if the test has not completed
+   */
+  getDurationFormatted(): string {
+    // Get the duration
+    const duration = this.getDurationMs();
+    if (!duration) return '';
+
+    // Return the duration formatted
+    return formatDuration(duration);
+  }
+
+  /**
+   * Gets the duration of the test callback execution in milliseconds.
+   *
+   * @returns The callback duration in milliseconds, or undefined if timestamps are not set
+   */
+  getDurationTestMs(): number | undefined {
+    if (!this.#timeStartTest || !this.#timeEndTest) return undefined;
+    return this.#timeEndTest.getTime() - this.#timeStartTest.getTime();
+  }
+
+  /**
+   * Gets the start time of the assertion phase.
+   *
+   * @returns The assertion start time, or undefined if not set
+   */
+  getTimeStartAssert(): Date | undefined {
+    return this.#timeStartAssert;
+  }
+
+  /**
+   * Sets the start time of the assertion phase.
+   *
+   * @param date - The assertion start time to set
+   */
+  setTimeStartAssert(date: Date): void {
+    this.#timeStartAssert = date;
+  }
+
+  /**
+   * Gets the end time of the assertion phase.
+   *
+   * @returns The assertion end time, or undefined if not set
+   */
+  getTimeEndAssert(): Date | undefined {
+    return this.#timeEndAssert;
+  }
+
+  /**
+   * Sets the end time of the assertion phase.
+   *
+   * @param date - The assertion end time to set
+   */
+  setTimeEndAssert(date: Date): void {
+    this.#timeEndAssert = date;
+  }
+
+  /**
+   * Gets the duration of the assertion phase in milliseconds.
+   *
+   * @returns The assertion duration in milliseconds, or undefined if timestamps are not set
+   */
+  getDurationAssertMs(): number | undefined {
+    if (!this.#timeStartAssert || !this.#timeEndAssert) return undefined;
+    return this.#timeEndAssert.getTime() - this.#timeStartAssert.getTime();
+  }
+
+  /**
+   * Gets the start time of the finalization phase.
+   *
+   * @returns The finalization start time, or undefined if not set
+   */
+  getTimeStartFinalize(): Date | undefined {
+    return this.#timeStartFinalize;
+  }
+
+  /**
+   * Sets the start time of the finalization phase.
+   *
+   * @param date - The finalization start time to set
+   */
+  setTimeStartFinalize(date: Date): void {
+    this.#timeStartFinalize = date;
+  }
+
+  /**
+   * Gets the end time of the finalization phase.
+   *
+   * @returns The finalization end time, or undefined if not set
+   */
+  getTimeEndFinalize(): Date | undefined {
+    return this.#timeEndFinalize;
+  }
+
+  /**
+   * Sets the end time of the finalization phase.
+   *
+   * @param date - The finalization end time to set
+   */
+  setTimeEndFinalize(date: Date): void {
+    this.#timeEndFinalize = date;
+  }
+
+  /**
+   * Gets the duration of the finalization phase in milliseconds.
+   *
+   * @returns The finalization duration in milliseconds, or undefined if timestamps are not set
+   */
+  getDurationFinalizeMs(): number | undefined {
+    if (!this.#timeStartFinalize || !this.#timeEndFinalize) return undefined;
+    return this.#timeEndFinalize.getTime() - this.#timeStartFinalize.getTime();
+  }
+
+  /**
+   * Gets the estimated net test duration in milliseconds — the wall-clock callback time minus
+   * estimated event loop starvation. This approximates how long the test's actual work
+   * (network I/O, processing) took without contention.
+   *
+   * Because the starvation estimate may slightly overcount (see `getDurationStarvationMs()`),
+   * this value may underestimate the true network/work time by a small margin.
+   *
+   * @returns The estimated net duration in milliseconds, or undefined if callback timestamps are not set
+   */
+  getDurationNetMs(): number | undefined {
+    const test = this.getDurationTestMs();
+    if (test === undefined) return undefined;
+    return Math.max(0, test - this.getDurationStarvationMs());
+  }
+
+  /**
+   * Gets the estimated event loop starvation duration in milliseconds.
+   *
+   * This is an approximation based on heartbeat sampling. The heartbeat fires at a fixed interval
+   * and measures how long each tick actually took — the excess is accumulated as starvation.
+   * Because the heartbeat cannot distinguish between starvation that overlaps with concurrent
+   * network I/O and starvation that delays promise continuations, the value may slightly
+   * overestimate actual starvation.
+   *
+   * @returns The estimated starvation duration in milliseconds
+   */
+  getDurationStarvationMs(): number {
+    return this.#estimatedStarvationMs;
+  }
+
+  /**
+   * Gets the estimated event loop starvation duration as a compact human-readable string.
+   *
+   * @returns The formatted starvation duration
+   */
+  getDurationStarvationFormatted(): string {
+    // Get the duration
+    const duration = this.getDurationStarvationMs();
+
+    // Return the duration formatted
+    return formatDuration(duration);
+  }
+
+  // #region EVENT LOOP MONITOR
+
+  /** The heartbeat interval in milliseconds used to probe event loop availability. */
+  static readonly HEARTBEAT_INTERVAL_MS = 250;
+
+  /** Per-tick jitter threshold in milliseconds below which excess is ignored (normal timer imprecision). */
+  static readonly HEARTBEAT_JITTER_THRESHOLD_MS = 100;
+
+  /**
+   * Starts the event loop starvation monitor.
+   *
+   * Schedules recurring heartbeat ticks at a known interval. Each tick measures how
+   * long it actually took versus the expected interval — the excess beyond a small
+   * jitter threshold is accumulated as starvation time caused by main-thread contention.
+   * The threshold filters out normal setTimeout scheduling imprecision (~1-4ms).
+   */
+  startEventLoopMonitor(): void {
+    this.#estimatedStarvationMs = 0;
+    this.#lastHeartbeat = performance.now();
+
+    const tick = (): void => {
+      const now = performance.now();
+      const elapsed = now - this.#lastHeartbeat;
+      const excess = Math.max(0, elapsed - Test.HEARTBEAT_INTERVAL_MS - Test.HEARTBEAT_JITTER_THRESHOLD_MS);
+      this.#estimatedStarvationMs += excess;
+      this.#lastHeartbeat = now;
+      this.#heartbeatHandle = setTimeout(tick, Test.HEARTBEAT_INTERVAL_MS);
+    };
+
+    this.#heartbeatHandle = setTimeout(tick, Test.HEARTBEAT_INTERVAL_MS);
+  }
+
+  /**
+   * Stops the event loop starvation monitor and finalizes the accumulated starvation value.
+   */
+  stopEventLoopMonitor(): void {
+    if (this.#heartbeatHandle !== undefined) {
+      clearTimeout(this.#heartbeatHandle);
+      this.#heartbeatHandle = undefined;
+    }
+  }
+
+  // #endregion
+
+  // #region PUBLIC STATIC METHODS -  PRIMITIVES
 
   /**
    * Asserts that two values are strictly equal (`===`).
    *
    * @param actualValue - The actual value being checked
    * @param expectedValue - The expected value to compare against
-   * @param [roundToPrecision] - Optional number of decimal places to round to before comparing (for numbers only)
+   * @param [roundToPrecision] - Decimal places to round numeric values: 1 means one, 10 means ten, and 100 means one hundred; this is not a tolerance
    * @throws {AssertionError} When the values are not strictly equal.
    */
   static assertIsEqual<T = unknown>(actualValue: T, expectedValue: T, roundToPrecision?: number): asserts actualValue is T {
@@ -248,8 +574,26 @@ export class Test<T = unknown> {
     // If equal
     if (equalResult.equal) return;
 
-    // Throw
+    // Throw an error if the values are not equal
     throw new AssertionValueError(equalResult.actualValue, equalResult.expectedValue);
+  }
+
+  /**
+   * Asserts that two numeric values differ by no more than the specified tolerance.
+   *
+   * The comparison succeeds when `Math.abs(actualValue - expectedValue) <= tolerance`. A tolerance of `1` allows
+   * values up to one unit apart, while a tolerance of `0.01` allows values up to one hundredth apart.
+   *
+   * @param actualValue - The actual numeric value being checked
+   * @param expectedValue - The expected numeric value to compare against
+   * @param tolerance - The maximum allowed absolute difference
+   * @throws {AssertionValueError} When the absolute difference is greater than the tolerance
+   */
+  static assertIsEqualWithinTolerance(actualValue: number, expectedValue: number, tolerance: number): void {
+    if (Math.abs(actualValue - expectedValue) <= tolerance) return;
+
+    // Throw an error if the values differ by more than the allowed tolerance
+    throw new AssertionValueError(actualValue, expectedValue);
   }
 
   /**
@@ -267,7 +611,7 @@ export class Test<T = unknown> {
     // If not equal
     if (!equalResult.equal) return;
 
-    // Throw
+    // Throw an error if the values are equal
     throw new AssertionValueDifferentError(equalResult.actualValue);
   }
 
@@ -278,11 +622,11 @@ export class Test<T = unknown> {
    * @param actualValue - The actual value being checked
    * @throws {AssertionUndefinedError} When the value isn't defined.
    */
-  static assertIsDefined<T = unknown>(propertyPath: string, actualValue: T | undefined): asserts actualValue is T {
+  static assertIsDefined<T = unknown>(propertyPath: string, actualValue: T | undefined | null): asserts actualValue is NonNullable<T> {
     // Checks if the value is defined
     if (actualValue !== undefined && actualValue !== null) return;
 
-    // Throw
+    // Throw an error if the value is not defined
     throw new AssertionUndefinedError(propertyPath);
   }
 
@@ -293,11 +637,11 @@ export class Test<T = unknown> {
    * @param actualValue - The actual value being checked
    * @throws {AssertionUndefinedError} When the value is defined.
    */
-  static assertIsUndefined<T = unknown>(propertyPath: string, actualValue: T | undefined): void {
+  static assertIsUndefined<T = unknown>(propertyPath: string, actualValue: T | undefined | null): void {
     // Checks if the value is defined
     if (actualValue === undefined || actualValue === null) return;
 
-    // Throw
+    // Throw an error if the value is defined
     throw new AssertionDefinedError(propertyPath, actualValue);
   }
 
@@ -315,7 +659,7 @@ export class Test<T = unknown> {
     // Checks if the value is of the expected instance type
     if (actualValue instanceof expectedType) return;
 
-    // Throw
+    // Throw an error if the value is not of the expected instance type
     throw new AssertionWrongInstanceError(actualValue, expectedType);
   }
 
@@ -333,7 +677,7 @@ export class Test<T = unknown> {
     // Checks if the value is of the expected instance type
     if (actualError instanceof expectedType) return;
 
-    // Throw
+    // Throw an error if the error is not of the expected instance type
     throw new AssertionWrongErrorInstanceError(actualError, expectedType);
   }
 
@@ -374,9 +718,9 @@ export class Test<T = unknown> {
     return { equal: actualValue === expectedValue, actualValue, expectedValue };
   }
 
-  // #endregion PRIMITIVES
+  // #endregion PUBLIC STATIC METHODS -  PRIMITIVES
 
-  // #region ARRAYS
+  // #region PUBLIC STATIC METHODS -  ARRAYS
 
   /**
    * Asserts that a value is an array.
@@ -384,10 +728,10 @@ export class Test<T = unknown> {
    * @param actualValue - The object to check
    * @throws {AssertionValueNotAnArrayError} When the value is not an array.
    */
-  static assertIsArray(actualValue: unknown | unknown[] | undefined): asserts actualValue is unknown[] {
+  static assertIsArray(actualValue: unknown | unknown[] | null | undefined): asserts actualValue is unknown[] {
     if (Array.isArray(actualValue)) return;
 
-    // Throw
+    // Throw an error if the value is not an array
     throw new AssertionValueNotAnArrayError(actualValue);
   }
 
@@ -405,7 +749,7 @@ export class Test<T = unknown> {
 
     if (array?.length === expectedValue) return;
 
-    // Throw
+    // Throw an error if the array length is not equal to the expected length
     throw new AssertionArrayLengthError(array?.length, expectedValue);
   }
 
@@ -423,7 +767,7 @@ export class Test<T = unknown> {
 
     if (array?.length ?? 0 >= expectedMinimumLength) return;
 
-    // Throw
+    // Throw an error if the array length is less than the expected minimum length
     throw new AssertionArrayLengthMinimalError(array?.length ?? 0, expectedMinimumLength);
   }
 
@@ -442,7 +786,7 @@ export class Test<T = unknown> {
 
     if (array.includes(expectedValue)) return;
 
-    // Throw
+    // Throw an error if the expected value is not found in the array
     throw new AssertionArrayIncludingError(array, expectedValue);
   }
 
@@ -461,7 +805,7 @@ export class Test<T = unknown> {
 
     if (!array.includes(expectedValue)) return;
 
-    // Throw
+    // Throw an error if the expected value is found in the array
     throw new AssertionArrayExcludingError(array, expectedValue);
   }
 
@@ -545,9 +889,9 @@ export class Test<T = unknown> {
     return;
   }
 
-  // #endregion ARRAYS
+  // #endregion PUBLIC STATIC METHODS -  ARRAYS
 
-  // #region JSON
+  // #region PUBLIC STATIC METHODS -  JSON
 
   /**
    * Asserts that a JSON object has at least all the properties/values of the expected JSON object.
@@ -567,7 +911,7 @@ export class Test<T = unknown> {
 
     // If not good
     if (!result.ok) {
-      // Throw
+      // Throw an error if the JSON object does not contain at least all properties and matching values of the expected object
       throw new AssertionJSONObjectError(result.mismatches, actualObject, expectedObject);
     }
   }
@@ -684,9 +1028,23 @@ export class Test<T = unknown> {
     };
   }
 
-  // #endregion JSON
+  // #endregion PUBLIC STATIC METHODS -  JSON
 
-  // #endregion
+  // #region PRIVATE STATIC METHODS
+
+  /**
+   * Rounds a number to the specified precision.
+   *
+   * @param value - The number to round
+   * @param precision - The number of decimal places
+   * @returns The rounded value
+   */
+  static #roundToPrecision(value: number, precision: number): number {
+    const multiplier = Math.pow(10, precision);
+    return Math.round(value * multiplier) / multiplier;
+  }
+
+  // #endregion PRIVATE STATIC METHODS
 
   // #region EVENTS
 
@@ -776,7 +1134,7 @@ export type TestChangedDelegate = EventDelegateBase<Test, BaseTestChangedEvent, 
 export type TestType = 'regular' | 'true-negative';
 
 /** The test statuses. */
-export type TestStatus = 'new' | 'running' | 'verifying' | 'success' | 'failed';
+export type TestStatus = 'new' | 'running' | 'verifying' | 'success' | 'failed' | 'skipped';
 
 /** A comparer delegate to compare 2 objects and determine if they are equal. */
 export type ComparerDelegate<T> = (array1: T, array2: T) => boolean;

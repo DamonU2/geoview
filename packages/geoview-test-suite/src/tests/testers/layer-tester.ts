@@ -54,7 +54,7 @@ export class LayerTester extends GVAbstractTester {
     // Create a random geoview layer id
     const gvLayerId = generateId();
     const layerUrl = GVAbstractTester.HISTORICAL_FLOOD_URL_MAP_SERVER;
-    const layerPath = `${gvLayerId}/${GVAbstractTester.HISTORICAL_FLOOD_URL_LAYER_ID}`;
+    const layerPath = `${gvLayerId}/${GVAbstractTester.HISTORICAL_FLOOD_LAYER_ID}`;
     const gvLayerName = 'Esri Dynamic Histo Flood Events';
 
     // Test
@@ -66,7 +66,7 @@ export class LayerTester extends GVAbstractTester {
 
         // Create the config
         const gvConfig = EsriDynamic.createGeoviewLayerConfig(gvLayerId, gvLayerName, layerUrl, false, [
-          { id: GVAbstractTester.HISTORICAL_FLOOD_URL_LAYER_ID },
+          { id: GVAbstractTester.HISTORICAL_FLOOD_LAYER_ID },
         ]);
 
         // Redirect to helper to add the layer to the map and wait
@@ -186,7 +186,7 @@ export class LayerTester extends GVAbstractTester {
     // Create a random geoview layer id
     const gvLayerId = generateId();
     const layerUrl = GVAbstractTester.BAD_URL;
-    const layerPath = `${gvLayerId}/${GVAbstractTester.HISTORICAL_FLOOD_URL_LAYER_ID}`;
+    const layerPath = `${gvLayerId}/${GVAbstractTester.HISTORICAL_FLOOD_LAYER_ID}`;
     const gvLayerName = 'Esri Dynamic Histo Flood Events';
 
     // Test
@@ -199,7 +199,7 @@ export class LayerTester extends GVAbstractTester {
 
         // Create the config
         const gvConfig = EsriDynamic.createGeoviewLayerConfig(gvLayerId, gvLayerName, layerUrl, false, [
-          { id: GVAbstractTester.HISTORICAL_FLOOD_URL_LAYER_ID },
+          { id: GVAbstractTester.HISTORICAL_FLOOD_LAYER_ID },
         ]);
 
         // Redirect to helper to add the layer to the map and wait
@@ -2250,16 +2250,12 @@ export class LayerTester extends GVAbstractTester {
    * @returns A promise that resolves to the fully loaded GeoView layer instance
    */
   async helperStepAddLayerOnMap<T>(test: Test<T>, gvConfig: TypeGeoviewLayerConfig): Promise<GeoViewLayerAddedResult> {
-    // Adding the layer on the map
-    test.addStep('Adding the layer on the map...');
-
     // Add the geoview layer by geocore uuid
+    test.addStep('Adding the layer on the map...');
     const result = this.getControllersRegistry().layerCreatorController.addGeoviewLayer(gvConfig);
 
-    // Creating the configuration
-    test.addStep('Waiting for the layer to be added...');
-
     // Wait for the layer to be fully added on the map
+    test.addStep('Waiting for the layer to be added...');
     await result.promiseLayer;
 
     // Return the layer
@@ -2276,16 +2272,12 @@ export class LayerTester extends GVAbstractTester {
    * @returns A promise that resolves to the fully loaded GeoView layer instance
    */
   async helperStepAddLayerOnMapFromUUID<T>(test: Test<T>, uuid: string): Promise<GeoViewLayerAddedResult | void> {
-    // Adding the layer on the map
-    test.addStep('Adding the layer on the map...');
-
     // Add the geoview layer by geocore uuid
+    test.addStep('Adding the layer on the map...');
     const result = await this.getControllersRegistry().layerCreatorController.addGeoviewLayerByGeoCoreUUID(uuid);
 
-    // Creating the configuration
-    test.addStep('Waiting for the layer to be added...');
-
     // Wait for the layer to be fully added on the map
+    test.addStep('Waiting for the layer to be added...');
     await result?.promiseLayer;
 
     // Return the layer
@@ -2307,16 +2299,12 @@ export class LayerTester extends GVAbstractTester {
    * @throws {LayerWrongTypeError} When the layer is of wrong type at the given layer path
    */
   async helperStepCheckLayerAtLayerPath<T>(test: Test<T>, layerPath: string, acceptNoIconsOrNoData = false): Promise<AbstractGVLayer> {
-    // Creating the configuration
-    test.addStep(`Wait for the layer ${layerPath} to be registered...`);
-
     // Wait for the layer to get registered
+    test.addStep(`Wait for the layer ${layerPath} to be registered...`);
     const layer = (await this.getControllersRegistry().layerController.waitForLayerRegistered(layerPath)) as AbstractGVLayer;
 
-    // Creating the configuration
-    test.addStep(`Waiting for the layer to be loaded at least once...`);
-
     // Wait until the layer has at least loaded once
+    test.addStep(`Waiting for the layer to be loaded at least once...`);
     await layer.waitForLoadedOnce();
 
     // Wait until the legend has been queried

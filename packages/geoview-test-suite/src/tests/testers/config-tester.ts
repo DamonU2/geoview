@@ -1,7 +1,27 @@
 import { GVAbstractTester } from './abstract-gv-tester';
 import { Test } from '../core/test';
+import { TestSkippedError } from '../core/exceptions';
 import type { ClassType } from 'geoview-core/core/types/global-types';
 import type { MapConfigLayerEntry, TypeGeoviewLayerConfig, TypeGeoviewLayerType } from 'geoview-core/api/types/layer-schema-types';
+import type { TypeOutfields } from 'geoview-core/api/types/map-schema-types';
+import type { ConfigBaseClass } from 'geoview-core/api/config/validation-classes/config-base-class';
+import type { AbstractBaseLayerEntryConfig } from 'geoview-core/api/config/validation-classes/abstract-base-layer-entry-config';
+import { EsriImageLayerEntryConfig } from 'geoview-core/api/config/validation-classes/raster-validation-classes/esri-image-layer-entry-config';
+import { EsriFeatureLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/esri-feature-layer-entry-config';
+import { EsriDynamicLayerEntryConfig } from 'geoview-core/api/config/validation-classes/raster-validation-classes/esri-dynamic-layer-entry-config';
+import { GroupLayerEntryConfig } from 'geoview-core/api/config/validation-classes/group-layer-entry-config';
+import { OgcWmsLayerEntryConfig } from 'geoview-core/api/config/validation-classes/raster-validation-classes/ogc-wms-layer-entry-config';
+import { OgcWfsLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/wfs-layer-entry-config';
+import { GeoJSONLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/geojson-layer-entry-config';
+import { CsvLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/csv-layer-entry-config';
+import { OgcFeatureLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/ogc-layer-entry-config';
+import { WkbLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/wkb-layer-entry-config';
+import { KmlLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/kml-layer-entry-config';
+import { GeoTIFFLayerEntryConfig } from 'geoview-core/api/config/validation-classes/raster-validation-classes/geotiff-layer-entry-config';
+import { ConfigApi } from 'geoview-core/api/config/config-api';
+import type { GeoCoreLayerConfigResponse } from 'geoview-core/api/config/geocore';
+import { GeoCore } from 'geoview-core/api/config/geocore';
+import { Config } from 'geoview-core/api/config/config';
 import type { LayerNoCapabilitiesError } from 'geoview-core/core/exceptions/layer-exceptions';
 import { LayerServiceMetadataUnableToFetchError } from 'geoview-core/core/exceptions/layer-exceptions';
 import { EsriDynamic } from 'geoview-core/geo/layer/geoview-layers/raster/esri-dynamic';
@@ -15,21 +35,7 @@ import { OgcFeature } from 'geoview-core/geo/layer/geoview-layers/vector/ogc-fea
 import { WKB } from 'geoview-core/geo/layer/geoview-layers/vector/wkb';
 import { KML } from 'geoview-core/geo/layer/geoview-layers/vector/kml';
 import { GeoTIFF } from 'geoview-core/geo/layer/geoview-layers/raster/geotiff';
-import { EsriImageLayerEntryConfig } from 'geoview-core/api/config/validation-classes/raster-validation-classes/esri-image-layer-entry-config';
-import { EsriFeatureLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/esri-feature-layer-entry-config';
-import { EsriDynamicLayerEntryConfig } from 'geoview-core/api/config/validation-classes/raster-validation-classes/esri-dynamic-layer-entry-config';
-import { GroupLayerEntryConfig } from 'geoview-core/api/config/validation-classes/group-layer-entry-config';
-import { OgcWmsLayerEntryConfig } from 'geoview-core/api/config/validation-classes/raster-validation-classes/ogc-wms-layer-entry-config';
-import { OgcWfsLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/wfs-layer-entry-config';
-import { GeoJSONLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/geojson-layer-entry-config';
-import { CsvLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/csv-layer-entry-config';
-import { OgcFeatureLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/ogc-layer-entry-config';
-import { WkbLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/wkb-layer-entry-config';
-import { KmlLayerEntryConfig } from 'geoview-core/api/config/validation-classes/vector-validation-classes/kml-layer-entry-config';
-import { GeoTIFFLayerEntryConfig } from 'geoview-core/api/config/validation-classes/raster-validation-classes/geotiff-layer-entry-config';
-import type { GeoCoreLayerConfigResponse } from 'geoview-core/api/config/geocore';
-import { GeoCore } from 'geoview-core/api/config/geocore';
-import { Config } from 'geoview-core/api/config/config';
+import { logger } from 'geoview-core/core/utils/logger';
 
 /**
  * Main Config testing class.
@@ -51,9 +57,9 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testEsriDynamicWithHistoricalFloodEvents(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitEsriDynamicWithHistoricalFlood(): Promise<Test<TypeGeoviewLayerConfig>> {
     // Redirect
-    return this.testEsriDynamic(
+    return this.testInitEsriDynamic(
       ConfigTester.HISTORICAL_FLOOD_URL_MAP_SERVER,
       ConfigTester.HISTORICAL_FLOOD_LAYER_NAME,
       EsriDynamicLayerEntryConfig
@@ -65,9 +71,9 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testEsriDynamicWithCESI(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitEsriDynamicWithCESI(): Promise<Test<TypeGeoviewLayerConfig>> {
     // Redirect
-    return this.testEsriDynamic(ConfigTester.CESI_MAP_SERVER, ConfigTester.CESI_GROUP_0_LAYER_NAME, GroupLayerEntryConfig);
+    return this.testInitEsriDynamic(ConfigTester.CESI_MAP_SERVER, ConfigTester.CESI_GROUP_0_LAYER_NAME, GroupLayerEntryConfig);
   }
 
   /**
@@ -78,7 +84,7 @@ export class ConfigTester extends GVAbstractTester {
    * @param expectedTypeFirstLayerEntry - The expected class type on which the assertions will be done
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testEsriDynamic(
+  testInitEsriDynamic(
     metadataAccessPath: string,
     layerName: string,
     expectedTypeFirstLayerEntry: ClassType<GroupLayerEntryConfig | EsriDynamicLayerEntryConfig>
@@ -131,7 +137,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the error
    */
-  testEsriDynamicBadUrl(): Promise<Test<LayerServiceMetadataUnableToFetchError>> {
+  testInitEsriDynamicBadUrl(): Promise<Test<LayerServiceMetadataUnableToFetchError>> {
     // The bad url
     const urlBad: string = GVAbstractTester.BAD_URL;
 
@@ -145,6 +151,56 @@ export class ConfigTester extends GVAbstractTester {
     });
   }
 
+  /**
+   * Tests processing an Esri Dynamic layer configuration using Historical Flood information.
+   *
+   * Verifies that `ConfigApi.processLayerFromType` returns a valid `EsriDynamicLayerEntryConfig`
+   * with the expected outfields configuration.
+   *
+   * @returns A promise that resolves with a Test containing the processed layer entry configs
+   */
+  testProcessEsriDynamicHistoricalFlood(): Promise<Test<ConfigBaseClass[]>> {
+    // Dummy names
+    const gvLayerId = 'gvLayerId';
+    const gvLayerName = 'gvLayerName';
+    const metadataAccessPath = ConfigTester.HISTORICAL_FLOOD_URL_MAP_SERVER;
+    const layerId = ConfigTester.HISTORICAL_FLOOD_LAYER_ID;
+    const layerName = ConfigTester.HISTORICAL_FLOOD_LAYER_NAME;
+
+    // Test
+    return this.test(
+      `Test processing an Esri Dynamic with ${layerName}`,
+      (test) => {
+        // Set step
+        test.addStep(`Processing geoview layer config on url: ${metadataAccessPath}`);
+
+        // Process the config to get the layer entry configs
+        return ConfigApi.processLayerFromType(
+          'esriDynamic',
+          gvLayerId,
+          gvLayerName,
+          metadataAccessPath,
+          [
+            {
+              id: layerId,
+              layerName: layerName,
+            },
+          ],
+          false
+        );
+      },
+      (test, result) => {
+        // Perform assertions
+        test.addStep('Verifying expected process...');
+        Test.assertIsArray(result);
+        Test.assertIsInstance(result[0], EsriDynamicLayerEntryConfig);
+
+        // Verify the layer outfields
+        ConfigTester.#helperStepOutfields(test, result[0], GVAbstractTester.HISTORICAL_FLOOD_OUTFIELDS);
+      }
+    );
+  }
+
   // #endregion ESRI DYNAMIC
 
   // #region ESRI FEATURE
@@ -154,11 +210,11 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves to the configured test instance
    */
-  testEsriFeatureWithTorontoNeighbourhoods(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitEsriFeatureWithTorontoNeighbourhoods(): Promise<Test<TypeGeoviewLayerConfig>> {
     // Redirect
-    return this.testEsriFeature(
+    return this.testInitEsriFeature(
       ConfigTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_URL,
-      '0',
+      ConfigTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_LAYER_ID,
       ConfigTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_LAYER_NAME
     );
   }
@@ -168,9 +224,13 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves to the configured test instance
    */
-  testEsriFeatureWithHistoricalFloodEvents(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitEsriFeatureWithHistoricalFloodEvents(): Promise<Test<TypeGeoviewLayerConfig>> {
     // Redirect
-    return this.testEsriFeature(ConfigTester.HISTORICAL_FLOOD_URL_MAP_SERVER, '0', ConfigTester.HISTORICAL_FLOOD_LAYER_NAME);
+    return this.testInitEsriFeature(
+      ConfigTester.HISTORICAL_FLOOD_URL_MAP_SERVER,
+      ConfigTester.HISTORICAL_FLOOD_LAYER_ID,
+      ConfigTester.HISTORICAL_FLOOD_LAYER_NAME
+    );
   }
 
   /**
@@ -178,9 +238,13 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves to the configured test instance
    */
-  testEsriFeatureWithForestIndustry(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitEsriFeatureWithForestIndustry(): Promise<Test<TypeGeoviewLayerConfig>> {
     // Redirect
-    return this.testEsriFeature(ConfigTester.FOREST_INDUSTRY_MAP_SERVER, '0', ConfigTester.FOREST_INDUSTRY_LAYER_NAME);
+    return this.testInitEsriFeature(
+      ConfigTester.FOREST_INDUSTRY_MAP_SERVER,
+      ConfigTester.FOREST_INDUSTRY_LAYER_ID,
+      ConfigTester.FOREST_INDUSTRY_LAYER_NAME
+    );
   }
 
   /**
@@ -191,7 +255,7 @@ export class ConfigTester extends GVAbstractTester {
    * @param layerName - The name of the layer to be tested
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testEsriFeature(metadataAccessPath: string, layerId: string, layerName: string): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitEsriFeature(metadataAccessPath: string, layerId: string, layerName: string): Promise<Test<TypeGeoviewLayerConfig>> {
     // Dummy names
     const gvLayerId = 'gvLayerId';
     const gvLayerName = 'gvLayerName';
@@ -243,7 +307,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the error
    */
-  testEsriFeatureBadUrl(): Promise<Test<LayerServiceMetadataUnableToFetchError>> {
+  testInitEsriFeatureBadUrl(): Promise<Test<LayerServiceMetadataUnableToFetchError>> {
     // The bad url
     const urlBad: string = GVAbstractTester.BAD_URL;
 
@@ -257,6 +321,56 @@ export class ConfigTester extends GVAbstractTester {
     });
   }
 
+  /**
+   * Tests processing an Esri Feature layer configuration using Toronto Neighbourhoods information.
+   *
+   * Verifies that `ConfigApi.processLayerFromType` returns a valid `EsriFeatureLayerEntryConfig`
+   * with the expected configuration.
+   *
+   * @returns A promise that resolves with a Test containing the processed layer entry configs
+   */
+  testProcessEsriFeatureWithTorontoNeighbourhoods(): Promise<Test<ConfigBaseClass[]>> {
+    // Dummy names
+    const gvLayerId = 'gvLayerId';
+    const gvLayerName = 'gvLayerName';
+    const metadataAccessPath = ConfigTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_URL;
+    const layerId = ConfigTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_LAYER_ID;
+    const layerName = ConfigTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_LAYER_NAME;
+
+    // Test
+    return this.test(
+      `Test processing an Esri Feature with ${layerName}`,
+      (test) => {
+        // Set step
+        test.addStep(`Processing geoview layer config on url: ${metadataAccessPath}`);
+
+        // Process the config to get the layer entry configs
+        return ConfigApi.processLayerFromType(
+          'esriFeature',
+          gvLayerId,
+          gvLayerName,
+          metadataAccessPath,
+          [
+            {
+              id: layerId,
+              layerName: layerName,
+            },
+          ],
+          false
+        );
+      },
+      (test, result) => {
+        // Perform assertions
+        test.addStep('Verifying expected process...');
+        Test.assertIsArray(result);
+        Test.assertIsInstance(result[0], EsriFeatureLayerEntryConfig);
+
+        // Verify the layer outfields
+        ConfigTester.#helperStepOutfields(test, result[0], ConfigTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_OUTFIELDS);
+      }
+    );
+  }
+
   // #endregion ESRI FEATURE
 
   // #region ESRI IMAGE
@@ -266,23 +380,13 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testEsriImageWithElevation(): Promise<Test<TypeGeoviewLayerConfig>> {
-    // Redirect
-    return this.testEsriImage(ConfigTester.IMAGE_SERVER_ELEVATION_URL, ConfigTester.IMAGE_SERVER_ELEVATION_LAYER_ID);
-  }
-
-  /**
-   * Tests an Esri Image Config.
-   *
-   * @param metadataAccessPath - The url of the Esri Image layer
-   * @param layerId - The id of the layer to be tested
-   * @returns A promise that resolves with a Test containing the configuration
-   */
-  testEsriImage(metadataAccessPath: string, layerId: string): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitEsriImageWithElevation(): Promise<Test<TypeGeoviewLayerConfig>> {
     // Dummy names
     const gvLayerId = 'gvLayerId';
     const gvLayerName = 'gvLayerName';
     const gvLayerType: TypeGeoviewLayerType = 'esriImage';
+    const metadataAccessPath = ConfigTester.IMAGE_SERVER_ELEVATION_URL;
+    const layerId = ConfigTester.IMAGE_SERVER_ELEVATION_LAYER_ID;
 
     // Complete the expected config by adding the geoviewLayerId and geoviewLayerName
     const expectedConfigFull = {
@@ -326,7 +430,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with the test result, expecting a `LayerServiceMetadataUnableToFetchError`
    */
-  testEsriImageBadUrl(): Promise<Test<LayerServiceMetadataUnableToFetchError>> {
+  testInitEsriImageBadUrl(): Promise<Test<LayerServiceMetadataUnableToFetchError>> {
     // The bad url
     const urlBad: string = GVAbstractTester.BAD_URL;
 
@@ -349,7 +453,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testWMSLayerWithOWSMundialis(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitWMSLayerWithOWSMundialis(): Promise<Test<TypeGeoviewLayerConfig>> {
     // The url
     const url = ConfigTester.OWS_MUNDIALIS;
 
@@ -408,7 +512,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testWMSLayerWithOWSMundialisNoFullSubLayers(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitWMSLayerWithOWSMundialisNoFullSubLayers(): Promise<Test<TypeGeoviewLayerConfig>> {
     // The url
     const url = ConfigTester.OWS_MUNDIALIS;
 
@@ -460,7 +564,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testWMSLayerWithDatacubeMSI(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitWMSLayerWithDatacubeMSI(): Promise<Test<TypeGeoviewLayerConfig>> {
     // The url
     const url = GVAbstractTester.DATACUBE_MSI;
 
@@ -525,7 +629,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testWMSLayerWithDatacubeMSINoFullSubLayers(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitWMSLayerWithDatacubeMSINoFullSubLayers(): Promise<Test<TypeGeoviewLayerConfig>> {
     // The url
     const url = GVAbstractTester.DATACUBE_MSI;
 
@@ -581,7 +685,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with the test result, expecting a `LayerNoCapabilitiesError`
    */
-  testWMSBadUrl(): Promise<Test<LayerNoCapabilitiesError>> {
+  testInitWMSBadUrl(): Promise<Test<LayerNoCapabilitiesError>> {
     // The bad url
     const urlBad: string = GVAbstractTester.BAD_URL;
 
@@ -595,6 +699,62 @@ export class ConfigTester extends GVAbstractTester {
     });
   }
 
+  /**
+   * Tests processing a WMS layer configuration using Airborne Radioactivity information.
+   *
+   * Verifies that `ConfigApi.processLayerFromType` returns a valid `OgcWmsLayerEntryConfig`
+   * with the expected outfields configuration.
+   *
+   * @param isRunningOnVPN - Whether the test is running on VPN (required to reach the service)
+   * @returns A promise that resolves with a Test containing the processed layer entry configs
+   * @throws {TestSkippedError} When not running on VPN
+   */
+  testProcessWMSAirborneRadioactivity(isRunningOnVPN: boolean): Promise<Test<ConfigBaseClass[]>> {
+    // Dummy names
+    const gvLayerId = 'gvLayerId';
+    const gvLayerName = 'gvLayerName';
+    const metadataAccessPath = ConfigTester.AIRBORNE_RADIOACTIVITY_WMS_URL;
+    const layerName = 'Airborne Radioactivity';
+
+    // Test
+    return this.test(
+      `Test processing a WMS with ${layerName}`,
+      (test) => {
+        // If not running on VPN, skip it
+        if (!isRunningOnVPN) {
+          throw new TestSkippedError('Not running on VPN');
+        }
+
+        // Set step
+        test.addStep(`Processing geoview layer config on url: ${metadataAccessPath}`);
+
+        // Process the config to get the layer entry configs
+        return ConfigApi.processLayerFromType(
+          'ogcWms',
+          gvLayerId,
+          gvLayerName,
+          metadataAccessPath,
+          [
+            {
+              id: ConfigTester.AIRBORNE_RADIOACTIVITY_WMS_LAYER_ID,
+              layerName,
+            },
+          ],
+          false
+        );
+      },
+      (test, result) => {
+        // Perform assertions
+        test.addStep('Verifying expected process...');
+        Test.assertIsArray(result);
+        Test.assertIsInstance(result[0], OgcWmsLayerEntryConfig);
+
+        // Verify the layer outfields
+        ConfigTester.#helperStepOutfields(test, result[0], ConfigTester.AIRBORNE_RADIOACTIVITY_WMS_OUTFIELDS);
+      }
+    );
+  }
+
   // #endregion WMS
 
   // #region WFS
@@ -604,7 +764,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with a Test containing the configuration
    */
-  testWFSLayerWithGeometCurrentConditions(): Promise<Test<TypeGeoviewLayerConfig>> {
+  testInitWFSLayerWithGeometCurrentConditions(): Promise<Test<TypeGeoviewLayerConfig>> {
     // The url
     const url = GVAbstractTester.GEOMET_URL;
 
@@ -662,7 +822,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with the test result, expecting a `LayerServiceMetadataUnableToFetchError`
    */
-  testWFSBadUrl(): Promise<Test<LayerServiceMetadataUnableToFetchError>> {
+  testInitWFSBadUrl(): Promise<Test<LayerServiceMetadataUnableToFetchError>> {
     // The bad url
     const urlBad: string = GVAbstractTester.BAD_URL;
 
@@ -684,7 +844,7 @@ export class ConfigTester extends GVAbstractTester {
    *
    * @returns A promise that resolves with the test result, expecting a `LayerNoCapabilitiesError`
    */
-  testWFSOkayUrlNoCap(): Promise<Test<LayerNoCapabilitiesError>> {
+  testInitWFSOkayUrlNoCap(): Promise<Test<LayerNoCapabilitiesError>> {
     // The bad url which still respond something (not a 404, 500, etc)
     const urlBad: string = GVAbstractTester.FAKE_URL_ALWAYS_RETURNING_RESPONSE_INSTEAD_OF_NETWORK_ERROR;
 
@@ -698,6 +858,55 @@ export class ConfigTester extends GVAbstractTester {
 
         // Try it and expect a fail
         await WFS.initGeoviewLayerConfig('gvLayerId', 'gvLayerName', urlBad);
+      }
+    );
+  }
+
+  /**
+   * Tests processing a WFS layer configuration using Geomet Current Conditions information.
+   *
+   * Verifies that `ConfigApi.processLayerFromType` returns a valid `OgcWfsLayerEntryConfig`
+   * with the expected configuration.
+   *
+   * @returns A promise that resolves with a Test containing the processed layer entry configs
+   */
+  testProcessWFSGeomet(): Promise<Test<ConfigBaseClass[]>> {
+    // Dummy names
+    const gvLayerId = 'gvLayerId';
+    const gvLayerName = 'gvLayerName';
+    const metadataAccessPath = GVAbstractTester.GEOMET_URL;
+    const layerName = 'Current Conditions';
+
+    // Test
+    return this.test(
+      `Test processing a WFS with ${layerName}`,
+      (test) => {
+        // Set step
+        test.addStep(`Processing geoview layer config on url: ${metadataAccessPath}`);
+
+        // Process the config to get the layer entry configs
+        return ConfigApi.processLayerFromType(
+          'ogcWfs',
+          gvLayerId,
+          gvLayerName,
+          metadataAccessPath,
+          [
+            {
+              id: GVAbstractTester.GEOMET_URL_CURRENT_COND_LAYER_ID,
+              layerName,
+            },
+          ],
+          false
+        );
+      },
+      (test, result) => {
+        // Perform assertions
+        test.addStep('Verifying expected process...');
+        Test.assertIsArray(result);
+        Test.assertIsInstance(result[0], OgcWfsLayerEntryConfig);
+
+        // Verify the layer outfields
+        ConfigTester.#helperStepOutfields(test, result[0], ConfigTester.GEOMET_WFS_OUTFIELDS);
       }
     );
   }
@@ -856,6 +1065,55 @@ export class ConfigTester extends GVAbstractTester {
 
         // Try it and expect a fail
         await GeoJSON.initGeoviewLayerConfig('gvLayerId', 'gvLayerName', urlBad);
+      }
+    );
+  }
+
+  /**
+   * Tests processing a GeoJSON layer configuration using the Polygons dataset.
+   *
+   * Verifies that `ConfigApi.processLayerFromType` returns a valid `GeoJSONLayerEntryConfig`
+   * with the expected configuration.
+   *
+   * @returns A promise that resolves with a Test containing the processed layer entry configs
+   */
+  testProcessGeoJsonPolygons(): Promise<Test<ConfigBaseClass[]>> {
+    // Dummy names
+    const gvLayerId = 'gvLayerId';
+    const gvLayerName = 'gvLayerName';
+    const metadataAccessPath = GVAbstractTester.GEOJSON_METADATA_META;
+    const layerName = 'Polygons';
+
+    // Test
+    return this.test(
+      `Test processing a GeoJSON with ${layerName}`,
+      (test) => {
+        // Set step
+        test.addStep(`Processing geoview layer config on url: ${metadataAccessPath}`);
+
+        // Process the config to get the layer entry configs
+        return ConfigApi.processLayerFromType(
+          'GeoJSON',
+          gvLayerId,
+          gvLayerName,
+          metadataAccessPath,
+          [
+            {
+              id: GVAbstractTester.GEOJSON_POLYGONS,
+              layerName,
+            },
+          ],
+          false
+        );
+      },
+      (test, result) => {
+        // Perform assertions
+        test.addStep('Verifying expected process...');
+        Test.assertIsArray(result);
+        Test.assertIsInstance(result[0], GeoJSONLayerEntryConfig);
+
+        // Verify the layer outfields
+        ConfigTester.#helperStepOutfields(test, result[0], ConfigTester.GEOJSON_POLYGONS_OUTFIELDS);
       }
     );
   }
@@ -1360,4 +1618,22 @@ export class ConfigTester extends GVAbstractTester {
   }
 
   // #endregion Settings
+
+  /**
+   * Asserts that a layer's outfields match the expected configuration.
+   *
+   * @param test - The test instance used to record the verification step
+   * @param layer - The GV layer whose outfields are being verified
+   * @param outfields - The expected outfields configuration to compare against
+   */
+  static #helperStepOutfields(test: Test, layerConfig: AbstractBaseLayerEntryConfig, outfields: TypeOutfields[]): void {
+    // Get the outfields of the layer
+    const layerOutfields = layerConfig.getOutfields();
+
+    logger.logDebug(layerConfig.layerPath, 'outfields', layerOutfields);
+
+    // Verify the layer outfields
+    test.addStep(`Verify the layer ${layerConfig.layerPath} outfields...`);
+    Test.assertJsonObject(layerOutfields, outfields);
+  }
 }

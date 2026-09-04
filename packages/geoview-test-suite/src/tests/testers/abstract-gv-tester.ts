@@ -5,11 +5,11 @@ import { Test } from '../core/test';
 import type { API } from 'geoview-core/api/api';
 import type { MapViewer } from 'geoview-core/geo/map/map-viewer';
 import type { TypeGeoviewLayerType } from 'geoview-core/api/types/layer-schema-types';
+import type { TypeOutfields } from 'geoview-core/api/types/map-schema-types';
 import type { TypeLegendItem } from 'geoview-core/core/components/layers/types';
 import type { ControllerRegistry } from 'geoview-core/core/controllers/base/controller-registry';
 import { getStoreLayerLegendLayerByPath } from 'geoview-core/core/stores/states/layer-state';
 import type { GeometryApi } from 'geoview-core/geo/layer/geometry/geometry';
-import { delay, whenThisThen } from 'geoview-core/core/utils/utilities';
 
 /**
  * Main GeoView Abstract Tester class.
@@ -49,6 +49,142 @@ export abstract class GVAbstractTester extends AbstractTester {
   static AIRBORNE_RADIOACTIVITY_UUID_WITH_SUFFIX = `${GVAbstractTester.AIRBORNE_RADIOACTIVITY_UUID}/0/1`;
   static AIRBORNE_RADIOACTIVITY_LAYER_GROUP_NAME = 'Airborne Radioactivity';
 
+  /** Airborne Radioactivity wms */
+  static AIRBORNE_RADIOACTIVITY_WMS_URL = 'https://qgis-stage.cdtk.geogc.ca/ows/hc/airborne_radioactivity_en';
+  static AIRBORNE_RADIOACTIVITY_WMS_LAYER_ID = 'AIRB_RAD';
+  static AIRBORNE_RADIOACTIVITY_WMS_OUTFIELDS: TypeOutfields[] = [
+    {
+      name: 'pk_lyr_id',
+      alias: 'pk_lyr_id',
+      type: 'oid',
+    },
+    {
+      name: 'Location_Emplacement',
+      alias: 'Location_Emplacement',
+      type: 'string',
+    },
+    {
+      name: 'Province',
+      alias: 'Province',
+      type: 'string',
+    },
+    {
+      name: 'Be7_Med_mBqM3',
+      alias: 'Be7_Med_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Be7_Max_mBqM3',
+      alias: 'Be7_Max_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Be7_Min_mBqM3',
+      alias: 'Be7_Min_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Be7_Readings_Lectures',
+      alias: 'Be7_Readings_Lectures',
+      type: 'string',
+    },
+    {
+      name: 'Pb210_Med_mBqM3',
+      alias: 'Pb210_Med_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Pb210_Max_mBqM3',
+      alias: 'Pb210_Max_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Pb210_Min_mBqM3',
+      alias: 'Pb210_Min_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Pb210_Readings_Lectures',
+      alias: 'Pb210_Readings_Lectures',
+      type: 'string',
+    },
+    {
+      name: 'I131_Med_mBqM3',
+      alias: 'I131_Med_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'I131_Max_mBqM3',
+      alias: 'I131_Max_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'I131_Min_mBqM3',
+      alias: 'I131_Min_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'I131_Readings_Lectures',
+      alias: 'I131_Readings_Lectures',
+      type: 'string',
+    },
+    {
+      name: 'Cs134_Med_mBqM3',
+      alias: 'Cs134_Med_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Cs134_Max_mBqM3',
+      alias: 'Cs134_Max_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Cs134_Min_mBqM3',
+      alias: 'Cs134_Min_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Cs134_Readings_Lectures',
+      alias: 'Cs134_Readings_Lectures',
+      type: 'string',
+    },
+    {
+      name: 'Cs137_Med_mBqM3',
+      alias: 'Cs137_Med_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Cs137_Max_mBqM3',
+      alias: 'Cs137_Max_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Cs137_Min_mBqM3',
+      alias: 'Cs137_Min_mBqM3',
+      type: 'number',
+    },
+    {
+      name: 'Cs137_Readings_Lectures',
+      alias: 'Cs137_Readings_Lectures',
+      type: 'string',
+    },
+    {
+      name: 'StartDate_DateDebut',
+      alias: 'StartDate_DateDebut',
+      type: 'string',
+    },
+    {
+      name: 'EndDate_DateFin',
+      alias: 'EndDate_DateFin',
+      type: 'string',
+    },
+    {
+      name: 'Graph_Graphique',
+      alias: 'Graph_Graphique',
+      type: 'string',
+    },
+  ];
+
   /** Geocore UUID with group layers having defaultVisibility set to false */
   static readonly GEOCORE_MARINE_FISHERIES_UUID = '44ef4d33-20b7-45fc-974c-d73a0a8fbae8';
   static readonly GEOCORE_MARINE_FISHERIES_LAYER_PATH = GVAbstractTester.GEOCORE_MARINE_FISHERIES_UUID + '/0';
@@ -57,10 +193,118 @@ export abstract class GVAbstractTester extends AbstractTester {
   /** Historical Flood */
   static readonly HISTORICAL_FLOOD_URL_MAP_SERVER: string =
     'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/historical_flood_event_en/MapServer';
-  static readonly HISTORICAL_FLOOD_URL_LAYER_ID: string = '0';
+  static readonly HISTORICAL_FLOOD_LAYER_ID: string = '0';
   static readonly HISTORICAL_FLOOD_LAYER_NAME: string = 'Historical Flood Events';
 
-  static readonly HISTORICAL_FLOOD_URL_FEATURE_SERVER: string = `${GVAbstractTester.HISTORICAL_FLOOD_URL_MAP_SERVER}/${GVAbstractTester.HISTORICAL_FLOOD_URL_LAYER_ID}`;
+  static readonly HISTORICAL_FLOOD_URL_FEATURE_SERVER: string = `${GVAbstractTester.HISTORICAL_FLOOD_URL_MAP_SERVER}/${GVAbstractTester.HISTORICAL_FLOOD_LAYER_ID}`;
+
+  static readonly HISTORICAL_FLOOD_OUTFIELDS: TypeOutfields[] = [
+    {
+      name: 'event_name',
+      alias: 'Event name',
+      type: 'string',
+    },
+    {
+      name: 'year',
+      alias: 'Year',
+      type: 'number',
+    },
+    {
+      name: 'event_summary',
+      alias: 'Event summary',
+      type: 'string',
+    },
+    {
+      name: 'evacuation',
+      alias: 'Evacuation',
+      type: 'string',
+    },
+    {
+      name: 'death',
+      alias: 'Death',
+      type: 'string',
+    },
+    {
+      name: 'flood_cause',
+      alias: 'Flood cause',
+      type: 'string',
+    },
+    {
+      name: 'flood_cause_description',
+      alias: 'Flood cause description',
+      type: 'string',
+    },
+    {
+      name: 'start_date',
+      alias: 'Start date',
+      type: 'string',
+    },
+    {
+      name: 'end_date',
+      alias: 'End date',
+      type: 'string',
+    },
+    {
+      name: 'season',
+      alias: 'Season',
+      type: 'string',
+    },
+    {
+      name: 'province_territory',
+      alias: 'Province or territory',
+      type: 'string',
+    },
+    {
+      name: 'province_territory_description',
+      alias: 'Province or territory description',
+      type: 'string',
+    },
+    {
+      name: 'source',
+      alias: 'Source',
+      type: 'string',
+    },
+    {
+      name: 'source_description',
+      alias: 'Source description',
+      type: 'string',
+    },
+    {
+      name: 'precipitation_analysis_url',
+      alias: 'Precipitation analysis',
+      type: 'string',
+    },
+    {
+      name: 'precipitation_animation_url',
+      alias: 'Precipitation animation',
+      type: 'string',
+    },
+    {
+      name: 'precipitation_data_url',
+      alias: 'Precipitation data',
+      type: 'string',
+    },
+    {
+      name: 'uuid',
+      alias: 'Unique ID',
+      type: 'string',
+    },
+    {
+      name: 'event_id',
+      alias: 'Event ID',
+      type: 'string',
+    },
+    {
+      name: 'OBJECTID',
+      alias: 'OBJECTID',
+      type: 'oid',
+    },
+    {
+      name: 'time_slider_date',
+      alias: 'Time slider date',
+      type: 'date',
+    },
+  ];
 
   static readonly HISTORICAL_FLOOD_ICON_LIST: TypeLegendItem[] = [
     {
@@ -323,8 +567,81 @@ export abstract class GVAbstractTester extends AbstractTester {
   /** Toronto */
   static readonly FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_URL: string =
     'https://services.arcgis.com/V6ZHFr6zdgNZuVG0/ArcGIS/rest/services/Toronto_Neighbourhoods/FeatureServer';
-  static readonly FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_FEATURE_SERVER: string = `${GVAbstractTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_URL}/0`;
+  static readonly FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_LAYER_ID: string = '0';
   static readonly FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_LAYER_NAME: string = 'Toronto_Neighbourhoods';
+  static readonly FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_FEATURE_SERVER: string = `${GVAbstractTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_URL}/${GVAbstractTester.FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_LAYER_ID}`;
+  static readonly FEATURE_SERVER_TORONTO_NEIGHBOURHOODS_OUTFIELDS: TypeOutfields[] = [
+    {
+      name: 'FID',
+      alias: 'FID',
+      type: 'oid',
+    },
+    {
+      name: 'F_id1',
+      alias: '_id1',
+      type: 'number',
+    },
+    {
+      name: 'AREA_ID2',
+      alias: 'AREA_ID2',
+      type: 'number',
+    },
+    {
+      name: 'AREA_AT3',
+      alias: 'AREA_AT3',
+      type: 'number',
+    },
+    {
+      name: 'PARENT_4',
+      alias: 'PARENT_4',
+      type: 'number',
+    },
+    {
+      name: 'AREA_SH5',
+      alias: 'AREA_SH5',
+      type: 'string',
+    },
+    {
+      name: 'AREA_LO6',
+      alias: 'AREA_LO6',
+      type: 'string',
+    },
+    {
+      name: 'AREA_NA7',
+      alias: 'AREA_NA7',
+      type: 'string',
+    },
+    {
+      name: 'AREA_DE8',
+      alias: 'AREA_DE8',
+      type: 'string',
+    },
+    {
+      name: 'CLASSIF9',
+      alias: 'CLASSIF9',
+      type: 'string',
+    },
+    {
+      name: 'CLASSIF10',
+      alias: 'CLASSIF10',
+      type: 'string',
+    },
+    {
+      name: 'OBJECTI11',
+      alias: 'OBJECTI11',
+      type: 'number',
+    },
+    {
+      name: 'Shape__Area',
+      alias: 'Shape__Area',
+      type: 'number',
+    },
+    {
+      name: 'Shape__Length',
+      alias: 'Shape__Length',
+      type: 'number',
+    },
+  ];
 
   /** Elevation */
   static readonly IMAGE_SERVER_ELEVATION_URL: string =
@@ -359,6 +676,123 @@ export abstract class GVAbstractTester extends AbstractTester {
   /** Geomet (serves WMS and WFS) */
   static readonly GEOMET_URL: string = 'https://geo.weather.gc.ca/geomet';
   static readonly GEOMET_URL_CURRENT_COND_LAYER_ID: string = 'ec-msc:CURRENT_CONDITIONS';
+  static readonly GEOMET_WFS_OUTFIELDS: TypeOutfields[] = [
+    {
+      name: 'name',
+      alias: 'name',
+      type: 'string',
+    },
+    {
+      name: 'nom',
+      alias: 'nom',
+      type: 'string',
+    },
+    {
+      name: 'station_en',
+      alias: 'station_en',
+      type: 'string',
+    },
+    {
+      name: 'station_fr',
+      alias: 'station_fr',
+      type: 'string',
+    },
+    {
+      name: 'icon',
+      alias: 'icon',
+      type: 'string',
+    },
+    {
+      name: 'cond_en',
+      alias: 'cond_en',
+      type: 'string',
+    },
+    {
+      name: 'cond_fr',
+      alias: 'cond_fr',
+      type: 'string',
+    },
+    {
+      name: 'temp',
+      alias: 'temp',
+      type: 'string',
+    },
+    {
+      name: 'dewpoint',
+      alias: 'dewpoint',
+      type: 'string',
+    },
+    {
+      name: 'windchill',
+      alias: 'windchill',
+      type: 'string',
+    },
+    {
+      name: 'pres_en',
+      alias: 'pres_en',
+      type: 'string',
+    },
+    {
+      name: 'pres_fr',
+      alias: 'pres_fr',
+      type: 'string',
+    },
+    {
+      name: 'prestnd_en',
+      alias: 'prestnd_en',
+      type: 'string',
+    },
+    {
+      name: 'prestnd_fr',
+      alias: 'prestnd_fr',
+      type: 'string',
+    },
+    {
+      name: 'rel_hum',
+      alias: 'rel_hum',
+      type: 'string',
+    },
+    {
+      name: 'speed',
+      alias: 'speed',
+      type: 'string',
+    },
+    {
+      name: 'gust',
+      alias: 'gust',
+      type: 'string',
+    },
+    {
+      name: 'direction',
+      alias: 'direction',
+      type: 'string',
+    },
+    {
+      name: 'bearing',
+      alias: 'bearing',
+      type: 'string',
+    },
+    {
+      name: 'timestamp',
+      alias: 'timestamp',
+      type: 'string',
+    },
+    {
+      name: 'url_en',
+      alias: 'url_en',
+      type: 'string',
+    },
+    {
+      name: 'url_fr',
+      alias: 'url_fr',
+      type: 'string',
+    },
+    {
+      name: 'national',
+      alias: 'national',
+      type: 'string',
+    },
+  ];
 
   /** WMS — Nonna service (CORS blocked, triggers proxy fallback) */
   static readonly NONNA_WMS_URL: string = 'https://nonna-geoserver.data.chs-shc.ca/geoserver/wms';
@@ -398,19 +832,16 @@ export abstract class GVAbstractTester extends AbstractTester {
   static readonly GEOJSON_POLYGONS_ICON_LIST: Partial<TypeLegendItem>[] = [
     {
       geometryType: 'Polygon',
-      icon: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAPY0lEQVR4AcyZa3BV1RXHFwlJbm5uXoRHIAjIIyGpqCDaUml9j4pYFR0VaX12bKcz/dZv7Qc7fUynM/3mdNoZrbalglYrvmrV+kCt9cFTeQkkJIG83+8Q7r2n/99O9vUkuQG1zmiGxT5773X2Wf+99n+tdc7NqKmpCerq6oL6+vqgoaEhaGxsDFpaWoLW1tago6Mj6OzsDLq7u4Pe3t5gYGAgGBwcDIaHh4ORkZEgHo8HiUQi+Cr8ZcgISyaTFm5lnOvTMudlYp9xf599yX8ZGBMWjMU43zJHP9xy7SWs92ViGQekrW2vIa2te2znzt/Z++//Vv0Prbl5l7377m/snXd+bS0te6ypaae9/fYv7a23fqG53dbYuMO2b/+5vfHGA67PPH2kuXm30+ca+aL6PDO8ceOAHD/+qj3x/mbbfPCg7WppsZFEwthxdh+vIH1DQ/bkoUP2Zn29k8f37bP+4WF3FJlHn/ZkPG7vnThhf/jgA/vjjh3umjHmwtJ/8qRt/egje/3YMSdbPvzQGAvrcM29qfVeftAOH34+jMPGAeEGZuO5SyxnwZ1WteLHVlJyjmSFrV79EyfFM1eY5S2z+PzvWrxsk+UWVVrJrPPs4ot/amvX/sxKS1dKVtk3dB1Z+n2z/HJJhRUv/6Gt0djcuats3rzVdumlDziZLf3MwkqzRXc7iel5pXMvMD/v9cetZ5P/HBAAsOtlZZdb9ow1VpSdbU0DA/bE4cPWO7bb7HTfyIg9duCAdWkMneJIxBr7+uyv2lH0WAO9Xu3yI7t2Wae8V5Kba0iD9B7ds8f6tYaN/aHH2GfVK5p3mVVUfGdsldHGRS0ePmpE3C6bN9c2LF5sBVlZ1imDt378sQMDiM379zsQzG2srDSkMCfHOgYH7dG9e61bhmPcw4DQvUWau2flSkMA3aF55tBB/rR7twPLHDoI12fSu76iXEc5OYpg7P8MQHiPNDS8bh3Nb1okI8NuEZhCeaZbBm0RGDzRo50u1tgdApGbmWnR6dNtk64B0yUj/yLPPKJd554Z8ta9AoFOTPfct2qVYSTeBACC3sxo1JhDB+H6THonjr1kkzgCCA+GawTvRGTozQJTICMA0KMjUawdvq2iwgFFj/tyAVNVZQ6MPINxgLjr3HMNsOixXthIdBBAAJa5sY01rj0YdJB0el7ftymPYFRp6SUi6iVyW5BKksFYssQg5JSiES36tBiZarWq10ePubCepif9SwbBpLF0A2E9+IGE9RxHeCDGJBJxgUi6kAspHxfZu+WJfPEF4ezCmT4dsVH9hCMvR6pbY+gUyGvtChRwhgCAHutzz0M7dzqOFenYIe3yIJzhWd4orhnjCKKDTNQLAiqRNBzhQQnljGbxo+7EazZw6pQ9WV1tvWrzdXQ2nH22+WOGq7coj2AYepuVRwBBANikI3bH8uUGGDjzZ+UEwKCbMk5HleOEYCQGMwcAhGvG4Ak6yES9fQefSc8RgARyMXKop8eeqqlxIAoE4qZFiywqviAAggsYjmf+plCMx4rksY0CgE6ergkGPLxTOw4YiO2Mk7fuPv98i0kHsBg5Q+GZOXQ8CMI1c+ggXIf1djU1eQemWpdHAILMnv0t6845dxSEjL9h4cJxhM0TsA0CRg7h4QAqlFG3KgCMI7bGNmqMXQUMukS7761Y4SIdG8bzMPIeAcNwcgl6XAM2X6C9lRP1hgovskkcYcFPJKF7A4OwWQrBKtONh3Ls0KFV0f5JIJAXcwSYca/nW/QSBApWVJsd0mMt9FzLvMT/i2iz/HW4JSQgbiwdR1jMS0vLW1Y4uMclw1blhWdVT3G+/UP7xZmnxJ0uERtPEI6b+vttqgoAj+E9PEMFAJ/gjH8eSfHzVADR3h02KY/4RWkxeFlBgV03b57FtDOc/6dra11mB8Tfjx41jHMBQDnmJgUB8ky4AsA4XwGgR/ZH4JaPZlQAPUq0cIJ7i3SMyOoIoImOzLEWAn84esyhs3LuXOeY8H+OIwAASEnJN6101lrL0bG6vqzMYjoOJMJt8gwBoE8egdhEMLI/vKACIGIBkApgiypnEiicgPTokN3DFQABIFUBCARkRiemiOaTIXwBAEKkJCkyh86KqptsEkcAwRkHSDKZ0PlHkikw7Cq7Agii2I0ie860adJLunxDBXDLkiXuOAIA4By501UAeATjqADu/BwVQJCOI4AIRFqAdHT819rb33FG0ieb0kIyWlxJxvb6vmUuSCaZtkDEZjyuvEQbXp++05UmemoMPcYQP8/4RMEWPwY/EN+ndZk93cNIds8eP259KknydMTI2pAczvgAwH0ksSeOHDH4BK/ydTw44z5pYpzXm1gBtClQ+AoAIAhrf5oKAOPDMq7WmqF3kWjBhTYo45/T2x2ZPSa+rBdffADg6GyrqzMeCNhwBQB3EEA7zqgCIEqhR8RiDD65CkBVM/mBCsCDYc2HfRmjDYE7CMkVzhAA2LizFl+bniPsxOjOxe0/He32fEOD80S+PHGtIkREnMgVIMBgCFwADAEAsHCHCgAdsjtg3CuAwjT1WqoCkHGpCkBRkWDgjFSoJwBAbLwOx0iKMSVWwAImnNm3HTxggXgyySMAwf1dXe+Z9e0cBSHDryktdSU78wiGrtOYB+NACOzECgAwlDMYxI7jCfLOreXl4yoFDJ2qAqDUCca4C5h7QhVAb9P2yXnEK9M6EUyI6DM7AMaJ5iEeAQB9r8c1m+F1yeqI1/usFYBfh3W5duvo2VP9c3kERYwoKLjQktGVRshtU8J6SV9SON9+MZLi8+IOPCmQJzhSLToWU1UA3hNk9y/yG0Dad3ZAIKPGJuzrRYV2RUmJEal6lABfbG423tc9CI4TiXLdWAAANAYTzSA2er4CQI/3f4TjSBanakaPNX0FwBzZH6ECONM3gLTv7IDw0tPzgQ1KSHhXCQyG9OrFCjAvNDZav3IDnlinAIAOFcD6sXIGL01VAVAFUAG4ACBPUwE8pgqAtU9XARCuH9EHCp88IT0VQNp3dg+CFq8gXGPklQKDZ9i9foVkQjEBABDoIBEdMcoZPINh6SoAr0c0ozYj6iEcudNVAF16n8HbVADhbwDYOJErjiNM8LBY7ALLz1/tMjucYRzim8Kva3U3mZhx9H3ryK8I4/tSs3QVAPOs49oxfa/nnxde1xF8rFJAjzn0li1bbwjP8ZLK7CglQ7XWkI7RS62t1qc2KiC8VLE7HDOSEvosSjCgAoA7eI/sTvKCMyQ4jEaPe8gpVAAkTIQKAM5M1ONI8Sx0CL2+aoZbrBe2MwWEh4xOJq1POaRTHCGzv9LW5jgBCMh/xYwZBhiOD2AAANi0FYASGXokTYxEN1wBkGP8MeP8U85gJHqTKgC9QgOGfETSRG//oWftyJEXlBQDd3oAk/IIYJBjIuO/OzqcJ/LkCQD4zA5n2HGM/JdCMyCoxfLFE18BkAypANhNFwBUzkysANBBAESUYvfxVqoC0EakKgBd+wqA12bA7G5qSoHAZk7HuForGl1pbZlVNqBzGROIy4qLzRMbzwEIYBAbshLF8qeoAK5TZCPPYCTHjmg3sQLAwxv0WgDpOY7ougpA7/u8x3gjYwITrgAGCi60xaq3AIBd6DmPMEAnoe9a02zUXdMFhHd25hDmaSE2AhHp+8zOdVh4Z0cPtwfaGK/HOgnxDl1ap6d5xpFPVwHwzoTwfWvUXucRv+ig3tdLTu03wmyHkuF2fRqCL8wjAwrBcIcdRocjdaYKAI+R8E5XAVAo4glqM/8NAG4BDLC82PHtGY/hvTxxubr6xdTxwrZxHuHGBapQL87LszwdGTL7q52dBgDklfZ2gxPMXTlzphEEiFRwgQDg8o02gDLGgRV3rps/330D4DgSsZ7+lN8AfAAABNzh6LEG2X/FrFkOBCABgbg8wgWDkch5lieBF2vHwMCD17u77VUFgAEdCXYYnmQpD6DnKgCV5AQAwIQrAEiPTo42haRJpQDoqSoAeEEFgAfZ/a36ZJvuG0D5knW2aNHVDgy2IykgeCOpPBKozmcCAzwYsjWAiGKXFhVZtg5+ICBOT0YSzfCM84iOH8eOCgA9dBAPhl1ll1mTYHC6bwDdiqAA58iNrwDiCrsJ982AtZEUEDpDQ3sNnnCNh2SvJeUFWgynpTRn3gt6zAUi7FQVgNeF/FwTKJy+FiRjc78bH9ucZDJpfp6Wea/H82prX7Zj+o2Ece5DxgFhQmsLbdKGZdgbIvuAFo9oMKqd95wJBwCS4pkqAB5EsqMCcBzLzLSYQiokhzNhYlMBpPsGEK4AWA9bAcU14oAwSCcr6xyz6V8zjNve2+vySa6AfDs/3zhmgOGIvdbV5d7r0SOKMRZVuIb88If84DkDAICTPF0A0Ib8v98A5ui3zgULrjJvN62LWp8gS9ie4SF7W79vDApAVJ4ggmXrmmQIGCIWuwoYF8V09OAOANDhdRjOuApAEYwA8EV/A/hnTbVOzShHAIH9Lo/QwSOnlEMi8QPOE4BYo0/+RCfmUMbQtfrNDzIDxlcABACCQ1gPYOQZPIMu0Y4AwLsJegig/TcAohQeS1cB+HIG0lNzDevbW13dK84j2IX9KY/QYXE5waLxepsz8rIN9j1nIyN1dvLkMevpeca6up52/ayRWpsz9KLNGnjBchMnbGjgiLW0PG7NzVsVLKqtv/+wtTZtsWj3Nss+VW/Zuj+m+4/XPmq9vR9rrYNWXf2wHT36kArVwzZtqNryO/9hsfYnpVtrnR0f2YEDv7d9+x60zs791qH+QV0nT2y2jKEa1R6m57TIK6OZHTApj9CZLn5U6PeRNfoeO1+EzBQqwHkB7HQds4uUYyqkUymPXSAPZYkfXse33Fuuuav1cnaNEthSXVP2MM86XrJ17+WzZ9sq1XWrVGFfMmeORfRsr4ddXHPveVrr9qVL7f6rfqX3kY0OCPOs5TyCIp0gKLWMjDJF0TLLybnaIpFrLDNzvuQsi8XWO8nKWmBZWQutqOhGKyy8QXqLLDt7kZWU3GwzZ97i+pHIYpsz5zb9sHq7RaNLJEutrGyTk7y8pa6/YMGdtnDhXVpzmV7mKlQE3mtLltxnBQUVkuX6APcDKy+/X8+p1HMqrarqR06KiiodgOLiKtdiN/Y7j3DhkfmWMa/EtRfmuaZl3reM0acNC/P0aZn3LWP0acPCvO8zT5+WMd9yjdBnnutxHmHAT/qWsbAwTj/cshh9WubCwjj9cIsefVrmwsL4xD56jNOG5+gzztj/AAAA//83/pWzAAAABklEQVQDAEL8u0ajL+K6AAAAAElFTkSuQmCC',
       name: 'Quebec',
       isVisible: true,
     },
     {
       geometryType: 'Polygon',
-      icon: 'data:image/png;base64,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',
       name: 'Alberta',
       isVisible: false,
     },
     {
       geometryType: 'Polygon',
-      icon: 'data:image/png;base64,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',
       name: 'Other provinces',
       isVisible: true,
     },
@@ -436,6 +867,24 @@ export abstract class GVAbstractTester extends AbstractTester {
       geometryType: 'GeometryCollection',
       name: 'Other',
       isVisible: true,
+    },
+  ];
+
+  static readonly GEOJSON_POLYGONS_OUTFIELDS: TypeOutfields[] = [
+    {
+      name: 'Province',
+      alias: 'Province',
+      type: 'string',
+    },
+    {
+      name: 'creationDate',
+      alias: 'Creation Date',
+      type: 'date',
+    },
+    {
+      name: 'myImages',
+      alias: 'My Images',
+      type: 'string',
     },
   ];
 
@@ -628,12 +1077,12 @@ export abstract class GVAbstractTester extends AbstractTester {
     // Replace the map viewer and the controller registry in the tester with the new one created from config
     this.reassignMapViewerAndControllers(mapViewer, mapViewer.controllers);
 
-    // Wait for layer to load and data table to initialize
-    test.addStep('Waiting for layers to get loaded...');
-    const loadedLayersCount = await this.getControllersRegistry().layerController.waitForLayersLoaded();
+    // Waiting for layers to get loaded even when map is in a background tab
+    test.addStep('Waiting for layers to get loaded even when map is in a background tab...');
+    const loadedLayersCount = await this.getControllersRegistry().layerController.waitForLayersLoadedForcingRenders();
     test.addStep(`Layers loaded (${loadedLayersCount})`);
 
-    // Force a synchronous render so OL populates frameState_ (required for getPixelFromCoordinate to work in hidden tabs)
+    // Force a final synchronous render so OL populates frameState_ (required for getPixelFromCoordinate to work in hidden tabs)
     test.addStep('Waiting for map render...');
     await mapViewer.waitForRender();
 
@@ -663,167 +1112,5 @@ export abstract class GVAbstractTester extends AbstractTester {
     test.addStep(`Check that the layer is indeed removed...`);
     const legendLayer = getStoreLayerLegendLayerByPath(this.getMapId(), layerPath);
     Test.assertIsUndefined('legendLayer', legendLayer);
-  }
-
-  /**
-   * Returns a promise that resolves when an element matching the given selector exists in the DOM.
-   *
-   * Resolves immediately if the element already exists. Otherwise, uses a MutationObserver on the parent
-   * to wait for the element to appear. Useful for waiting on React to mount a component.
-   *
-   * @param selector - The CSS selector to query for
-   * @param parent - Optional parent element to observe (default: document.body)
-   * @param timeout - Optional maximum duration in milliseconds to wait before rejecting. When omitted, waits indefinitely
-   * @returns A promise that resolves with the matched element
-   */
-  static waitForDomElement(selector: string, parent?: Element, timeout?: number): Promise<Element> {
-    const root = parent ?? document.body;
-
-    // If the element already exists, resolve immediately
-    const existing = root.querySelector(selector);
-    if (existing) {
-      return Promise.resolve(existing);
-    }
-
-    return new Promise<Element>((resolve, reject) => {
-      const state = { resolved: false };
-      const observer = new MutationObserver(() => {
-        if (state.resolved) return;
-        const el = root.querySelector(selector);
-        if (el) {
-          state.resolved = true;
-          observer.disconnect();
-          resolve(el);
-        }
-      });
-      observer.observe(root, { childList: true, subtree: true });
-
-      // Only set up the timeout when a duration is provided; otherwise wait indefinitely
-      if (timeout !== undefined) {
-        setTimeout(() => {
-          if (state.resolved) return;
-          state.resolved = true;
-          observer.disconnect();
-          reject(new Error(`waitForDomElement timed out after ${timeout}ms waiting for "${selector}"`));
-        }, timeout);
-      }
-    });
-  }
-
-  /**
-   * Returns a promise that resolves when the given element has non-empty text content.
-   *
-   * Resolves immediately if the element already has text content. Otherwise, delegates to waitForDomChange
-   * with a filter that checks for non-empty text. Useful for waiting on React to render text into a DOM element.
-   *
-   * @param element - The DOM element to check for text content
-   * @param timeout - Optional maximum duration in milliseconds to wait before rejecting. When omitted, waits indefinitely
-   * @returns A promise that resolves when the element has text content, or rejects on timeout
-   */
-  static waitForDomContent(element: Element, timeout?: number): Promise<void> {
-    // If the element already has content, resolve immediately
-    if (element.textContent?.trim()) {
-      return Promise.resolve();
-    }
-
-    // Otherwise, wait for a DOM change that results in non-empty text content
-    return GVAbstractTester.waitForDomChange(element, () => !!element.textContent?.trim(), timeout);
-  }
-
-  /**
-   * Returns a promise that resolves when a DOM mutation is observed on the given element.
-   *
-   * Uses a MutationObserver to detect changes (childList, subtree, characterData) without polling.
-   * Useful for waiting on React UI updates after a store change.
-   * When a filter is provided, the observer keeps listening until the filter returns true.
-   *
-   * @param element - The DOM element to observe for changes
-   * @param filter - Optional predicate evaluated on each mutation. When provided, only resolves when filter returns true
-   * @param timeout - Optional maximum duration in milliseconds to wait before rejecting. When omitted, waits indefinitely
-   * @returns A promise that resolves when the DOM changes (and passes the filter), or rejects on timeout
-   */
-  static waitForDomChange(element: Element, filter?: () => boolean, timeout?: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const state = { resolved: false };
-      const observer = new MutationObserver(() => {
-        if (state.resolved) return;
-        if (filter && !filter()) return;
-        state.resolved = true;
-        observer.disconnect();
-        resolve();
-      });
-      observer.observe(element, { childList: true, subtree: true, characterData: true });
-
-      // Only set up the timeout when a duration is provided; otherwise wait indefinitely
-      if (timeout !== undefined) {
-        setTimeout(() => {
-          if (state.resolved) return;
-          state.resolved = true;
-          observer.disconnect();
-          reject(new Error(`waitForDomChange timed out after ${timeout}ms`));
-        }, timeout);
-      }
-    });
-  }
-
-  /**
-   * Polls a condition at short intervals until it returns true, then resolves.
-   *
-   * This is the preferred way to wait for an expected state change (e.g., store update, layer registration)
-   * rather than using a fixed delay. Delegates to `whenThisThen` from geoview-core utilities.
-   *
-   * @param condition - A predicate that returns true when the expected state is reached
-   * @param timeout - Optional maximum duration in milliseconds to wait before rejecting
-   * @returns A promise that resolves with true when the condition is met, or rejects on timeout
-   */
-  static waitForCondition(condition: () => boolean, timeout?: number): Promise<boolean> {
-    return whenThisThen(condition, timeout);
-  }
-
-  /**
-   * Waits for a fixed delay to allow React to re-render after a store update.
-   *
-   * This is a brute-force workaround that should only be used as a last resort when no DOM signal
-   * is available to observe. Prefer {@link waitForDomElement}, {@link waitForDomContent}, or
-   * {@link waitForDomChange} which react to actual DOM mutations instead of relying on an arbitrary delay.
-   * The default period is rather long, because it's a very arbitrary period to wait for.. and when many tests are
-   * happening in parallel, react will be much slower at rendering and triggering the components useEffects.
-   *
-   * @param period - Optional delay in milliseconds (default: 5000)
-   * @returns A promise that resolves after the fixed delay
-   */
-  static waitForUI(period = 5000): Promise<void> {
-    // Wait for a short delay to allow React to process the store update and re-render components
-    return delay(period);
-  }
-
-  /**
-   * Waits until the browser's main thread becomes idle using `requestIdleCallback`.
-   *
-   * This is useful for waiting until React has finished its render and commit phases, since the
-   * idle callback fires only after all pending tasks (renders, effects, layout) have completed.
-   * Prefer polling with `whenThisThen` for specific expected outcomes; use this when you need a
-   * lightweight "wait for React to settle" without knowing the exact condition to check.
-   *
-   * @returns A promise that resolves when the browser reports an idle period
-   */
-  static waitForBrowserIdle(): Promise<void> {
-    return new Promise((resolve) => {
-      (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(resolve);
-    });
-  }
-
-  /**
-   * Waits for a purely aesthetic delay to allow the test UI to visually catch up.
-   *
-   * This should only be used for display purposes (e.g., giving the human observer time to see
-   * intermediate state changes in the test runner UI). Never use this for functional synchronization.
-   *
-   * @param period - Optional delay in milliseconds (default: 5000)
-   * @returns A promise that resolves after the delay
-   */
-  static waitForFun(period = 5000): Promise<void> {
-    // Wait for the React UI to actually pick up on the store update
-    return delay(period);
   }
 }

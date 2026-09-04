@@ -4,7 +4,9 @@ import type { EventDelegateBase } from 'geoview-core/api/events/event-helper';
 import EventHelper from 'geoview-core/api/events/event-helper';
 import { logger } from 'geoview-core/core/utils/logger';
 import { formatError } from 'geoview-core/core/exceptions/core-exceptions';
+import { delay, whenThisThen } from 'geoview-core/core/utils/utilities';
 import { Test } from './test';
+import { TestSkippedError } from './exceptions';
 
 /**
  * Abstract base class for creating custom testers with assertion and event capabilities.
@@ -24,6 +26,9 @@ export abstract class AbstractTester {
 
   /** Callback delegates for the test failure event */
   #onFailureHandlers: FailureDelegate[] = [];
+
+  /** Callback delegates for the test skipped event */
+  #onSkippedHandlers: SkippedDelegate[] = [];
 
   /** Callback delegates for the test done event */
   #onDoneHandlers: TestDelegate[] = [];
@@ -79,12 +84,21 @@ export abstract class AbstractTester {
   }
 
   /**
-   * Gets the total number of currently done failed tests which were successful.
+   * Gets the total number of currently done skipped tests.
+   *
+   * @returns The total number of tests
+   */
+  getTestsDoneSkipped(): number {
+    return this.#testsDone.filter((test) => test.getStatus() === 'skipped').length;
+  }
+
+  /**
+   * Gets the total number of currently done failed tests.
    *
    * @returns The total number of tests
    */
   getTestsDoneFailed(): number {
-    return this.getTestsDone() - this.getTestsDoneSuccess();
+    return this.getTestsDone() - this.getTestsDoneSuccess() - this.getTestsDoneSkipped();
   }
 
   /**
@@ -97,12 +111,12 @@ export abstract class AbstractTester {
   }
 
   /**
-   * Gets if all the tests are done and successfully.
+   * Gets if all the tests are done and successfully or skipped.
    *
    * @returns Indicate if the tests are all done and finished successfully
    */
   getTestsDoneAllSuccess(): boolean {
-    return this.getTestsDoneAll() && this.#tests.every((test) => test.getStatus() === 'success');
+    return this.getTestsDoneAll() && this.#tests.every((test) => test.getStatus() === 'success' || test.getStatus() === 'skipped');
   }
 
   /**
@@ -118,27 +132,27 @@ export abstract class AbstractTester {
    * Performs a test using the provided test callback and assertion callback.
    *
    * @template T The type of the result produced by the test.
-   * @param message - A message describing the test
+   * @param title - A title describing the test
    * @param callback - The function to execute to obtain a test result
    * @param callbackAssert - The function to perform assertions on the result
    * @param [callbackFinalize] - Optional function to finalize the test after completion
    * @returns A promise that resolves to the {@link Test} result object
    */
   test<T>(
-    message: string,
+    title: string,
     callback: BaseTestDelegate<T, T>,
     callbackAssert: BaseAssertionDelegate<T>,
     callbackFinalize?: BaseFinalizeDelegate<T>
   ): Promise<Test<T>> {
     // Redirect
-    return this.#testPerformTest(message, callback, callbackAssert, callbackFinalize);
+    return this.#testPerformTest(title, callback, callbackAssert, callbackFinalize);
   }
 
   /**
    * Performs a test which is supposed to throw an error (a true negative) using the provided test callback and assertion callback.
    *
    * @template T The expected error that the test should throw.
-   * @param message - A message describing the test
+   * @param title - A title describing the test
    * @param errorClass - The expected error class that the test should throw
    * @param callback - The function to execute which should be throwing an error
    * @param [callbackAssert] - Optional function to perform assertions on the result
@@ -146,14 +160,14 @@ export abstract class AbstractTester {
    * @returns A promise that resolves to the {@link Test} result object
    */
   testError<T extends Error>(
-    message: string,
+    title: string,
     errorClass: ClassType<T>,
     callback: BaseTestDelegate<T, void>,
     callbackAssert?: BaseAssertionDelegate<T>,
     callbackFinalize?: BaseFinalizeDelegate<T>
   ): Promise<Test<T>> {
     // Redirect
-    return this.#testPerformTestError(message, errorClass, callback, callbackAssert, callbackFinalize);
+    return this.#testPerformTestError(title, errorClass, callback, callbackAssert, callbackFinalize);
   }
 
   // #region PROTECTED
@@ -161,12 +175,12 @@ export abstract class AbstractTester {
   /**
    * Overridable function called when a test is being created for execution.
    *
-   * @param message - A message describing the test
+   * @param title - A title describing the test
    * @returns The test about to be performed
    */
-  protected onCreatingTest<T>(message: string): Test<T> {
+  protected onCreatingTest<T>(title: string): Test<T> {
     // Create the test
-    const test = new Test<T>(message);
+    const test = new Test<T>(title);
 
     // Hook on step changed
     test.onStepChanged(this.#handleTestStepChanged.bind(this));
@@ -191,6 +205,7 @@ export abstract class AbstractTester {
     this.#addTestRunning(test);
 
     // Update the status and step
+    test.setTimeStart(new Date());
     test.setStatus('running');
     test.addStep('Running test...', 'major');
 
@@ -233,7 +248,6 @@ export abstract class AbstractTester {
   protected onPerformingTestSuccess<T>(test: Test<T>, result: T): void {
     // Update the step - clearing it
     test.setStatus('success');
-    test.addStep('Completed assertions.');
 
     // Emit
     this.#emitSuccess({ test, result });
@@ -264,9 +278,25 @@ export abstract class AbstractTester {
     if (shouldSetError) {
       // Set the error
       test.setError(normalizedError);
+
       // Emit
       this.#emitFailure({ test, error: normalizedError });
     }
+  }
+
+  /**
+   * Marks a test as skipped and emits the skipped event.
+   *
+   * @param test - The test being skipped
+   * @param reason - The reason the test was skipped
+   */
+  protected onPerformingTestSkipped<T>(test: Test<T>, reason: string): void {
+    // Set status to skipped
+    test.setSkippedReason(reason);
+    test.setStatus('skipped');
+
+    // Emit
+    this.#emitSkipped({ test, reason });
   }
 
   /**
@@ -293,8 +323,15 @@ export abstract class AbstractTester {
     // Move the test from the running list and add it to the done list
     this.#moveTestFromRunningToDone(test);
 
+    // Determine the color based on status
+    const status = test.getStatus();
+    let color = 'red';
+    if (status === 'success') color = 'green';
+    else if (status === 'skipped') color = 'orange';
+
     // Add done step
-    test.addStep('Done', 'major', test.getStatus() === 'success' ? 'green' : 'red');
+    test.setTimeEnd(new Date());
+    test.addStep('Done', 'major', color);
 
     // Emit
     this.#emitDone({ test });
@@ -316,27 +353,32 @@ export abstract class AbstractTester {
    * - Optionally finalizing the test (e.g., cleanup or logging)
    *
    * @template T - The type of the result returned by the test.
-   * @param message - A human-readable description of the test
+   * @param title - The title of the test
    * @param callback - Function that performs the main test logic and returns the result
    * @param callbackAssert - Function that asserts the correctness of the test result
    * @param [callbackFinalize] - Optional finalization callback, called after the test completes (regardless of success or failure)
    * @returns A promise that resolves to the fully populated {@link Test} object
    */
   async #testPerformTest<T>(
-    message: string,
+    title: string,
     callback: BaseTestDelegate<T, T>,
     callbackAssert: BaseAssertionDelegate<T>,
     callbackFinalize?: BaseFinalizeDelegate<T>
   ): Promise<Test<T>> {
     // Create the test
-    const test = this.onCreatingTest<T>(message);
+    const test = this.onCreatingTest<T>(title);
 
     try {
       // Testing
       this.onPerformingTest(test);
 
+      // Start event loop starvation monitor
+      test.startEventLoopMonitor();
+
       // Start the test and await
+      test.setTimeStartTest(new Date());
       const result = await callback(test);
+      test.setTimeEndTest(new Date());
 
       // Assign it to the current test
       test.setResult(result);
@@ -345,13 +387,22 @@ export abstract class AbstractTester {
       this.onPerformingTestAssertions(test);
 
       // Callback with the result to verify using an assertion check
+      test.setTimeStartAssert(new Date());
       await callbackAssert(test, result);
+      test.setTimeEndAssert(new Date());
 
       // All good
       this.onPerformingTestSuccess(test, result);
     } catch (error: unknown) {
-      // The execution of the test has failed
-      this.onPerformingTestFailure(test, error, false);
+      // If the test was skipped via TestSkippedError
+      if (error instanceof TestSkippedError) {
+        // Skipped
+        test.addStep(`Test skipped: ${error.message}`);
+        this.onPerformingTestSkipped(test, error.message);
+      } else {
+        // The execution of the test has failed
+        this.onPerformingTestFailure(test, error, false);
+      }
     }
 
     try {
@@ -359,11 +410,16 @@ export abstract class AbstractTester {
       this.onPerformingTestFinalization(test, callbackFinalize);
 
       // Possibly callback for more
+      test.setTimeStartFinalize(new Date());
       await callbackFinalize?.(test, test.getResult()!);
+      test.setTimeEndFinalize(new Date());
     } catch (error: unknown) {
       // The execution of the test has failed during finalization
       this.onPerformingTestFailure(test, error, true);
     }
+
+    // Stop event loop starvation monitor
+    test.stopEventLoopMonitor();
 
     // Done
     this.onPerformingTestDone(test);
@@ -384,21 +440,21 @@ export abstract class AbstractTester {
    * - Optionally finalizing the test (e.g., cleanup or logging)
    *
    * @template T - The type of the result returned by the test.
-   * @param message - A human-readable description of the test
+   * @param title - A human-readable description of the test
    * @param callback - Function that performs the main test logic and is supposed to throw an Error
    * @param callbackAssert - Function that asserts the correctness of the test result
    * @param [callbackFinalize] - Optional finalization callback, called after the test completes (regardless of success or failure)
    * @returns A promise that resolves to the fully populated {@link Test} object
    */
   async #testPerformTestError<T extends Error>(
-    message: string,
+    title: string,
     errorClass: ClassType<T>,
     callback: BaseTestDelegate<T, void>,
     callbackAssert?: BaseAssertionDelegate<T>,
     callbackFinalize?: BaseFinalizeDelegate<T>
   ): Promise<Test<T>> {
     // Create the test
-    const test = this.onCreatingTest<T>(message);
+    const test = this.onCreatingTest<T>(title);
 
     // Set the type to a true-negative, because we're testing for an Error.
     test.setType('true-negative');
@@ -407,9 +463,13 @@ export abstract class AbstractTester {
       // Testing
       this.onPerformingTest(test);
 
+      // Start event loop starvation monitor
+      test.startEventLoopMonitor();
+
       // Start the test and expect it to fail
       let result: Error | undefined = undefined;
       try {
+        test.setTimeStartTest(new Date());
         await callback(test);
       } catch (error: unknown) {
         // An error happened, as expected
@@ -419,6 +479,7 @@ export abstract class AbstractTester {
         // Assign it to the current test
         test.setResult(result as T);
       }
+      test.setTimeEndTest(new Date());
 
       // Checking assertions
       this.onPerformingTestAssertions(test);
@@ -427,10 +488,12 @@ export abstract class AbstractTester {
       test.addStep(`Verifying if error '${result?.constructor.name}' obtained is of the expected class type...`);
 
       // Check if the result is instance of the error we're testing for
+      test.setTimeStartAssert(new Date());
       Test.assertIsErrorInstance(result as T, errorClass);
 
       // Callback with the result to verify using an assertion check
       await callbackAssert?.(test, result as T);
+      test.setTimeEndAssert(new Date());
 
       // All good
       this.onPerformingTestSuccess(test, result);
@@ -444,11 +507,16 @@ export abstract class AbstractTester {
       this.onPerformingTestFinalization(test, callbackFinalize);
 
       // Possibly callback for more
+      test.setTimeStartFinalize(new Date());
       await callbackFinalize?.(test, test.getResult()!);
+      test.setTimeEndFinalize(new Date());
     } catch (error: unknown) {
       // The execution of the test has failed during finalization
       this.onPerformingTestFailure(test, error, true);
     }
+
+    // Stop event loop starvation monitor
+    test.stopEventLoopMonitor();
 
     // Done
     this.onPerformingTestDone(test);
@@ -496,7 +564,183 @@ export abstract class AbstractTester {
     this.onPerformingTestStepChanged(sender, event);
   }
 
-  // #endregion
+  // #endregion PRIVATE
+
+  // #region STATIC METHODS
+
+  /**
+   * Returns a promise that resolves when an element matching the given selector exists in the DOM.
+   *
+   * Resolves immediately if the element already exists. Otherwise, uses a MutationObserver on the parent
+   * to wait for the element to appear. Useful for waiting on React to mount a component.
+   *
+   * @param selector - The CSS selector to query for
+   * @param parent - Optional parent element to observe (default: document.body)
+   * @param timeout - Optional maximum duration in milliseconds to wait before rejecting. When omitted, waits indefinitely
+   * @returns A promise that resolves with the matched element
+   */
+  static waitForDomElement(selector: string, parent?: Element, timeout?: number): Promise<Element> {
+    const root = parent ?? document.body;
+
+    // If the element already exists, resolve immediately
+    const existing = root.querySelector(selector);
+    if (existing) {
+      return Promise.resolve(existing);
+    }
+
+    return new Promise<Element>((resolve, reject) => {
+      const state = { resolved: false };
+      const observer = new MutationObserver(() => {
+        if (state.resolved) return;
+        const el = root.querySelector(selector);
+        if (el) {
+          state.resolved = true;
+          observer.disconnect();
+          resolve(el);
+        }
+      });
+      observer.observe(root, { childList: true, subtree: true });
+
+      // Only set up the timeout when a duration is provided; otherwise wait indefinitely
+      if (timeout !== undefined) {
+        setTimeout(() => {
+          if (state.resolved) return;
+          state.resolved = true;
+          observer.disconnect();
+          reject(new Error(`waitForDomElement timed out after ${timeout}ms waiting for "${selector}"`));
+        }, timeout);
+      }
+    });
+  }
+
+  /**
+   * Returns a promise that resolves when the given element has non-empty text content.
+   *
+   * Resolves immediately if the element already has text content. Otherwise, delegates to waitForDomChange
+   * with a filter that checks for non-empty text. Useful for waiting on React to render text into a DOM element.
+   *
+   * @param element - The DOM element to check for text content
+   * @param timeout - Optional maximum duration in milliseconds to wait before rejecting. When omitted, waits indefinitely
+   * @returns A promise that resolves when the element has text content, or rejects on timeout
+   */
+  static waitForDomContent(element: Element, timeout?: number): Promise<void> {
+    // If the element already has content, resolve immediately
+    if (element.textContent?.trim()) {
+      return Promise.resolve();
+    }
+
+    // Otherwise, wait for a DOM change that results in non-empty text content
+    return this.waitForDomChange(element, () => !!element.textContent?.trim(), timeout);
+  }
+
+  /**
+   * Returns a promise that resolves when a DOM mutation is observed on the given element.
+   *
+   * Uses a MutationObserver to detect changes (childList, subtree, characterData) without polling.
+   * Useful for waiting on React UI updates after a store change.
+   * When a filter is provided, the observer keeps listening until the filter returns true.
+   *
+   * @param element - The DOM element to observe for changes
+   * @param filter - Optional predicate evaluated on each mutation. When provided, only resolves when filter returns true
+   * @param timeout - Optional maximum duration in milliseconds to wait before rejecting. When omitted, waits indefinitely
+   * @returns A promise that resolves when the DOM changes (and passes the filter), or rejects on timeout
+   */
+  static waitForDomChange(element: Element, filter?: () => boolean, timeout?: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const state = { resolved: false };
+      const observer = new MutationObserver(() => {
+        if (state.resolved) return;
+        if (filter && !filter()) return;
+        state.resolved = true;
+        observer.disconnect();
+        resolve();
+      });
+      observer.observe(element, { childList: true, subtree: true, characterData: true });
+
+      // Only set up the timeout when a duration is provided; otherwise wait indefinitely
+      if (timeout !== undefined) {
+        setTimeout(() => {
+          if (state.resolved) return;
+          state.resolved = true;
+          observer.disconnect();
+          reject(new Error(`waitForDomChange timed out after ${timeout}ms`));
+        }, timeout);
+      }
+    });
+  }
+
+  /**
+   * Polls a condition at short intervals until it returns true, then resolves.
+   *
+   * This is the preferred way to wait for an expected state change (e.g., store update, layer registration)
+   * rather than using a fixed delay. Delegates to `whenThisThen` from geoview-core utilities.
+   *
+   * @param condition - A predicate that returns true when the expected state is reached
+   * @param timeout - Optional maximum duration in milliseconds to wait before rejecting
+   * @returns A promise that resolves with true when the condition is met, or rejects on timeout
+   */
+  static waitForCondition(condition: () => boolean, timeout?: number): Promise<boolean> {
+    return whenThisThen(condition, timeout);
+  }
+
+  /**
+   * Waits for React to fully settle after a state change.
+   *
+   * Uses two nested `requestAnimationFrame` calls followed by a `requestIdleCallback` to ensure
+   * that React's commit phase has completed, the browser has painted the updated DOM, and all
+   * `useEffect` callbacks and microtasks have run before resolving. This is more reliable than a
+   * single `requestIdleCallback` (which can fire between React's render and effect phases) and
+   * avoids the arbitrary fixed delays of `waitForFun`.
+   *
+   * Prefer `waitForCondition` when a specific expected outcome can be checked; use this method
+   * when you need a general "wait for React to finish" without knowing the exact condition.
+   *
+   * @returns A promise that resolves once React has rendered, painted, and executed effects
+   */
+  static waitForReactIdle(): Promise<void> {
+    return new Promise((resolve) => {
+      // First rAF: React's commit phase may still be in progress
+      requestAnimationFrame(() => {
+        // Second rAF: ensures the paint after commit has occurred
+        requestAnimationFrame(() => {
+          // Idle callback: fires after useEffect and any microtasks settle
+          (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(() => resolve());
+        });
+      });
+    });
+  }
+
+  /**
+   * Waits until the browser's main thread becomes idle using `requestIdleCallback`.
+   *
+   * This is useful for waiting until React has finished its render and commit phases, since the
+   * idle callback fires only after all pending tasks (renders, effects, layout) have completed.
+   * Prefer polling with `whenThisThen` for specific expected outcomes; use this when you need a
+   * lightweight "wait for React to settle" without knowing the exact condition to check.
+   *
+   * @returns A promise that resolves when the browser reports an idle period
+   */
+  static waitForBrowserIdle(): Promise<void> {
+    return new Promise((resolve) => {
+      (window as unknown as { requestIdleCallback: (cb: () => void) => void }).requestIdleCallback(resolve);
+    });
+  }
+
+  /**
+   * Waits for a purely aesthetic delay to allow the test UI to visually catch up.
+   *
+   * This should only be used for display purposes (e.g., giving the human observer time to see
+   * intermediate state changes in the test runner UI). Never use this for functional synchronization.
+   *
+   * @param period - Optional delay in milliseconds (default: 5000)
+   * @returns A promise that resolves after the delay
+   */
+  static waitForFun(period = 5000): Promise<void> {
+    // Wait for the React UI to actually pick up on the store update
+    return delay(period);
+  }
+
+  // #endregion STATIC METHODS
 
   // #region EVENTS
 
@@ -625,6 +869,36 @@ export abstract class AbstractTester {
    *
    * @param event - The event to emit
    */
+  #emitSkipped(event: SkippedEvent): void {
+    // Emit the event for all handlers
+    EventHelper.emitEvent(this, this.#onSkippedHandlers, event);
+  }
+
+  /**
+   * Registers a skipped event handler.
+   *
+   * @param callback - The callback to be executed whenever the event is emitted
+   */
+  onSkipped(callback: SkippedDelegate): void {
+    // Register the event handler
+    EventHelper.onEvent(this.#onSkippedHandlers, callback);
+  }
+
+  /**
+   * Unregisters a skipped event handler.
+   *
+   * @param callback - The callback to stop being called whenever the event is emitted
+   */
+  offSkipped(callback: SkippedDelegate): void {
+    // Unregister the event handler
+    EventHelper.offEvent(this.#onSkippedHandlers, callback);
+  }
+
+  /**
+   * Emits an event to all handlers.
+   *
+   * @param event - The event to emit
+   */
   #emitDone(event: TestEvent): void {
     // Emit the event for all handlers
     EventHelper.emitEvent(this, this.#onDoneHandlers, event);
@@ -671,8 +945,7 @@ export interface TestEvent {
 export type TestDelegate = EventDelegateBase<AbstractTester, TestEvent, void>;
 
 /** Define an event for the delegate. */
-export interface TestUpdatedEvent<T = BaseTestChangedEvent> {
-  test: Test;
+export interface TestUpdatedEvent<T = BaseTestChangedEvent> extends TestEvent {
   event: T;
 }
 
@@ -680,8 +953,7 @@ export interface TestUpdatedEvent<T = BaseTestChangedEvent> {
 export type TestUpdatedDelegate = EventDelegateBase<AbstractTester, TestUpdatedEvent, void>;
 
 /** Define an event for the delegate. */
-export interface SuccessEvent<T = unknown> {
-  test: Test;
+export interface SuccessEvent<T = unknown> extends TestEvent {
   result: T;
 }
 
@@ -689,10 +961,17 @@ export interface SuccessEvent<T = unknown> {
 export type SuccessDelegate = EventDelegateBase<AbstractTester, SuccessEvent, void>;
 
 /** Define an event for the delegate. */
-export interface FailureEvent {
-  test: Test;
+export interface FailureEvent extends TestEvent {
   error: unknown;
 }
 
 /** Define a delegate for the event handler function signature. */
 export type FailureDelegate = EventDelegateBase<AbstractTester, FailureEvent, void>;
+
+/** Define an event for the delegate. */
+export interface SkippedEvent extends TestEvent {
+  reason: string;
+}
+
+/** Define a delegate for the event handler function signature. */
+export type SkippedDelegate = EventDelegateBase<AbstractTester, SkippedEvent, void>;

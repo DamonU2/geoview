@@ -51,6 +51,15 @@ export class GVTestSuiteDataTable extends GVAbstractTestSuite {
   }
 
   /**
+   * Gets the total number of tests including those that are planned but not yet in the pipeline nor executed.
+   *
+   * @returns The total number of tests including those that are planned but not yet in the pipeline nor executed.
+   */
+  override getTestsTotalFinal(): number {
+    return 12;
+  }
+
+  /**
    * Overrides the check if the Test Suite can be executed.
    *
    * @returns A promise that resolves to true when the Test Suite can be launched for the given map
@@ -74,7 +83,8 @@ export class GVTestSuiteDataTable extends GVAbstractTestSuite {
    *
    * @returns A promise that resolves when the debug tests are completed
    */
-  protected override onLaunchTestSuiteDEBUG(): Promise<unknown> {
+  protected override async onLaunchTestSuiteDEBUG(): Promise<unknown> {
+    await this.#dataTableTester.testFilterByExtentOnGeoJSONOntario();
     return Promise.resolve();
   }
 

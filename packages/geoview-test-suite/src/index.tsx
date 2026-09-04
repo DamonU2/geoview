@@ -3,7 +3,13 @@ import { AbstractPlugin } from 'geoview-core/api/plugin/abstract-plugin';
 import { PluginConfigNotFoundError, TestSuiteInitializationError } from 'geoview-core/core/exceptions/geoview-exceptions';
 import type { EventDelegateBase } from 'geoview-core/api/events/event-helper';
 import EventHelper from 'geoview-core/api/events/event-helper';
-import type { TesterFailureEvent, TesterSuccessEvent, TesterTestEvent, TesterTestUpdatedEvent } from './tests/core/abstract-test-suite';
+import type {
+  TesterFailureEvent,
+  TesterSkippedEvent,
+  TesterSuccessEvent,
+  TesterTestEvent,
+  TesterTestUpdatedEvent,
+} from './tests/core/abstract-test-suite';
 import { TestSuiteRunningError } from './tests/core/exceptions';
 import type { GVAbstractTestSuite } from './tests/suites/abstract-gv-test-suite';
 import { GVTestSuiteCore } from './tests/suites/suite-core';
@@ -40,6 +46,12 @@ class TestSuitePlugin extends AbstractPlugin {
 
   /** Callback delegates for the test failure event */
   #onSuiteTestersTestFailureHandlers: SuiteTesterFailureDelegate[] = [];
+
+  /** Callback delegates for the test skipped event */
+  #onSuiteTestersTestSkippedHandlers: SuiteTesterSkippedDelegate[] = [];
+
+  /** Callback delegates for the test suites completed event */
+  #onTestSuitesCompletedHandlers: TestSuitesCompletedDelegate[] = [];
 
   /**
    * Returns the package schema.
@@ -170,31 +182,50 @@ class TestSuitePlugin extends AbstractPlugin {
       // Re-emit
       this.#emitFailure({ ...event, suite: sender as GVAbstractTestSuite });
     });
+
+    // Register handlers when the a test has failed
+    testSuite.onSkipped((sender, event) => {
+      // Re-emit
+      this.#emitSkipped({ ...event, suite: sender as GVAbstractTestSuite });
+    });
   }
 
   /**
-   * Launches all test suites sequentially.
+   * Launches all test suites and waits for them to settle.
    *
-   * This method resets the completed suite counter, then executes each test suite
-   * one after the other (not in parallel). Awaits each suite to ensure sequential execution.
+   * This method resets the completed suite counter, launches each suite, then awaits
+   * all launch promises so completion and error reporting happen in one consolidated path.
    *
    * @returns A promise that resolves once all test suites have completed.
    */
-  async launchTestSuites(): Promise<void> {
+  launchTestSuites(): Promise<void[]> {
     // Make sure no test suite is currently running
     if (this.getTestsRunning() > 0) throw new TestSuiteRunningError();
 
     // Reset the test suites
     this.resetTestSuites();
 
-    // For each test suite, launch them one by one and awaiting on them so they don't run in parallel
-    for (const testSuite of this.testSuites) {
-      // We do want to await in a loop so the test suites are launched sequencially
-      // eslint-disable-next-line no-await-in-loop
+    // Build suite launch promises first, then await them together.
+    const launchPromises = this.testSuites.map(async (testSuite) => {
+      // Launch the test suite and wait
       await testSuite.launchTestSuite();
-      // Increment the completed suites
+
+      // Increment the completed suites for each successful launch.
       this.#suitesCompleted++;
-    }
+    });
+
+    // Combine the promises into 1
+    const launchSuitesPromise = Promise.all(launchPromises);
+
+    // Emit once all test suites have completed launching.
+    void launchSuitesPromise.then(() => {
+      this.#emitTestSuitesCompleted({
+        testSuites: this.testSuites,
+      });
+    });
+
+    // Return the promise
+    return launchSuitesPromise;
   }
 
   /**
@@ -295,6 +326,18 @@ class TestSuitePlugin extends AbstractPlugin {
   }
 
   /**
+   * Gets the total number of currently skipped across all test suites.
+   *
+   * @returns The total number of tests skipped.
+   */
+  getTestsDoneSkipped(): number {
+    // For each test suite
+    return this.testSuites.reduce((total, testSuite) => {
+      return total + testSuite.getTestsDoneSkipped();
+    }, 0);
+  }
+
+  /**
    * Gets the total number of currently done failed across all test suites.
    *
    * @returns The total number of tests done failed.
@@ -315,6 +358,20 @@ class TestSuitePlugin extends AbstractPlugin {
     // For each test suite
     return this.testSuites.reduce((total, testSuite) => {
       return total + testSuite.getTestsTotal();
+    }, 0);
+  }
+
+  /**
+   * Gets the total number of tests declared by all registered suites.
+   *
+   * Each suite total must match the number of active tester test calls in its full launch pipeline; debug-only calls are excluded.
+   *
+   * @returns The total number of tests declared by all test suites
+   */
+  getTestsTotalFinal(): number {
+    // For each test suite
+    return this.testSuites.reduce((total, testSuite) => {
+      return total + testSuite.getTestsTotalFinal();
     }, 0);
   }
 
@@ -352,6 +409,86 @@ class TestSuitePlugin extends AbstractPlugin {
    */
   getTestsDoneAllSuccessAndSuiteDone(): boolean {
     return this.getSuitesDone() && this.getTestsDoneAllSuccess();
+  }
+
+  /**
+   * Gets the longest launch duration among all test suites in milliseconds.
+   *
+   * @returns The maximum suite launch duration in milliseconds
+   */
+  getDurationAllSuites(): number {
+    return this.testSuites.reduce((maxDuration, testSuite) => {
+      return Math.max(maxDuration, testSuite.getDurationMs());
+    }, 0);
+  }
+
+  /**
+   * Gets whether the test suites are configured to run in VPN mode.
+   *
+   * Returns the flag from the first registered suite as the canonical source,
+   * or false when no suites are registered.
+   *
+   * @returns Whether the test suites are running in VPN mode
+   */
+  getIsRunningOnVPN(): boolean {
+    return this.testSuites[0]?.getIsRunningOnVPN() ?? false;
+  }
+
+  /**
+   * Sets the VPN flag on all registered test suites.
+   *
+   * @param runningOnVPN - Whether the test environment is running on VPN
+   */
+  setIsRunningOnVPN(runningOnVPN: boolean): void {
+    // Set the running on VPN flag for all all test suites
+    this.testSuites.forEach((testSuite) => {
+      testSuite.setIsRunningOnVPN(runningOnVPN);
+    });
+  }
+
+  /**
+   * Gets whether the test suites are configured to run sequentially.
+   *
+   * @returns Whether the test suites are running sequentially
+   */
+  getIsRunningSequentially(): boolean {
+    return this.testSuites[0]?.getIsRunningSequentially() ?? false;
+  }
+
+  /**
+   * Sets the sequential execution flag on all registered test suites.
+   *
+   * @param runningSequentially - Whether test suites should run sequentially
+   */
+  setIsRunningSequentially(runningSequentially: boolean): void {
+    // Set the running sequentially flag for all test suites
+    this.testSuites.forEach((testSuite) => {
+      testSuite.setIsRunningSequentially(runningSequentially);
+    });
+  }
+
+  /**
+   * Gets whether the test suites are configured to run heavy tests.
+   *
+   * Returns the flag from the first registered suite as the canonical source,
+   * or false when no suites are registered.
+   *
+   * @returns Whether the test suites are running heavy tests
+   */
+  getIsRunningHeavyTests(): boolean {
+    return this.testSuites[0]?.getIsRunningHeavyTests() ?? false;
+  }
+
+  /**
+   * Sets the heavy tests flag on all registered test suites.
+   *
+   * @param runningHeavyTests - Whether the test environment is running heavy tests
+   */
+  setIsRunningHeavyTests(runningHeavyTests: boolean): void {
+    // Set the running heavy tests flag for all test suites
+    this.testSuites.forEach((testSuite) => {
+      testSuite.setIsRunningHeavyTests(runningHeavyTests);
+    });
   }
 
   // #region EVENTS
@@ -476,6 +613,66 @@ class TestSuitePlugin extends AbstractPlugin {
     EventHelper.offEvent(this.#onSuiteTestersTestFailureHandlers, callback);
   }
 
+  /**
+   * Emits an event to all handlers.
+   *
+   * @param event - The event to emit
+   */
+  #emitSkipped(event: SuiteTesterSkippedEvent): void {
+    // Emit the event for all handlers
+    EventHelper.emitEvent(this, this.#onSuiteTestersTestSkippedHandlers, event);
+  }
+
+  /**
+   * Registers a failure event handler.
+   *
+   * @param callback - The callback to be executed whenever the event is emitted
+   */
+  onSkipped(callback: SuiteTesterSkippedDelegate): void {
+    // Register the event handler
+    EventHelper.onEvent(this.#onSuiteTestersTestSkippedHandlers, callback);
+  }
+
+  /**
+   * Unregisters a failure event handler.
+   *
+   * @param callback - The callback to stop being called whenever the event is emitted
+   */
+  offSkipped(callback: SuiteTesterSkippedDelegate): void {
+    // Unregister the event handler
+    EventHelper.offEvent(this.#onSuiteTestersTestSkippedHandlers, callback);
+  }
+
+  /**
+   * Emits an event to all handlers.
+   *
+   * @param event - The event to emit
+   */
+  #emitTestSuitesCompleted(event: TestSuitesCompletedEvent): void {
+    // Emit the event for all handlers
+    EventHelper.emitEvent(this, this.#onTestSuitesCompletedHandlers, event);
+  }
+
+  /**
+   * Registers a test suites completed event handler.
+   *
+   * @param callback - The callback to be executed whenever the event is emitted
+   */
+  onTestSuitesCompleted(callback: TestSuitesCompletedDelegate): void {
+    // Register the event handler
+    EventHelper.onEvent(this.#onTestSuitesCompletedHandlers, callback);
+  }
+
+  /**
+   * Unregisters a test suites completed event handler.
+   *
+   * @param callback - The callback to stop being called whenever the event is emitted
+   */
+  offTestSuitesCompleted(callback: TestSuitesCompletedDelegate): void {
+    // Unregister the event handler
+    EventHelper.offEvent(this.#onTestSuitesCompletedHandlers, callback);
+  }
+
   // #endregion EVENTS
 }
 
@@ -527,6 +724,33 @@ export interface SuiteTesterFailureEvent extends TesterFailureEvent {
  */
 export type SuiteTesterFailureDelegate = EventDelegateBase<TestSuitePlugin, SuiteTesterFailureEvent, void>;
 
+/**
+ * Define an event for the delegate
+ */
+export interface SuiteTesterSkippedEvent extends TesterSkippedEvent {
+  suite: GVAbstractTestSuite;
+}
+
+/**
+ * Define a delegate for the event handler function signature
+ */
+export type SuiteTesterSkippedDelegate = EventDelegateBase<TestSuitePlugin, SuiteTesterSkippedEvent, void>;
+
+/**
+ * Define an event for the delegate.
+ */
+export interface TestSuitesCompletedEvent {
+  testSuites: GVAbstractTestSuite[];
+}
+
+/**
+ * Define a delegate for the event handler function signature.
+ */
+export type TestSuitesCompletedDelegate = EventDelegateBase<TestSuitePlugin, TestSuitesCompletedEvent, void>;
+
+/**
+ * Define the configuration for the Test Suite Plugin.
+ */
 /** Configuration properties for the test suite plugin. */
 export type TestSuitePluginConfig = {
   /** The test suites to execute. */

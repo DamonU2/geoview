@@ -53,6 +53,15 @@ export class GVTestSuiteMapConfig extends GVAbstractTestSuite {
   }
 
   /**
+   * Gets the total number of tests including those that are planned but not yet in the pipeline nor executed.
+   *
+   * @returns The total number of tests including those that are planned but not yet in the pipeline nor executed.
+   */
+  override getTestsTotalFinal(): number {
+    return 39;
+  }
+
+  /**
    * Overrides the debug hook for running a subset of tests during development.
    *
    * GV DEBUG SECTION TO NOT HAVE TO TEST EVERYTHING EVERYTIME
@@ -60,7 +69,11 @@ export class GVTestSuiteMapConfig extends GVAbstractTestSuite {
    * @returns A promise that resolves when the debug tests are completed
    */
   protected override onLaunchTestSuiteDEBUG(): Promise<unknown> {
-    return Promise.resolve();
+    // Test DEBUG
+    const pDevTest0 = this.#mapConfigTester.testFixedHeightWithCollapsedFooterBar();
+
+    // Resolve when all
+    return Promise.all([pDevTest0]);
   }
 
   /**
