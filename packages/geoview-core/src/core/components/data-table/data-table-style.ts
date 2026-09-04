@@ -42,6 +42,11 @@ export const getSxClasses = (theme: Theme): SxStyles => ({
       color: theme.palette.geoViewColor?.textColor.light[200], // WCAG - Matches global placeholder text color
     },
   },
+  dataTableTopToolbar: {
+    '& .MuiInputBase-input[type="search"]': {
+      boxSizing: 'content-box',
+    },
+  },
   filterMap: {
     '& .Mui-checked': {
       '& .MuiTouchRipple-root': {
