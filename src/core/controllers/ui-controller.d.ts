@@ -228,5 +228,15 @@ export declare class UIController extends AbstractMapViewerController {
         coords: Coordinate;
         bbox?: Extent;
     } | undefined;
+    /**
+     * Gets the effective footer height for the map.
+     *
+     * Prefers a consumer-provided `data-footer-height` attribute on the root element, falling back to the store's
+     * app height. Combines a DOM read with a store value, so it lives on the controller rather than in `dom-helper`
+     * (which must stay store-free). Callable from non-React code via `mapViewer.controllers.uiController`.
+     *
+     * @returns The footer height as a CSS length string (e.g. '600px')
+     */
+    getFooterHeight(): string;
 }
 //# sourceMappingURL=ui-controller.d.ts.map
