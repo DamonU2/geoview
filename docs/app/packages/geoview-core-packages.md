@@ -35,6 +35,7 @@ This document provides comprehensive API reference and configuration details for
 - Play/pause animation controls
 - Configurable time step for continuous mode
 - Temporal filtering synchronized across multiple layers
+- Automatic synchronization of direct sibling layers for supported grouped WMS time dimensions
 - Automatic timezone handling (UTC)
 
 **Dependencies:**
@@ -570,6 +571,8 @@ const geochartPlugin = mapViewer.plugins["geochart"];
 
 - Interactive swiper bar
 - Layer visibility toggle on each side
+- Per-layer side placement (left/right for vertical, up/down for horizontal)
+- Optional user customization from the layer settings panel (`interactive` flag)
 - Draggable swiper control
 - Vertical or horizontal orientation
 - Synchronized map views
@@ -605,7 +608,7 @@ const mapViewer = cgpv.api.getMapViewer("mapId");
 const swiperPlugin = mapViewer.plugins["swiper"];
 
 if (swiperPlugin) {
-  swiperPlugin.activateForLayer("layerPath");
+  swiperPlugin.activateForLayer("layerPath", "right");
   swiperPlugin.setOrientation("vertical");
 }
 ```
@@ -636,12 +639,15 @@ if (swiperPlugin) {
       "swiper": {
         "orientation": "horizontal",
         "keyboardOffset": 10,
-        "layers": ["esriFeatureLYR4/0"]
+        "interactive": true,
+        "layers": [{ "layerPath": "esriFeatureLYR4/0", "side": "up" }]
       }
     }
   ]
 }
 ```
+
+> **Interactive mode:** When `interactive` is `true`, a **Swiper** section appears in each layer's right panel (settings gear). Users can toggle a layer in/out of the swiper and pick its visible side. The side options follow the current orientation (left/right for vertical, up/down for horizontal). When `interactive` is `false` (default) the swiper stays static and author-defined. Each `layers` entry is an object `{ layerPath, side }`; `side` names the visible side of the divider.
 
 ### API Methods
 
@@ -650,11 +656,14 @@ const mapViewer = cgpv.api.getMapViewer("mapId");
 const swiperPlugin = mapViewer.plugins["swiper"];
 
 if (swiperPlugin) {
-  // Activate swiper for a layer
-  swiperPlugin.activateForLayer("layerPath");
+  // Activate swiper for a layer on the right side
+  swiperPlugin.activateForLayer("layerPath", "right");
 
   // Deactivate for a layer
   swiperPlugin.deActivateForLayer("layerPath");
+
+  // Change the visible side for an active layer
+  swiperPlugin.setLayerSide("layerPath", "left");
 
   // Set orientation
   swiperPlugin.setOrientation("vertical");
@@ -663,6 +672,8 @@ if (swiperPlugin) {
   swiperPlugin.deActivateAll();
 }
 ```
+
+> The swiper controller (accessible on the map's controller registry as `swiperController`) also exposes `setLayers(entries)`, `addLayerPath(layerPath, side?)`, `setLayerSide(layerPath, side)`, and `setInteractive(interactive)` for finer-grained control, including per-layer side placement.
 
 **See Also:** [Controllers API](app/events/controllers.md)
 
@@ -1597,10 +1608,10 @@ The panel gracefully handles:
 - Multiple filter types (select, multiselect, range, date)
 - Real-time or manual filter application
 - Layer organization with collapsible sections
-- Feature count display
 - Theme-aware UI (adapts to geo.ca, light, dark themes)
-- Auto-apply or manual apply modes
-- Reset individual filters or all filters at once
+- Clear a layer's active filters with one click
+- Optional search box for multiselect filters with long value lists
+- Zoom to the extent of features matching a layer's active filters
 - Integration with GeoView's LayerFilters system
 
 **Dependencies:**
@@ -1653,7 +1664,6 @@ interface FilterPanelConfig {
     layerPath: string;
     filterName?: string;
     enabled?: boolean;
-    collapsible?: boolean;
     defaultCollapsed?: boolean;
     attributes?: Array<
       | SelectFilterAttribute
@@ -1682,6 +1692,7 @@ type MultiselectFilterAttribute = {
   defaultValues?: Array<string | number> | null;
   domain?: Array<{ value: string | number; label: string }>;
   filterMissingDomainValues?: boolean;
+  searchable?: boolean;
 };
 
 type RangeFilterAttribute = {
@@ -1717,8 +1728,7 @@ type DateFilterAttribute = {
 - **layerPath** (string, required): Unique layer path identifier
 - **filterName** (string, optional): Display name for the layer (if not provided, layer path is used)
 - **enabled** (boolean, default: true): Whether filtering is enabled for this layer
-- **collapsible** (boolean, default: true): Allow collapsing/expanding this layer section
-- **defaultCollapsed** (boolean, default: false): Default collapsed state for this layer section. If `collapsible` is false, this is ignored and the section is forced open.
+- **defaultCollapsed** (boolean, default: false): Default collapsed state for this layer section.
 - **attributes** (array): Array of filterable attributes
 
 **Attribute properties (common to all types):**
@@ -1741,6 +1751,7 @@ type DateFilterAttribute = {
 - **defaultValues** (array | null): Initial array of selected values (e.g., `["value1", "value2"]`)
 - **domain** (array, optional): Same structure as select filter
 - **filterMissingDomainValues** (boolean, default: false): Same behavior as select filter
+- **searchable** (boolean, default: false): Shows a search box below the label to filter the checkbox list, useful for long value lists
 
 **Range filter properties:**
 
@@ -1780,7 +1791,6 @@ type DateFilterAttribute = {
             "layerPath": "cities-layer",
             "filterName": "Canadian Cities",
             "enabled": true,
-            "collapsible": true,
             "defaultCollapsed": false,
             "attributes": [
               {
@@ -1858,7 +1868,6 @@ type DateFilterAttribute = {
             "layerPath": "population-data",
             "filterName": "Population Data",
             "enabled": true,
-            "collapsible": true,
             "defaultCollapsed": false,
             "attributes": [
               {
@@ -1910,7 +1919,6 @@ type DateFilterAttribute = {
             "layerPath": "environmental-data",
             "filterName": "Environmental Monitoring",
             "enabled": true,
-            "collapsible": false,
             "attributes": [
               {
                 "fieldName": "pollutant_type",
@@ -1944,7 +1952,6 @@ type DateFilterAttribute = {
   "corePackagesConfig": [
     {
       "filter-panel": {
-        "enabled": true,
         "layers": [
           {
             "layerPath": "weather-stations",
@@ -1978,11 +1985,7 @@ type DateFilterAttribute = {
               }
             ]
           }
-        ],
-        "settings": {
-          "collapsible": true,
-          "defaultCollapsed": false
-        }
+        ]
       }
     }
   ]
@@ -2120,6 +2123,7 @@ In this example:
 
 - Multiple-value checkbox list
 - "All" option to select/deselect all values
+- Optional search box (`searchable: true`) to filter the checkbox list, useful for long value lists
 - Default: all values selected
 
 ```json
@@ -2127,7 +2131,8 @@ In this example:
   "fieldName": "category",
   "displayLabel": "Category",
   "filterType": "multiselect",
-  "defaultValues": []
+  "defaultValues": [],
+  "searchable": true
 }
 ```
 
@@ -2166,8 +2171,8 @@ In this example:
 - **Layer Paths:** Must reference existing layers in the map configuration
 - **Filter Names:** Optional - if not provided, the layer path will be used as the display name
 - **Field Names:** Must match actual field names in the layer schema
-- **Auto-Apply:** When `autoApply: true`, filters apply immediately on every change. When `false`, filters still apply automatically but may have a slight delay
-- **Reset:** Individual filters can be reset, or all filters can be reset at once using the reset button
+- **Reset:** Each layer section has a "Clear" button that resets that layer's active filters
+- **Zoom to Filtered:** Each layer section has a "Zoom to filtered" button (next to Clear) that zooms the map to the extent of features currently matching that layer's active filters. Disabled when no filters are active; shows a warning notification instead of an error if no feature currently matches
 - **Theme Integration:** UI automatically adapts to the map's theme (geo.ca, light, dark)
 - **Performance:** Range and date filters are optimized for large datasets
 
@@ -2227,8 +2232,7 @@ In this example:
           }
         ]
       }
-    ],
-    "settings": { "autoApply": true }
+    ]
   }
 }
 ```
@@ -2265,8 +2269,7 @@ In this example:
           }
         ]
       }
-    ],
-    "settings": { "autoApply": true }
+    ]
   }
 }
 ```

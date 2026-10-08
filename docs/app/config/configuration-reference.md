@@ -2,7 +2,7 @@
 
 Complete reference for GeoView configuration objects. This guide covers all configuration options for creating and managing maps, layers, and packages.
 
-> **Quick Start:** See [Creating Maps](app/config/create-map.md) for basic usage examples  
+> **Quick Start:** See [Creating Maps](app/config/create-map.md) for basic usage examples
 > **For Core Developers:** See [Adding Layer Types](programming/adding-layer-types.md) for implementation details
 
 > **⚠️ Schema Validation:** Always check the browser console for schema validation errors and discrepancies. The console will display detailed error messages including the schema path, affected property, and allowed values. Invalid configurations will be rejected with specific error messages indicating what needs to be corrected.
@@ -123,21 +123,21 @@ When writing or editing map configuration JSON files, properties **must** follow
 
 **Root-level property order:**
 
-| Order | Property             | Required | Purpose                                    |
-| ----- | -------------------- | -------- | ------------------------------------------ |
-| 1     | `configMeta`         | No       | Config metadata (schema version)           |
-| 2     | `map`                | **Yes**  | Map definition (view, basemap, layers)     |
-| 3     | `components`         | No       | Map components (overview-map, north-arrow) |
-| 4     | `overviewMap`        | No       | Overview map settings                      |
-| 5     | `navBar`             | No       | Navigation bar controls                    |
-| 6     | `appBar`             | No       | Application bar tabs                       |
-| 7     | `footerBar`          | No       | Footer bar tabs                            |
-| 8     | `corePackages`       | No       | Core plugin packages to load               |
-| 9     | `globalSettings`     | No       | Universal map settings                     |
-| 10    | `serviceUrls`        | No       | Override service endpoints                 |
+| Order | Property             | Required | Purpose                                                |
+| ----- | -------------------- | -------- | ------------------------------------------------------ |
+| 1     | `configMeta`         | No       | Config metadata (schema version)                       |
+| 2     | `map`                | **Yes**  | Map definition (view, basemap, layers)                 |
+| 3     | `components`         | No       | Map components (overview-map, north-arrow)             |
+| 4     | `overviewMap`        | No       | Overview map settings                                  |
+| 5     | `navBar`             | No       | Navigation bar controls                                |
+| 6     | `appBar`             | No       | Application bar tabs                                   |
+| 7     | `footerBar`          | No       | Footer bar tabs                                        |
+| 8     | `corePackages`       | No       | Core plugin packages to load                           |
+| 9     | `globalSettings`     | No       | Universal map settings                                 |
+| 10    | `serviceUrls`        | No       | Override service endpoints                             |
 | 11    | `theme`              | No       | Display theme (`geo.ca`, `dark`, `light`, `canada.ca`) |
-| 12    | `corePackagesConfig` | No       | Configuration for core packages            |
-| 13    | `externalPackages`   | No       | External plugin packages                   |
+| 12    | `corePackagesConfig` | No       | Configuration for core packages                        |
+| 13    | `externalPackages`   | No       | External plugin packages                               |
 
 **`map` sub-property order:**
 
@@ -598,6 +598,8 @@ TypeValidAppBarCoreProps = "about-panel" | "geolocator" | "export" | "aoi-panel"
 
 > **Note:** The `"aoi-panel"` tab requires the **aoi-panel package** to be configured. See [Area of Interest Panel Package](#area-of-interest-aoi-panel-package) configuration.
 
+> **Note:** Several panels (`legend`, `layers`, `details`, `data-table`, `guide`) are valid in both `appBar` and `footerBar`. If the same panel is declared in **both** bars, the viewer keeps the **app bar** occurrence, removes the duplicate from the **footer bar**, and shows a warning naming the removed panel(s). Declare each panel in only one bar to avoid this.
+
 ---
 
 #### footerBar (Optional)
@@ -665,6 +667,8 @@ TypeFooterBarTabsCustomProps = {
 ```
 
 > **Note:** The `"time-slider"` and `"geochart"` tabs require their respective packages to be configured. See [Time Slider Package](#time-slider-package) and [GeoChart Package](#geochart-package) configuration.
+
+> **Note:** A panel declared in both `appBar.tabs.core` and `footerBar.tabs.core` is kept in the app bar and removed from the footer bar (with a warning). The overlapping panels are `legend`, `layers`, `details`, `data-table`, and `guide`.
 
 ---
 
@@ -822,7 +826,10 @@ See package-specific sections ([Swiper](#swiper-package), [GeoChart](#geochart-p
   {
     "swiper": {
       "orientation": "vertical",
-      "layers": ["layer1", "layer2"],
+      "layers": [
+        { "layerPath": "layer1", "side": "left" },
+        { "layerPath": "layer2", "side": "left" }
+      ],
       "keyboardOffset": 20
     }
   }
@@ -850,7 +857,7 @@ See package-specific sections ([Swiper](#swiper-package), [GeoChart](#geochart-p
   {
     "swiper": {
       "orientation": "horizontal",
-      "layers": ["layer1/0"]
+      "layers": [{ "layerPath": "layer1/0", "side": "up" }]
     }
   },
   {
@@ -985,7 +992,7 @@ URL or path to the service/data.
 metadataAccessPath?: string;
 ```
 
-**Required for:** WMS, WFS, OGC Feature, ESRI services  
+**Required for:** WMS, WFS, OGC Feature, ESRI services
 **Optional for:** GeoJSON, CSV, KML (can use relative paths)
 
 **Examples:**
@@ -1761,6 +1768,8 @@ ESRI Image source:
 }
 ```
 
+For WMS, a configured `wmsStyle` takes precedence over service defaults. If it is omitted, GeoView uses the advertised default style when available and otherwise the first advertised style. For ESRI Image layers, a configured `rasterFunction` takes precedence; otherwise GeoView selects the first advertised function other than `None`.
+
 Static Image source:
 
 ```json
@@ -2382,9 +2391,13 @@ Layer comparison package using a swipe control.
 interface SwiperConfig {
   // Required
   orientation: "vertical" | "horizontal";
-  layers: Array<string>;
+  layers: Array<{
+    layerPath: string;
+    side: "left" | "right" | "up" | "down";
+  }>;
 
   // Optional
+  interactive?: boolean;
   keyboardOffset?: number;
   version?: string;
 }
@@ -2395,9 +2408,12 @@ interface SwiperConfig {
 - **orientation** (Required): Swiper bar orientation
   - `"vertical"` - Vertical swipe bar
   - `"horizontal"` - Horizontal swipe bar
-- **layers** (Required): Array of layer IDs to include in swiper
+- **layers** (Required): Array of layer entries participating in the swiper. Each entry is an object:
+  - `layerPath` - The layer path to include in the swiper
+  - `side` - The **visible** side of the bar for this layer. Use `"left"`/`"right"` with a vertical bar and `"up"`/`"down"` with a horizontal bar. `"left"` means the layer stays visible on the left of the divider, and so on (default: `"left"`)
+- **interactive**: When `true`, users can add/remove layers from the swiper and choose each layer's side directly from the layer settings panel (right panel → settings gear). When `false` (default), the swiper is static and author-defined
 - **keyboardOffset**: Pixel offset when using keyboard (default: 10, range: 10-100)
-- **version**: Schema version (default: "1.0")
+- **version**: Schema version (default: "1.1")
 
 #### Example
 
@@ -2406,8 +2422,12 @@ interface SwiperConfig {
   {
     "swiper": {
       "orientation": "vertical",
-      "layers": ["satellite-imagery", "street-map"],
-      "keyboardOffset": 20
+      "interactive": true,
+      "keyboardOffset": 20,
+      "layers": [
+        { "layerPath": "satellite-imagery", "side": "left" },
+        { "layerPath": "street-map", "side": "right" }
+      ]
     }
   }
 ]
@@ -2497,6 +2517,7 @@ interface SliderConfig {
     rangeItems?: {
       type?: string;
       range: Array<string>;
+      durationInterval?: string;
     };
   };
 }
@@ -2521,8 +2542,9 @@ interface SliderConfig {
   - **singleHandle**: Use single handle (true) or range handles (false). GeoView auto-detects this from WMS metadata: if the `<Dimension>` has a `default` attribute or `multipleValues="0"`, it defaults to single handle; otherwise dual handle. Use this config property to override the auto-detected value.
   - **displayPattern**: Date/time display format configuration
   - **rangeItems**: Temporal range definition
-    - **type**: Range type ('discrete', 'continuous')
+    - **type**: Normalized source shape (`'discrete'`, `'relative'`, or `'none'`)
     - **range**: Array of date strings defining available time points
+    - **durationInterval**: Optional ISO 8601 duration retained from an interval such as `start/end/P1Y`
 
 #### Temporal Modes
 
@@ -3121,7 +3143,6 @@ interface FilterPanelConfig {
     layerPath: string;
     filterName?: string;
     enabled?: boolean;
-    collapsible?: boolean;
     defaultCollapsed?: boolean;
     attributes?: Array<
       | SelectFilterAttribute
@@ -3153,8 +3174,7 @@ type DateFilterAttribute = {
   - **layerPath** (required): Unique layer path identifier
   - **filterName** (optional): Display name for the layer (if not provided, layer path is used)
   - **enabled**: Whether filtering is enabled for this layer (default: true)
-  - **collapsible**: Allow collapsing/expanding this layer section (default: true)
-  - **defaultCollapsed**: Default collapsed state for this layer section. If `collapsible` is false, this is ignored and the section is forced open (default: false)
+  - **defaultCollapsed**: Default collapsed state for this layer section (default: false)
   - **attributes**: Array of filterable attributes (each attribute must specify one of the four filter types)
 
 **Common attribute properties:**
@@ -3175,6 +3195,7 @@ type DateFilterAttribute = {
   - **value** (required): The raw value from the layer (string or number)
   - **label** (required): The display label for this value
 - **filterMissingDomainValues** (optional): If true, filter out values not in domain (default: false)
+- **searchable** (optional, multiselect only): Shows a search box to filter the checkbox list by label (default: false)
 
 **Range filter-specific properties:**
 
@@ -3203,7 +3224,6 @@ type DateFilterAttribute = {
           "layerPath": "cities-layer",
           "filterName": "Canadian Cities",
           "enabled": true,
-          "collapsible": true,
           "defaultCollapsed": false,
           "attributes": [
             {
@@ -3232,7 +3252,6 @@ type DateFilterAttribute = {
           "layerPath": "population-data",
           "filterName": "Population Data",
           "enabled": true,
-          "collapsible": true,
           "defaultCollapsed": false,
           "attributes": [
             {
@@ -3254,42 +3273,6 @@ type DateFilterAttribute = {
           ]
         }
       ]
-    }
-  }
-]
-```
-
-**Custom Settings:**
-
-```json
-"corePackagesConfig": [
-  {
-    "filter-panel": {
-      "layers": [
-        {
-          "layerPath": "environmental-data",
-          "filterName": "Environmental Monitoring",
-          "enabled": true,
-          "collapsible": false,
-          "attributes": [
-            {
-              "fieldName": "pollutant_type",
-              "displayLabel": "Pollutant Type",
-              "filterType": "multiselect"
-            },
-            {
-              "fieldName": "concentration",
-              "displayLabel": "Concentration (ppm)",
-              "filterType": "range"
-            }
-          ]
-        }
-      ]
-      "settings": {
-        "title": "Environmental Filters",
-        "collapsible": false,
-        "showResetButton": true
-      }
     }
   }
 ]
@@ -3331,7 +3314,6 @@ Domain mapping displays user-friendly labels instead of raw codes. When `filterM
 - Layer paths must reference existing layers in the map configuration
 - Layer names are optional - if not provided, the layer path will be used as the display name
 - Field names must match actual field names in the layer schema
-- When `autoApply: true`, filters apply immediately on every change
 - UI automatically adapts to the map's theme (geo.ca, light, dark)
 - Range and date filters are optimized for large datasets
 - **Domain mapping**: Use the `domain` property on attributes to display custom labels for coded values. Values are ordered according to the domain array order (not alphabetically). Set `filterMissingDomainValues: true` to hide features with values outside the domain
@@ -3386,7 +3368,10 @@ Domain mapping displays user-friendly labels instead of raw codes. When `filterM
     {
       "swiper": {
         "orientation": "vertical",
-        "layers": ["weather-data", "satellite-layer"],
+        "layers": [
+          { "layerPath": "weather-data", "side": "left" },
+          { "layerPath": "satellite-layer", "side": "right" }
+        ],
         "keyboardOffset": 20
       }
     }

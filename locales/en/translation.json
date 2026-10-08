@@ -45,7 +45,8 @@
       "loadingMap": "Loading map",
       "mapLoaded": "Map loaded",
       "processing": "Processing",
-      "processingComplete": "Processing complete"
+      "processingComplete": "Processing complete",
+      "loadingLayers": "Loading layers..."
     }
   },
   "mapnav": {
@@ -189,6 +190,10 @@
     "layer": "Layer",
     "hidden": "Layer is hidden",
     "parentHidden": "Parent layer is hidden",
+    "hiddenLayersSection": "Hidden layers",
+    "availableLayersSection": "Available layers",
+    "layerMovedToHidden": "{{name}} moved to hidden layers",
+    "layerMovedToAvailable": "{{name}} moved to available layers",
     "stepOne": "Upload data",
     "stepOneLoading": "Uploading data...",
     "stepTwo": "Select format",
@@ -235,6 +240,7 @@
     "errorImageLoadSizeLimitExceededWidth": "The image requested for layer '{{layerName}}' exceeds the maximum width allowed by the server ({{requestedWidth}}px > {{maxWidth}}px).",
     "errorImageLoadSizeLimitExceededHeight": "The image requested for layer '{{layerName}}' exceeds the maximum height allowed by the server ({{requestedHeight}}px > {{maxHeight}}px).",
     "errorImageLoadNoImageReturned": "No image was returned from the server for layer '{{layerName}}'.",
+    "errorImageLoadProjectionNotValid": "The layer '{{layerName}}' could not be displayed: its defined projection '{{definedCRS}}' is not a valid projection (EPSG code not found).",
     "errorTileLoad": "An error occurred with a tile for layer '{{layerName}}'.",
     "errorNoLastQueryToPerform": "No last query to perform.",
     "errorProj": "Projection '{{projectionCode}}' invalid.",
@@ -245,12 +251,14 @@
     "errorInvalidExtent": "Invalid extent '{{extent}}'.",
     "errorNonreloadableLayer": "This layer cannot be reloaded. Make sure it was loaded at least once before.",
     "layerReloaded": "Layer '{{layerName}}' reloaded successfully.",
-    "fetchProgress": "Fetching data... Retrieved {{processed}} of {{total}} records.",
-    "fetchDone": "Data fetched - {{total}} records.",
-    "fetchStart": "Fetching data...",
+    "fetchProgress": "Fetching data for '{{layerName}}'... Retrieved {{processed}} of {{total}} records.",
+    "fetchDone": "Data fetched for '{{layerName}}' - {{total}} records.",
+    "fetchStart": "Fetching data for '{{layerName}}'...",
     "only": "only",
     "opacity": "Opacity (%)",
+    "opacityAriaLabel": "{{name}} layer {{label}}",
     "opacityMax": "Maximum from parent",
+    "opacityValueText": "{{value}}%",
     "outOfVisibleRange": "out of visible range",
     "reloadLayer": "Reload layer",
     "reloadSublayers": "Reload all layers in error",
@@ -270,7 +278,7 @@
     "lessInfo": "Less Information",
     "layerInfoServiceInfo": "Service Information",
     "layerInfoActiveFilters": "Active Filters",
-    "layerInfoTemporalSettings": "Temporal Settings",
+    "layerInfoTemporalInformation": "Temporal Information",
     "layerInfoTemporalDimension": "Temporal Dimension (Time Slider)",
     "layerInfoInteraction": "Interaction",
     "layerPath": "Layer Path",
@@ -289,13 +297,19 @@
     "layerDataTableFilter": "Data Table filter: ",
     "layerTimeFilter": "Time Slider filter: ",
     "layerPanelFilter": "Filter Panel filter: ",
-    "layerTemporalSettings": "Temporal settings: ",
     "layerDisplayDateFormat": "Display date format: ",
     "layerDisplayDateFormatShort": "Display date format (short): ",
     "layerDateTemporalMode": "Temporal mode: ",
     "layerDisplayDateTimezone": "Display date timezone: ",
     "layerTimeDimension": "Temporal dimension (time-slider): ",
     "layerTimeDimensionField": "Field",
+    "layerTimeDimensionRangeType": "Range type",
+    "layerTimeDimensionRangeTypeValues": "Range values",
+    "layerTimeDimensionRangeTypeMinMax": "Min/Max",
+    "layerTimeDimensionRangeDurationInterval": "Duration interval",
+    "layerTimeDimensionRangeDurationIntervalSpec": "ISO8601 spec.",
+    "layerTimeDimensionRangeDurationIntervalSpecNotSet": "Not set",
+    "layerIsGroupDimension": "Part of a group dimension",
     "layerServiceProjection": "Service projection",
     "layerServiceProjectionAndMore": "and more",
     "layerHoverable": "Information on mouse over",
@@ -470,7 +484,8 @@
     "letter": "Letter",
     "legal": "Legal",
     "tabloid": "Tabloid",
-    "previewAlt": "Export Preview"
+    "previewAlt": "Export Preview",
+    "loadingPreview": "Loading preview..."
   },
   "geolocator": {
     "title": "Geolocator",
@@ -500,11 +515,14 @@
     "details": "DETAILS",
     "exportBtn": "Download",
     "downloadAsGeoJSONMessage": "Download GeoJSON {{message}}",
+    "downloadAsGeoJSONProgress": "Downloading GeoJSON for '{{layerName}}'...",
+    "downloadAsGeoJSONProcessing": "Downloading GeoJSON for '{{layerName}}'... {{count}} of {{total}} element(s)",
     "downloadAsGeoJSON": "Download GeoJSON",
     "downloadAsCSV": "Download CSV",
     "filterMap": "Filter map",
     "stopFilterMap": "Stop filtering map",
     "clearFilters": "Clear filters",
+    "zoomToFilteredExtent": "Zoom to filtered extent",
     "rowsSelected": "{rowsSelected} of {totalRows} row(s) selected",
     "rowsFiltered": "{rowsFiltered} of {totalRows} row(s) filtered",
     "enlargeBtn": "Enlarge",
@@ -536,7 +554,8 @@
   "filterPanel": {
     "errorRegistrationTimeout": "Filter panel timeout error: Layer '{{layerName}}' took too long to register",
     "errorFilterPanelQuery": "Filter panel query error: Layer '{{layerName}}' failed to query",
-    "errorFilterPanelClear": "Filter panel clear error: Layer '{{layerName}}' failed to clear filters"
+    "errorFilterPanelClear": "Filter panel clear error: Layer '{{layerName}}' failed to clear filters",
+    "warningNoFilteredExtent": "No features currently match the active filters for layer '{{layerName}}' - nothing to zoom to"
   },
   "guide": {
     "title": "Guide",
@@ -560,8 +579,12 @@
   },
   "footerBar": {
     "resizeTooltip": "Resize",
+    "resizeAriaLabel": "Resize footer panel",
+    "footerPanelHeight": "Footer panel height",
+    "resizeValueText": "{{value}}%",
     "noTab": "No tab",
-    "tabsLabel": "Footer panel tabs"
+    "tabsLabel": "Footer panel tabs",
+    "tabsSelectionLabel": "Panel selection"
   },
   "toggleAll": {
     "show": "Show All",
@@ -576,12 +599,21 @@
       "basemapTakingLongTime": "The basemap is taking a long time to respond...",
       "metadataTakingLongTime": "The metadata for the layer '{{layerName}}' is taking longer than expected to fetch...",
       "metadatasTakingLongTime": "The metadata for some layers is taking longer than expected to fetch...",
-      "vectorTileUnsupportedProjection": "The vector tile {{layerName}} doesn't support the map projection, consider turning its visibility off.",
+      "vectorTileUnsupportedProjection": "The vector tile '{{layerName}}' doesn't support the map projection, consider turning its visibility off.",
       "basemapLayerCreationError": "Error creating {{basemapType}} basemap.",
-      "kmlLayerWarning": "KML layers will not have proper symbols in the panels or have entries in the data table.",
+      "kmlLayerWarning": "The KML layer '{{layerName}}' will not have proper symbols in the panels or entries in the data table.",
       "layerCRSNotSupported": "The spatial reference of the map '{{mapProj}}' is not officially supported by the layer '{{layerName}}'. GeoView will still attempt to load the layer on the map, but it might be misaligned.",
+      "projectionNotValid": "The layer '{{layerName}}' declares a projection '{{definedCRS}}' that could not be resolved (EPSG code not found). The layer may still display if the map projection is supported.",
       "invalidGeometry": "The '{{layerName}}' layer contains features with invalid geometries that will not show on the map.",
-      "slowCoordinateInfo": "The coordinate info for the clicked coordinates is taking longer than expected to fetch..."
+      "geometryTooComplexToHighlight": "The selected feature has too many vertices to be highlighted on the map.",
+      "slowCoordinateInfo": "The coordinate info for the clicked coordinates is taking longer than expected to fetch...",
+      "styleUrlNotApplied": "The style for layer '{{layerName}}' could not be loaded. The layer is shown with default styling."
+    },
+    "map": {
+      "invalidZoomExtent": "Unable to zoom, the provided extent is invalid."
+    },
+    "config": {
+      "duplicatedPanels": "The panel(s) '{{panels}}' were declared in both the app bar and the footer bar; they were removed from the footer bar to keep a single instance."
     },
     "schema": {
       "validationIssues": "A configuration warning was found, check the console to see what is wrong."
@@ -593,9 +625,10 @@
       "overviewMapCreationError": "Error creating the overview map basemap."
     },
     "layer": {
-      "differingFieldLengths": "Length of provided fields do not match for layer '{{layerPath}}'.",
+      "differingFieldLengths": "Length of provided fields do not match for layer '{{layerNameOrPath}}'.",
       "layerConfigNotFound": "Layer Configuration at layer path '{{layerPath}}' not found.",
       "layerNotFound": "Layer at layer path '{{layerPath}}' not found.",
+      "sourceNotLoaded": "Unable to load the data source for layer '{{layerName}}'.",
       "wfsConfigMissing": "The vector layer configuration is missing for layer path '{{layerPath}}'.",
       "wrongType": "Layer '{{layerNameOrPath}}' isn't of the expected type.",
       "statusWasError": "Layer '{{layerNameOrId}}' status was 'error'.",
@@ -604,8 +637,8 @@
       "notSupportingDynamicLayers": "Layer '{{layerNameOrPath}}' does not technically support dynamic layers per its metadata.",
       "notAFeatureLayer": "Layer id not a Feature Layer for layer '{{layerNameOrPath}}'.",
       "notQueryableLayer": "Layer '{{layerNameOrPath}}' is not queryable.",
-      "notAbleToQuery": "Unable to download records for '{{layerName}}'",
-      "noWMSLegend": "Error fetching legend for '{{layerName}}': '{{errorName}}'",
+      "notAbleToQuery": "Unable to download records for '{{layerName}}'.",
+      "noWMSLegend": "Error fetching legend for '{{layerName}}': '{{errorName}}'.",
       "featureParsingError": "Unable to read feature data for layer '{{layerNameOrId}}'.",
       "styleGeometryNotFound": "The style for layer '{{layerName}}' and geometry type '{{geomType}}' could not be found."
     },
@@ -618,9 +651,7 @@
       "mapWrongCall": "Div with id {{mapId}} has a class 'geoview-map' and should be initialized via a 'cgpv.init()' call.",
       "pluginError": "A major error on Plugin '{{pluginId}}' on map '{{mapId}}' has happened.",
       "pluginConfigNotFound": "The Plugin configuration '{{pluginId}}' on map '{{mapId}}' at path '{{path}}' couldn't be found.",
-      "pluginStateUninitialized": "The Plugin state for '{{pluginId}}' on map '{{mapId}}' is uninitialized.",
-      "invalidZoomExtent": "Unable to zoom, the provided extent is invalid.",
-      "loadingLayers": "Loading layers..."
+      "pluginStateUninitialized": "The Plugin state for '{{pluginId}}' on map '{{mapId}}' is uninitialized."
     },
     "geocore": {
       "serviceFail": "GeoCore service is unresponsive for UUID '{{uuid}}'.",

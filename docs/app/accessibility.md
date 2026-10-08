@@ -52,6 +52,19 @@ All interactive elements include context-specific aria-label attributes:
 - Panels: "Layers panel", "Legend panel", "Details panel"
 - Toggle states: Communicated via `aria-pressed` (stable labels, not dynamic text changes)
 
+The custom `Select` wrapper requires exactly one naming prop: a non-empty visible `label` or
+`aria-label`. Use translated text (or the configured attribute display label for filter controls).
+TypeScript requires exactly one naming prop, but accepts empty strings. At runtime, the wrapper
+logs an error to the browser console for missing, conflicting, empty, or whitespace-only naming
+props without interrupting rendering. These diagnostics are available in development and
+production, subject to the configured logging level; they do not display an in-app notification.
+Logging does not correct the accessible name: callers must fix invalid naming props.
+For visible labels, the wrapper generates and connects the label ID automatically; supply
+`labelId` only when another element or integration needs a specific ID. Optional `inputLabel`
+props customize the label but cannot override its `id`. With `aria-label`, no InputLabel is
+rendered and no label ID is connected to the Select. The visible `label` is also passed to
+Material UI so outlined selects render their notch correctly.
+
 ---
 
 ## 002. Intentional Interaction Patterns
@@ -97,6 +110,28 @@ This mutual exclusion pattern balances WCAG requirements with multi-panel workfl
 - Prevents multiple simultaneous traps (which are disorienting for keyboard users)
 - Maintains keyboard access to all auto-opened content (users can explore without being trapped)
 - Requires explicit activation (Enter/Space on a layer) to enable panel-level focus management
+
+This is intentional architectural behaviour, not a bug.
+
+### 3. Mouse Movement Can Disrupt WCAG Mode
+
+**Behavior:**
+
+In keyboard navigation (WCAG) mode, mouse movement or placement can cause unexpected behavior that is difficult to reproduce. For example:
+
+- Some buttons may become unresponsive.
+- Pressing certain buttons may not trigger the expected action.
+- Focus traps, which intentionally restrict where you can tab to, may not function as intended.
+
+To avoid these issues:
+
+- Before tabbing into the viewer to enter keyboard navigation (WCAG) mode, move your mouse away from the browser window.
+- Avoid moving your mouse after enabling keyboard navigation mode.
+- Before entering the viewer's fullscreen mode, move your mouse away from where the viewer will appear, so it doesn't overlap with the mouse as the viewer expands to fill the screen. Placing the mouse in one of your display's corners should help avoid any issues.
+
+**Rationale:**
+
+This is a deliberate WCAG-compliance safeguard — if the user's real interaction mode is the mouse, WCAG/keyboard mode should not be silently forced on them.
 
 This is intentional architectural behaviour, not a bug.
 

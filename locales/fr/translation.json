@@ -45,7 +45,8 @@
       "loadingMap": "Chargement de la carte",
       "mapLoaded": "Carte chargée",
       "processing": "Traitement en cours",
-      "processingComplete": "Traitement terminé"
+      "processingComplete": "Traitement terminé",
+      "loadingLayers": "Chargement des couches..."
     }
   },
   "mapnav": {
@@ -189,6 +190,10 @@
     "layer": "Couche",
     "hidden": "La couche est cachée",
     "parentHidden": "La couche parent est cachée",
+    "hiddenLayersSection": "Couches cachées",
+    "availableLayersSection": "Couches disponibles",
+    "layerMovedToHidden": "{{name}} déplacée vers les couches cachées",
+    "layerMovedToAvailable": "{{name}} déplacée vers les couches disponibles",
     "stepOne": "Télécharger des données",
     "stepOneLoading": "Téléchargement des données...",
     "stepTwo": "Sélectionner le format",
@@ -235,6 +240,7 @@
     "errorImageLoadSizeLimitExceededWidth": "L'image demandée pour la couche '{{layerName}}' dépasse la taille maximale en largeur autorisée par le serveur ({{requestedWidth}}px > {{maxWidth}}px).",
     "errorImageLoadSizeLimitExceededHeight": "L'image demandée pour la couche '{{layerName}}' dépasse la taille maximale en hauteur autorisée par le serveur ({{requestedHeight}}px > {{maxHeight}}px).",
     "errorImageLoadNoImageReturned": "Aucune image n'a été renvoyée par le serveur pour la couche '{{layerName}}'.",
+    "errorImageLoadProjectionNotValid": "La couche '{{layerName}}' n'a pas pu être affichée : sa projection définie '{{definedCRS}}' n'est pas une projection valide (code EPSG introuvable).",
     "errorTileLoad": "Une erreur est survenue avec une tuile pour la couche '{{layerName}}'.",
     "errorNoLastQueryToPerform": "Aucune dernière requête à effectuer.",
     "errorProj": "Projection {{projectionCode}} invalide.",
@@ -245,12 +251,14 @@
     "errorInvalidExtent": "Étendue invalide '{{extent}}'.",
     "errorNonreloadableLayer": "Cette couche ne peut être rechargée. Assurez-vous qu'elle a déjà été chargée au moins une fois.",
     "layerReloaded": "La couche '{{layerName}}' a été rechargée avec succès.",
-    "fetchProgress": "Téléchargement des données... Téléchargé {{processed}} de {{total}} enregistrements.",
-    "fetchDone": "Données téléchargées - {{total}} enregistrements.",
-    "fetchStart": "Téléchargement des données...",
+    "fetchProgress": "Téléchargement des données pour « {{layerName}} »... Téléchargé {{processed}} de {{total}} enregistrements.",
+    "fetchDone": "Données téléchargées pour « {{layerName}} » - {{total}} enregistrements.",
+    "fetchStart": "Téléchargement des données pour « {{layerName}} »...",
     "only": "seulement",
     "opacity": "Opacité (%)",
+    "opacityAriaLabel": "{{label}} de la couche {{name}}",
     "opacityMax": "Maximum du parent",
+    "opacityValueText": "{{value}} %",
     "outOfVisibleRange": "hors de la plage visible",
     "reloadLayer": "Recharger la couche",
     "reloadSublayers": "Recharger toutes les couches en erreur",
@@ -270,7 +278,7 @@
     "lessInfo": "Moins d'informations",
     "layerInfoServiceInfo": "Informations du service",
     "layerInfoActiveFilters": "Filtres actifs",
-    "layerInfoTemporalSettings": "Paramètres temporels",
+    "layerInfoTemporalInformation": "Informations temporelles",
     "layerInfoTemporalDimension": "Dimension temporelle (curseur temporel)",
     "layerInfoInteraction": "Interaction",
     "layerPath": "Chemin de la couche",
@@ -289,13 +297,19 @@
     "layerDataTableFilter": "Filtre du tableau de données : ",
     "layerTimeFilter": "Filtre curseur temporel : ",
     "layerPanelFilter": "Panneau de filtres : ",
-    "layerTemporalSettings": "Paramètres temporels: ",
     "layerDisplayDateFormat": "Format d'affichage: ",
     "layerDisplayDateFormatShort": "Format d'affichage (court): ",
     "layerDateTemporalMode": "Mode temporel: ",
     "layerDisplayDateTimezone": "Fuseau horaire: ",
     "layerTimeDimension": "Dimension temporelle (curseur temporel): ",
     "layerTimeDimensionField": "Champ",
+    "layerTimeDimensionRangeType": "Type de plage",
+    "layerTimeDimensionRangeTypeValues": "Valeurs de la plage",
+    "layerTimeDimensionRangeTypeMinMax": "Min/Max",
+    "layerTimeDimensionRangeDurationInterval": "Intervalle de durée",
+    "layerTimeDimensionRangeDurationIntervalSpec": "spec. ISO8601",
+    "layerTimeDimensionRangeDurationIntervalSpecNotSet": "Indéterminée",
+    "layerIsGroupDimension": "Fait partie d'une dimension de groupe",
     "layerServiceProjection": "Projection du service",
     "layerServiceProjectionAndMore": "et plus",
     "layerHoverable": "Information au survol de la souris",
@@ -470,7 +484,8 @@
     "letter": "Lettre",
     "legal": "Légal",
     "tabloid": "Tabloïd",
-    "previewAlt": "Aperçu de l'exportation de la carte"
+    "previewAlt": "Aperçu de l'exportation de la carte",
+    "loadingPreview": "Chargement de l'aperçu..."
   },
   "geolocator": {
     "title": "Géolocalisation",
@@ -500,11 +515,14 @@
     "details": "DÉTAILS",
     "exportBtn": "Télécharger",
     "downloadAsGeoJSONMessage": "Télécharger GeoJSON {{message}}",
+    "downloadAsGeoJSONProgress": "Téléchargement du GeoJSON pour « {{layerName}} »...",
+    "downloadAsGeoJSONProcessing": "Téléchargement du GeoJSON pour « {{layerName}} »... {{count}} sur {{total}} élément(s)",
     "downloadAsGeoJSON": "Télécharger GeoJSON",
     "downloadAsCSV": "Télécharger CSV",
     "filterMap": "Filtrer la carte",
     "stopFilterMap": "Arrêter le filtrage de la carte",
     "clearFilters": "Effacer les filtres",
+    "zoomToFilteredExtent": "Zoomer sur l'étendue filtrée",
     "rowsSelected": "{rowsSelected} sur {totalRows} ligne(s) sélectionnée(s)",
     "rowsFiltered": "{rowsFiltered} sur {totalRows} ligne(s) filtrée(s)",
     "enlargeBtn": "Agrandir",
@@ -536,7 +554,8 @@
   "filterPanel": {
     "errorRegistrationTimeout": "Erreur de délai d'attente du panneau de filtres : La couche '{{layerName}}' a mis trop de temps à s'enregistrer",
     "errorFilterPanelQuery": "Erreur de requête du panneau de filtres : La couche '{{layerName}}' n'a pas pu être interrogée",
-    "errorFilterPanelClear": "Erreur de nettoyage du panneau de filtres : La couche '{{layerName}}' n'a pas pu effacer les filtres"
+    "errorFilterPanelClear": "Erreur de nettoyage du panneau de filtres : La couche '{{layerName}}' n'a pas pu effacer les filtres",
+    "warningNoFilteredExtent": "Aucun élément ne correspond actuellement aux filtres actifs pour la couche '{{layerName}}' - rien à zoomer"
   },
   "guide": {
     "title": "Guide",
@@ -560,8 +579,12 @@
   },
   "footerBar": {
     "resizeTooltip": "Redimensionner",
+    "resizeAriaLabel": "Redimensionner le panneau de pied de page",
+    "footerPanelHeight": "Hauteur du panneau de pied de page",
+    "resizeValueText": "{{value}} %",
     "noTab": "Pas d'onglet",
-    "tabsLabel": "Onglets du panneau de pied de page"
+    "tabsLabel": "Onglets du panneau de pied de page",
+    "tabsSelectionLabel": "Sélection du panneau"
   },
   "toggleAll": {
     "show": "Afficher tout",
@@ -578,10 +601,19 @@
       "metadatasTakingLongTime": "Le téléchargement des métadonnées de certaines couches prend plus de temps que...",
       "vectorTileUnsupportedProjection": "La tuile vectorielle '{{layerName}}' ne supporte pas la projection de la carte, envisagez de désactiver sa visibilité.",
       "basemapLayerCreationError": "Erreur lors de la création de la couche de base {{basemapType}}.",
-      "kmlLayerWarning": "Les couches KML n'afficheront pas les symboles appropriés dans les panneaux et ne comporteront pas d'entrées dans le tableau de données.",
+      "kmlLayerWarning": "La couche KML '{{layerName}}' n'affichera pas les symboles appropriés dans les panneaux ni d'entrées dans le tableau de données.",
       "layerCRSNotSupported": "La référence spatiale de la carte '{{mapProj}}' n'est pas officiellement supportée par la couche '{{layerName}}'. GeoView va tout de même tenté d'afficher la couche, mais celle-ci risque d'être désalignée..",
+      "projectionNotValid": "La couche '{{layerName}}' déclare une projection '{{definedCRS}}' qui n'a pas pu être résolue (code EPSG introuvable). La couche pourrait tout de même s'afficher si la projection de la carte est supportée.",
       "invalidGeometry": "La couche '{{layerName}}' contient des entités dont la géométrie est invalide et qui ne s'afficheront pas sur la carte.",
-      "slowCoordinateInfo": "Les informations de coordonnées pour le point cliqué prennent plus de temps que prévu à être récupérées..."
+      "geometryTooComplexToHighlight": "L'entité sélectionnée comporte trop de sommets pour être mise en évidence sur la carte.",
+      "slowCoordinateInfo": "Les informations de coordonnées pour le point cliqué prennent plus de temps que prévu à être récupérées...",
+      "styleUrlNotApplied": "Le style de la couche '{{layerName}}' n'a pas pu être chargé. La couche est affichée avec le style par défaut."
+    },
+    "map": {
+      "invalidZoomExtent": "Impossible de zoomer, l'étendue fournie est invalide."
+    },
+    "config": {
+      "duplicatedPanels": "Le(s) panneau(x) '{{panels}}' ont été déclarés à la fois dans la barre d'application et dans la barre de pied de page; ils ont été retirés de la barre de pied de page afin de conserver une seule instance."
     },
     "schema": {
       "validationIssues": "Une erreur de configuration a été trouvée, vérifiez la console pour voir ce qui ne va pas."
@@ -593,9 +625,10 @@
       "overviewMapCreationError": "Erreur lors de la création de la couche de base de la carte d'aperçu."
     },
     "layer": {
-      "differingFieldLengths": "La longueur des champs fournis ne correspond pas pour la couche '{{layerPath}}'.",
+      "differingFieldLengths": "La longueur des champs fournis ne correspond pas pour la couche '{{layerNameOrPath}}'.",
       "layerConfigNotFound": "La configuration de la couche à l'emplacement '{{layerPath}}' est introuvable.",
       "layerNotFound": "La couche à l'emplacement '{{layerPath}}' est introuvable.",
+      "sourceNotLoaded": "Impossible de charger la source de données de la couche '{{layerName}}'.",
       "wfsConfigMissing": "La configuration de la couche vectorielle est manquante pour la couche à l'emplacement '{{layerPath}}'.",
       "wrongType": "La couche '{{layerNameOrPath}}' n'est pas du type attendu.",
       "statusWasError": "Le statut de la couche '{{layerNameOrId}}' était en 'erreur'.",
@@ -605,7 +638,7 @@
       "notAFeatureLayer": "L'identifiant de couche n'est pas une couche d'entités pour la couche '{{layerNameOrPath}}'.",
       "notQueryableLayer": "La couche '{{layerNameOrPath}}' n'est pas interrogeable.",
       "notAbleToQuery": "Impossible de téléchager les données pour '{{layerName}}'.",
-      "noWMSLegend": "Erreur lors de la récupération de la légende pour '{{layerName}}': '{{errorName}}'",
+      "noWMSLegend": "Erreur lors de la récupération de la légende pour '{{layerName}}': '{{errorName}}'.",
       "featureParsingError": "Impossible de lire les données d'entités pour la couche '{{layerNameOrId}}'.",
       "styleGeometryNotFound": "Le style pour la couche '{{layerName}}' et le type de géométrie '{{geomType}}' introuvable."
     },
@@ -618,9 +651,7 @@
       "mapWrongCall": "Div avec identifiant {{mapId}} a une classe 'geoview-map' et devrait être initialisé via un appel à 'cgpv.init()'.",
       "pluginError": "Une erreur majeure sur le Plugin '{{pluginId}}' sur la carte '{{mapId}}' est survenue.",
       "pluginConfigNotFound": "La configuration pour le Plugin '{{pluginId}}' sur la carte '{{mapId}}' au chemin d'accès '{{path}}' est introuvable.",
-      "pluginStateUninitialized": "L'état du Plugin '{{pluginId}}' sur la carte '{{mapId}}' n'est pas initialisé.",
-      "invalidZoomExtent": "Impossible de zoomer, l'étendue fournie est invalide.",
-      "loadingLayers": "Chargement des couches..."
+      "pluginStateUninitialized": "L'état du Plugin '{{pluginId}}' sur la carte '{{mapId}}' n'est pas initialisé."
     },
     "geocore": {
       "serviceFail": "Le service Geocore ne répond pas pour UUID '{{uuid}}'.",
