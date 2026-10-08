@@ -1,0 +1,62 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Add Layers Panel - Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link rel="stylesheet" href="css/style.css"/><style>li.source-link {
+        cursor: pointer;
+        color: #6082b6;
+      }
+
+      .sourceLinkCopied {
+        position: fixed;
+        top: 6px;
+        right: 6px;
+        background-color: darkblue;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        min-width: 150px;
+        text-align: center;
+        border-radius: 5px;
+        z-index: 1;
+      }</style><script src="cgpv-main.js"></script></head><body><select name="projections" id="projections"><option value="3857">Web Mercator (3857)</option><option value="3978">LCC (3978)</option></select> <button type="button" onclick="reloadMap()">Set Projection</button><div id="mapWM" class="geoview-map" data-lang="en" data-config="{
+        'map': {
+          'interaction': 'dynamic',
+          'viewSettings': {
+            'projection': 3857
+          },
+          'basemapOptions': {
+            'basemapId': 'transport',
+            'shaded': true,
+            'labeled': true
+          },
+          'listOfGeoviewLayerConfig': [
+          {
+            'geoviewLayerId': 'geojsonlyr1',
+            'geoviewLayerName': 'Multi Polygon Layer',
+            'geoviewLayerType': 'GeoJSON',
+            'metadataAccessPath': 'https://en-fr-test.r2.osdp.aws.nrcan-rncan.cloud/GeoJson/',
+            'listOfLayerEntryConfig': [
+              {
+                'layerId': 'NRCAN-FGP-1-15543ed6-2057-4f1f-88f9-d97b5c31e2c1_en.json',
+                'layerName': 'Multi Polygon Layer'
+              }
+            ]
+          }
+          ]
+        },
+        'theme': 'geo.ca',
+        'components': [],
+        'footerBar': {
+          'tabs': {
+            'core': ['legend', 'layers', 'details', 'data-table']
+          }
+        },
+        'corePackages': [],
+        'externalPackages': []
+      }"></div><hr/><button type="button" class="collapsible">Configuration Snippet</button><pre id="mapWMCS" class="panel"></pre><hr/><script src="codedoc.js"></script><script>// initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
+      cgpv.init((mapId) => {
+        // write some code ...
+      });
+
+      // create snippets
+      window.addEventListener('load', () => {
+        createCodeSnippet();
+        createConfigSnippet();
+      });</script></body></html>
