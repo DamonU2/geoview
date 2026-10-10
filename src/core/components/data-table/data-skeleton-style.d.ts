@@ -1,10 +1,10 @@
 import type { Theme } from '@mui/material/styles';
 import type { SxStyles } from '@/ui/style/types';
 /**
- * Gets custom sx classes for the layer settings components.
+ * Gets custom sx classes for the data table loading skeleton.
  *
  * @param theme - The MUI theme object
- * @returns The sx classes object for layer settings panel and sub-components
+ * @returns The sx classes object
  */
 export declare const getSxClasses: (theme: Theme) => SxStyles;
-//# sourceMappingURL=layer-settings-style.d.ts.map
+//# sourceMappingURL=data-skeleton-style.d.ts.map
