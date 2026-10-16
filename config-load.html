@@ -1,0 +1,563 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>Add Layers Panel - Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link rel="stylesheet" href="css/style.css"/><style>li.source-link {
+        cursor: pointer;
+        color: #6082b6;
+      }
+
+      .sourceLinkCopied {
+        position: fixed;
+        top: 6px;
+        right: 6px;
+        background-color: darkblue;
+        color: white;
+        padding: 16px;
+        font-size: 16px;
+        min-width: 150px;
+        text-align: center;
+        border-radius: 5px;
+        z-index: 1;
+      }</style><script src="cgpv-main.js"></script></head><body><div class="header-table"><table><tbody><tr><td><img class="header-logo" alt="logo" src="./img/Logo.png"/></td><td class="header-title"><h1><strong>Add Layers Panel</strong></h1></td></tr><tr><td><a href="./index.html">Main</a><br/><a href="#HUC1">Default Configuration</a><br/></td></tr></tbody></table><table><tbody><tr><td>This page is used to showcase loading "Layers Panel" with the ability to add various layer types.</td></tr></tbody></table></div><div class="map-title-holder"><h4 id="HUC1">1. Default Configuration</h4><a class="ref-link" href="#top">Top</a></div><select name="projections" id="projections"><option value="3857">Web Mercator (3857)</option><option value="3978">LCC (3978)</option></select> <button type="button" onclick="reloadMap()">Set Projection</button><div id="mapWM"></div><script src="codedoc.js"></script><script>const config = {
+        mapId: 'mapWM',
+        map: {
+          basemapOptions: {
+            basemapId: 'transport',
+            shaded: true,
+            labeled: true,
+          },
+          interaction: 'dynamic',
+          listOfGeoviewLayerConfig: [
+            {
+              geoviewLayerId: 'M02LXQFABEJUH',
+              geoviewLayerName: {
+                en: 'CSV',
+                fr: 'CSV',
+              },
+              geoviewLayerType: 'CSV',
+              initialSettings: {
+                states: {
+                  visible: true,
+                  opacity: 1,
+                  legendCollapsed: false,
+                  queryable: true,
+                  hoverable: true,
+                },
+                controls: {
+                  highlight: true,
+                  hover: true,
+                  opacity: true,
+                  query: true,
+                  remove: true,
+                  table: true,
+                  visibility: true,
+                  zoom: true,
+                },
+              },
+              listOfLayerEntryConfig: [
+                {
+                  layerId: 'M02LXQFABEJUH',
+                  layerName: {
+                    en: 'CSV',
+                    fr: 'CSV',
+                  },
+                  initialSettings: {
+                    states: {
+                      visible: true,
+                      opacity: 1,
+                      legendCollapsed: false,
+                      queryable: true,
+                      hoverable: true,
+                    },
+                    controls: {
+                      highlight: true,
+                      hover: true,
+                      opacity: true,
+                      query: true,
+                      remove: true,
+                      table: true,
+                      visibility: true,
+                      zoom: true,
+                    },
+                  },
+                  style: {
+                    Point: {
+                      styleType: 'simple',
+                      label: 'CSV',
+                      settings: {
+                        type: 'simpleSymbol',
+                        color: 'rgba(128,0,0,0.25)',
+                        stroke: {
+                          color: 'rgba(128,0,0,1)',
+                          lineStyle: 'solid',
+                          width: 1,
+                        },
+                        symbol: 'circle',
+                      },
+                    },
+                  },
+                  source: {
+                    dataAccessPath: {
+                      en: 'https://canadian-geospatial-platform.github.io/geoview/public/datasets/csv-files/Station_List_Minus_HQ-MELCC.csv',
+                      fr: 'https://canadian-geospatial-platform.github.io/geoview/public/datasets/csv-files/Station_List_Minus_HQ-MELCC.csv',
+                    },
+                    format: 'CSV',
+                    separator: ',',
+                    dataProjection: 'EPSG:4326',
+                  },
+                  listOfLayerEntryConfig: [],
+                },
+              ],
+            },
+            {
+              geoviewLayerId: 'M02LX772MJWMX',
+              geoviewLayerName: {
+                en: 'Historical Flood Events',
+                fr: 'Historical Flood Events',
+              },
+              geoviewLayerType: 'esriDynamic',
+              initialSettings: {
+                states: {
+                  visible: true,
+                  opacity: 1,
+                  legendCollapsed: true,
+                  queryable: true,
+                  hoverable: true,
+                },
+                controls: {
+                  highlight: true,
+                  hover: true,
+                  opacity: true,
+                  query: true,
+                  remove: true,
+                  table: true,
+                  visibility: true,
+                  zoom: true,
+                },
+                bounds: [-149.3114091510905, 36.06189253598374, -32.44739675856876, 63.69486395754804],
+              },
+              listOfLayerEntryConfig: [
+                {
+                  layerId: 0,
+                  layerName: {
+                    en: 'Historical Flood Events',
+                    fr: 'Historical Flood Events',
+                  },
+                  initialSettings: {
+                    states: {
+                      visible: true,
+                      opacity: 1,
+                      legendCollapsed: true,
+                      queryable: true,
+                      hoverable: true,
+                    },
+                    controls: {
+                      highlight: true,
+                      hover: true,
+                      opacity: true,
+                      query: true,
+                      remove: true,
+                      table: true,
+                      visibility: true,
+                      zoom: true,
+                    },
+                    bounds: [-149.3114091510905, 36.06189253598374, -32.44739675856876, 63.69486395754804],
+                  },
+                  style: {
+                    Point: {
+                      styleType: 'uniqueValue',
+                      defaultVisible: false,
+                      fields: ['flood_cause'],
+                      uniqueValueStyleInfo: [
+                        {
+                          label: 'freshet',
+                          visible: true,
+                          values: ['freshet'],
+                          settings: {
+                            type: 'iconSymbol',
+                            mimeType: 'image/png',
+                            src: 'iVBORw0KGgoAAAANSUhEUgAAAAwAAAAUCAYAAAC58NwRAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAZ1JREFUKJGV0UFLG0EUwPF/stqhcWnosoZuCFQQiqCeNm0991bQL5C9b25d9hOonyDEiyT37AdQz168BMxKIT1oQaiipgS6xdqRjpBsD0mr0S2xDwaGx/x4782b4D9j4s/FcHxb9vprAIr4wtC0etSohInAcHxXPjNrmC8gayKur5CdE1eUvFAF1eIIMBzflk8yNWYXIKMPshkdTAvaTdtwfDdqVOp/gaS/wnT+9vHdmF1AHuy6wC1QvdgSevbxQxuaFsqfl4MWHgOi+NeOOPsMuUJyW/cBwebFlOMX5cFui7fvYXJyDACiRiU0HL8sP+7VeP1uPBiiunC8PO3mKotL4wGAalTXRMlb5suhzczceACggmpRlLwWetYma4LQ83eX9wAAqFS8Lr593cK0YP6NJY8/1UTJc1VQLSYCeiwjng7uGR0Wl6DdtHE+rCQCkU7Z5AqjSesl4kfXTq7Qp8P11egiOyco4jB5hvRNWRzun1N4Bc9z8L0Ll92QYGM7ucJw+9HpkcvpEUJLdaZS6W3FP34JBtsHygBqeAB+A13uj5E0Bn/BAAAAAElFTkSuQmCC',
+                            rotation: 0,
+                            opacity: 1,
+                            offset: [0, 1],
+                          },
+                        },
+                        {
+                          label: 'heavy rain',
+                          visible: true,
+                          values: ['heavy rain'],
+                          settings: {
+                            type: 'iconSymbol',
+                            mimeType: 'image/png',
+                            src: 'iVBORw0KGgoAAAANSUhEUgAAAAwAAAAUCAYAAAC58NwRAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAATZJREFUKJGV0zFq3EAUxvGfYbEIW9gxIbAiTQo3gcAS4z4H0PoYs8dI9g5pdq7gUjlAUjgQjGCrNC5cxeoUkyJYlVLIBqGdxfbXzcf8Z97He2/imZqk7RiwwIyuOjrai00Tqh1ALMkLPuAF/pw0zc/A+oxlOQJi4Ljg48A7xEucrzEGLJgnSjzEfEYMY2CWzgSv0J3sCJ3SP1m2Vz8RqPGjmk63MyR0i+/oVk2zrB4BbnGBv2csS3Y27kEbWXazatv+8iPAN1x9bdvweejeA19y9gsO8v58jauKsBg/cw/sr5kXvNE36QLdKvXvpB+HvOB0YL/G7wLlFpBl8rZ9N7LfYxOw3AKmU2Xb/vrE24Fdo4vJkvo5jzWXsz7DHS7rfgeSGSDkfZbNgu5muDA7AAgREVIvP+g/tBRdQONprg8AAAAASUVORK5CYII=',
+                            rotation: 0,
+                            opacity: 1,
+                            offset: [0, 1],
+                          },
+                        },
+                        {
+                          label: 'coastal storm',
+                          visible: true,
+                          values: ['coastal storm'],
+                          settings: {
+                            type: 'iconSymbol',
+                            mimeType: 'image/png',
+                            src: 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAZpJREFUOI2t0sFKG0EYwPE/JNmvmmjjGk12C1oKrYc9KGxFEPIGyWusr+FrJK9h3iAQELun4qE9FcGdijAak7WdbRd6iDExMZpAv8McZr75zXwzX5b/HNmFsj3PFf02MFADXCDE7h5xfh4tDNp21dc6bVDe9WV5HTI5uNc1E51d4nnvhujcoJb0WMq7PsWt0eRKBXH3MdHZl4cbzwk6hyesvq89wcZQ8mVnUEE7fB20qwH5Uk02d+Y6+2Vw+6BOrtSQTQ8y1uy8P/doRyv0BGjbVT+WtG6s1AFaJJmGVD6ClZ+N3V5A0mtNf8r2QUPnSgFSRN6sYn7fBVLYgKW1aeTXDfw1mO4FxFeD1lHjJXueS78YiLP3WJqsVAYZaQJJDKaH6f+E+AogxEpDoIU6PRliI7Bf8Cm4U+9krr+D/qYegMjuWU3tdNV4I09GFsDuWZEmgo1Po5UkHmCq4w6n9OMwO7IAWrdD5DA06qsv6x8gTTC3Sgk0zcv7nwcBUJ3PmExg7n7UAUegZVTneEFvog91uwk0ARa92TD+Ad42mWPJer8DAAAAAElFTkSuQmCC',
+                            rotation: 0,
+                            opacity: 1,
+                            offset: [0, 1],
+                          },
+                        },
+                        {
+                          label: 'beaver dam failure',
+                          visible: true,
+                          values: ['beaver dam failure'],
+                          settings: {
+                            type: 'iconSymbol',
+                            mimeType: 'image/png',
+                            src: 'iVBORw0KGgoAAAANSUhEUgAAABYAAAALCAYAAAB7/H1+AAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAdVJREFUKJGlk79rE2EYxz/Xnv1h1MZKxUQRVERRFOUNOHRxcHCo/gG9vdBYhKqZk8yNFUo15PYLuJqMDi4uwWAnq5VUsM2d6ZF4Z42poZdzaC80zUUK/W7vw/N+3i/f53llDqnJ6bkwQDYd0/fW5f2NSjQlkPsF204RQHv1rOgH3O3LBE+FhWWWUR49z2svnz7wBSsz84nh4yPx0+FL2LWKVwPXzSNJOmDQauVc1zWQ+zO3xh+Kk6NnAPj88d2E8vjFB21hNtIBVqIpERw7G78eucfAwFCHu5+1HxPbf/+waVexa5W4ZZa5fHMcDwpw9fZdjO9fRLdjSUqcu3CtCwq0AWOhi36pANBsbgE7mWfTMV32DoGRUfG/i57qdYvK2lc29BI37twnEAgCsGGUAFRviDLsTFSZmQ81m1u+jj2Zxiql5QKNTVulT8oX3r7OhM5fCTUav7GqetF1nGR3FKDaVX3Kz7VprLL+7ROWWVZptdQ9m5JToikB3dvTBruOkywtF6bkwaPtTOt1i7WVJYz1lSKQ1Baf5PY/2msd2+BsOqYr0VRk6f2bzHDghBgcOoZllg36pIS2MKv2zKeHOvZ49/XI5PRcuHHkl3Adp5hd7PxRB9U/CxrBv2db0NUAAAAASUVORK5CYII=',
+                            rotation: 0,
+                            opacity: 1,
+                            offset: [0, 1.1],
+                          },
+                        },
+                        {
+                          label: 'frazil',
+                          visible: true,
+                          values: ['frazil'],
+                          settings: {
+                            type: 'iconSymbol',
+                            mimeType: 'image/png',
+                            src: 'iVBORw0KGgoAAAANSUhEUgAAABQAAAAPCAYAAADkmO9VAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAedJREFUOI2tlL9vEmEYxz9YuCNA0R42eDeUkDjZ+POa6NKpK/BnYHIyQldgLTfSS8qfAVMXHXRw6CWaQBjsUAfvNJG3QksqxXAOpQgGlTY+25P3m8/7PN/3eV4//zn804limboMafCygCrh1SIjX7mVKzhXBiZ2zTSxlXpAjbO0GsMvSQw+uVnRbKcB7crAc59XjD64hz8SnhzKyTUAVbUqB65R2FgYOK5On4ZNQ4ffunrC2tn7aGw/Xwh44kNV1PgfRZHH9zk9+55VLdN1jXzpn0DAHrpfLlucD914hHj9tqhYZkMYefuvQGHkbdmq2APnsy5rd+YrpQDK5jPE/suDxK6ZOfGhyqApI682PQWTR1FGZIT9vk63pxMMsrQauxBM+yoFCOsP6bc/1BUtDsEgotkuqpZZvrRiAmzlCs56tZJxD49SMmjgpQCNUEiVlFsEgjLcjCLfjiFv/epCTq4hGvsTK2YGe1x6bZyWANarFe20f6YLH+oyI70fCmeVrc0ZN8J3kwwOj3RgFjgvxpc4AAJQrR3tR+c45Y+tTDTD4y7LHq7gt9VbLG7YvXfNVPTpk4tt+trhvCNs90WhwXWArpEvKZbp9F69KQGOhGcrI1/ZHZ9fo0IQRr4G1NarFa2V2575OH4C5EivMBEK4u8AAAAASUVORK5CYII=',
+                            rotation: 0,
+                            opacity: 1,
+                            offset: [0, 1],
+                          },
+                        },
+                        {
+                          label: 'dam failure',
+                          visible: true,
+                          values: ['dam failure'],
+                          settings: {
+                            type: 'iconSymbol',
+                            mimeType: 'image/png',
+                            src: 'iVBORw0KGgoAAAANSUhEUgAAAAoAAAAWCAYAAAD5Jg1dAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAYRJREFUKJGNkkFqwkAYhZ8wCYREFwaibUHwBC6mx4inGJgwp2h7ipDBOUWv0SxnrbgwxrXhX412UTJUU6FvN8PH//73+Bn+KXb/oZR6Lsvy8BBUSj07596cc1JKCQBaa10MQOdctVgs8vF4jCiKcDqdZFEUvKqqVw8KIXgYhnmWZd4qyzLs93suhODGmJoBQBiGTRiGgwBJkoCIGj+xLMuDlBJEhCiKAABEhPP53GitD/c7vlprv1arFQDAWttcLpdhGGNMXRRFTUQ8CAKMRqPDZrP5HIBCCB4EAZ9MJgCA6/XKf3fqQcYYn06nPsh8PkfbtjkAfQMCkGma+keapmjbVt6AQggexzHvEwNAFEWI4/i2R8bYOkmSP3vsuo4DqHvr/Ldtr9lshuPx+A5As79sewVBgCRJnoQQfHBmj8SMMbWUsiGip/upRISu62ofxjm3ttZ+LZdL9IUTEXa7HZxzH74eY0ytlHrZbrcVgBxAA6B2zr0bY2oPAj8XBGD9cMf/hvkGoEqq8MohyswAAAAASUVORK5CYII=',
+                            rotation: 0,
+                            opacity: 1,
+                            offset: [0, 1],
+                          },
+                        },
+                        {
+                          label: 'municipal water main break',
+                          visible: true,
+                          values: ['municipal water main break'],
+                          settings: {
+                            type: 'iconSymbol',
+                            mimeType: 'image/png',
+                            src: 'iVBORw0KGgoAAAANSUhEUgAAABAAAAATCAYAAACZZ43PAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAdZJREFUOI2lk1Fq20AURS+1IssdWSoFG6SWNgbTUB6k0AnMl3fQdBnSMpIsI16GnR0YCoLqc0ooDQlEkYyVEORK2G6S0g8lSkKlqqXvb95jzhzuzCj4z1IeLkiIbaRqKOXE/ycAEdnQ9ZHZMjhaAHERYalu/w0oN9D1Uf/1G86YDgDIstT6dvR1DMCuBRCRrTVaxWYAYEyH2TYsogGvs1AAYLla1B1UDZBShsTFMJ6FTqd7b8zYUySL+T4RfZRShn80kL7nQggeTqfcbBuwXrxEp2tD1Rg/OTk6Iy6G0vfcSgAASM/bIiI7UcBXx8ejjY23MA0T7zbfI56FDrhwoMCVnjcsBQDArWpIQvhZlhbBdro2jGfPEZ0F+ySEg1R178J9BCjqunEQz6ac9fpFq6lqWO/1kWUpD4LTz0SDLSknfilA+p92iYudshljOtZ7PRwefhkDsMsNAOAGB8k8+WAa5m+jpqpBa7YsogGvBlypu5cXcSkgh6xhiZuKDABIOfGJC1z/vILyZO3RLMtSJIu5L6VXnsF9NfZm02jHtl8VndWPJYLgFAD2gKpbuLPIw7Ti83PHbBsAgOT7PLp9D+NaQA7xXAAu0YDnnTR6+LRrAQWo4lf+AvrcuXixUUmWAAAAAElFTkSuQmCC',
+                            rotation: 0,
+                            opacity: 1,
+                            offset: [0, 1],
+                          },
+                        },
+                        {
+                          label: 'unknown',
+                          visible: true,
+                          values: ['unknown'],
+                          settings: {
+                            type: 'iconSymbol',
+                            mimeType: 'image/png',
+                            src: 'iVBORw0KGgoAAAANSUhEUgAAABAAAAATCAYAAACZZ43PAAAAAXNSR0IB2cksfwAAAAlwSFlzAAAOxAAADsQBlSsOGwAAAdxJREFUOI2lk81qE1EYhp/MDNGUpjSOf5kWRdpCQXQzIl5E6z2UkXSTGigkZKfL4oDQOpsMHXIR7UVUYTZKV4kugiRCc1pNSppJmIyLmpA0E2PxXZ5z3uf7zvudo/CfUq5zeH9ve10OotWNzI57LUBxN6/3ZL+gJuI6gGNlXcmXNzcyO+4/AXqyX3jx/LGuqnMACNHQjz4dF4BnUwH7e9vraiI+MAOo6hwzsRu6Y+W0qQA5iFavrnW8LgCSLyX/Ciju5vWe5L+dn4+PmKu1Oq2WZxsZMzwDx8ppEKzdjCmF5P17rK4+RIgGpVKFi3aHVsuzpZ5sQ8gUHCubgiC19EjTFxfvMjsbA6BUqlAXP1/KQbRqZMzxMfbbVRPxtZWVBwyHJkQDcdZ0X71+f3C1oAKXSd+6Ey8sLy0kh419nZycARyGXVcBiEjym0nmjtfl67cqUk8eqw6gOFZOm4lF9TAzQF38Ajgcfr4jACP9rup8yIaaASqVHwSBb0/avwwxgitEY6yLjtdFnDZrYeGNAsD+/KVcePpkeZD++fkF5fJ3gInmAcBIm3ZxN+8efTw+WNBuJwHabQ9x2rSNLXNzKgDgT0iaY2VTQc+vRSTFNbbMsX8wEdCXkTYnBham3xrcuVoF1oT4AAAAAElFTkSuQmCC',
+                            rotation: 0,
+                            opacity: 1,
+                            offset: [0, 1],
+                          },
+                        },
+                      ],
+                    },
+                  },
+                  source: {
+                    dataAccessPath: {
+                      en: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/historical_flood_event_en/MapServer',
+                      fr: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/historical_flood_event_en/MapServer',
+                    },
+                  },
+                  listOfLayerEntryConfig: [],
+                },
+              ],
+              metadataAccessPath: {
+                en: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/historical_flood_event_en/MapServer',
+                fr: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/historical_flood_event_en/MapServer',
+              },
+              serviceDateFormat: 'DD/MM/YYYY HH:MM:SSZ',
+            },
+            {
+              geoviewLayerId: 'M02LWV0MGNSXJ',
+              geoviewLayerName: {
+                en: 'Location of mill facilities',
+                fr: 'Location of mill facilities',
+              },
+              geoviewLayerType: 'esriFeature',
+              initialSettings: {
+                states: {
+                  visible: true,
+                  opacity: 1,
+                  legendCollapsed: false,
+                  queryable: true,
+                  hoverable: true,
+                },
+                controls: {
+                  highlight: true,
+                  hover: true,
+                  opacity: true,
+                  query: true,
+                  remove: true,
+                  table: true,
+                  visibility: true,
+                  zoom: true,
+                },
+                bounds: [-133.91155461898288, 37.79293542412239, -49.26275318309816, 55.1898710257852],
+              },
+              listOfLayerEntryConfig: [
+                {
+                  layerId: 0,
+                  layerName: {
+                    en: 'Location of mill facilities',
+                    fr: 'Location of mill facilities',
+                  },
+                  initialSettings: {
+                    states: {
+                      visible: true,
+                      opacity: 1,
+                      legendCollapsed: false,
+                      queryable: true,
+                      hoverable: true,
+                    },
+                    controls: {
+                      highlight: true,
+                      hover: true,
+                      opacity: true,
+                      query: true,
+                      remove: true,
+                      table: true,
+                      visibility: true,
+                      zoom: true,
+                    },
+                    bounds: [-133.91155461898288, 37.79293542412239, -49.26275318309816, 55.1898710257852],
+                  },
+                  style: {
+                    Point: {
+                      styleType: 'simple',
+                      label: 'Mills',
+                      settings: {
+                        type: 'simpleSymbol',
+                        rotation: 0,
+                        color: 'rgba(0,0,0,1)',
+                        stroke: {
+                          color: 'rgba(0,0,0,1)',
+                          lineStyle: 'solid',
+                          width: 1,
+                        },
+                        size: 2.3345000000000002,
+                        symbol: 'circle',
+                        offset: [0, 0],
+                      },
+                    },
+                  },
+                  source: {
+                    format: 'EsriJSON',
+                    dataAccessPath: {
+                      en: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/forest_industry_hotspots_en/MapServer',
+                      fr: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/forest_industry_hotspots_en/MapServer',
+                    },
+                  },
+                  listOfLayerEntryConfig: [],
+                },
+              ],
+              metadataAccessPath: {
+                en: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/forest_industry_hotspots_en/MapServer',
+                fr: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/NRCan/forest_industry_hotspots_en/MapServer',
+              },
+            },
+            {
+              geoviewLayerId: 'rcs.21b821cf-0f1c-40ee-8925-eab12d357668.en',
+              geoviewLayerName: {
+                en: 'Airborne Radioactivity',
+                fr: 'Airborne Radioactivity',
+              },
+              geoviewLayerType: 'esriDynamic',
+              initialSettings: {
+                states: {
+                  visible: true,
+                  opacity: 1,
+                  legendCollapsed: true,
+                  queryable: true,
+                  hoverable: true,
+                },
+                controls: {
+                  highlight: true,
+                  hover: true,
+                  opacity: true,
+                  query: true,
+                  remove: true,
+                  table: true,
+                  visibility: true,
+                  zoom: true,
+                },
+              },
+              isTimeAware: false,
+              listOfLayerEntryConfig: [
+                {
+                  layerId: '1',
+                  layerName: {
+                    en: 'Airborne Radioactivity',
+                    fr: 'Airborne Radioactivity',
+                  },
+                  initialSettings: {
+                    states: {
+                      visible: true,
+                      opacity: 1,
+                      legendCollapsed: false,
+                      queryable: true,
+                      hoverable: true,
+                    },
+                    controls: {
+                      highlight: true,
+                      hover: true,
+                      opacity: true,
+                      query: true,
+                      remove: true,
+                      table: true,
+                      visibility: true,
+                      zoom: true,
+                    },
+                    bounds: [-172.29067651136063, 38.329252882592876, -16.386190903342257, 69.30225949153494],
+                  },
+                  style: {
+                    Point: {
+                      styleType: 'simple',
+                      label: '',
+                      settings: {
+                        type: 'iconSymbol',
+                        mimeType: 'image/png',
+                        src: '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',
+                        rotation: 0,
+                        opacity: 1,
+                        offset: [0, 0],
+                      },
+                    },
+                  },
+                  source: {
+                    dataAccessPath: {
+                      en: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/airborne_radioactivity_en/MapServer',
+                      fr: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/airborne_radioactivity_en/MapServer',
+                    },
+                  },
+                  listOfLayerEntryConfig: [],
+                },
+                {
+                  layerId: '2',
+                  layerName: {
+                    en: 'Station location range',
+                    fr: 'Station location range',
+                  },
+                  initialSettings: {
+                    states: {
+                      visible: true,
+                      opacity: 1,
+                      legendCollapsed: false,
+                      queryable: true,
+                      hoverable: true,
+                    },
+                    controls: {
+                      highlight: true,
+                      hover: true,
+                      opacity: true,
+                      query: true,
+                      remove: true,
+                      table: true,
+                      visibility: true,
+                      zoom: true,
+                    },
+                    bounds: [-172.29067651136063, 38.329252882592876, -16.386190903342257, 69.30225949153494],
+                  },
+                  style: {
+                    Polygon: {
+                      styleType: 'simple',
+                      label: '',
+                      settings: {
+                        type: 'filledPolygon',
+                        color: 'rgba(130,130,130,1)',
+                        stroke: {
+                          color: 'rgba(130,130,130,1)',
+                          lineStyle: 'solid',
+                          width: 3,
+                        },
+                        fillStyle: 'backwardDiagonal',
+                      },
+                    },
+                  },
+                  source: {
+                    dataAccessPath: {
+                      en: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/airborne_radioactivity_en/MapServer',
+                      fr: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/airborne_radioactivity_en/MapServer',
+                    },
+                  },
+                  listOfLayerEntryConfig: [],
+                },
+              ],
+              metadataAccessPath: {
+                en: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/airborne_radioactivity_en/MapServer',
+                fr: 'https://maps-cartes.services.geo.ca/server_serveur/rest/services/HC/airborne_radioactivity_en/MapServer',
+              },
+              serviceDateFormat: 'DD/MM/YYYY HH:MM:SSZ',
+            },
+          ],
+          highlightColor: 'black',
+          viewSettings: {
+            initialView: {
+              zoomAndCenter: [5.519541132767813, [-91.63870248110355, 59.14021420364438]],
+            },
+            enableRotation: true,
+            rotation: 0,
+            minZoom: 0,
+            maxZoom: 50,
+            maxExtent: [-170, 35, -20, 84],
+            projection: 3857,
+          },
+        },
+        theme: 'geo.ca',
+        navBar: ['zoom', 'fullscreen', 'home', 'basemap-select'],
+        footerBar: {
+          tabs: {
+            core: ['legend', 'layers', 'details', 'data-table', 'geochart', 'time-slider'],
+          },
+          selectedTab: 'legend',
+          collapsed: false,
+        },
+        appBar: {
+          tabs: {
+            core: ['legend', 'layers', 'details', 'data-table', 'geochart'],
+          },
+          selectedTab: '',
+          collapsed: false,
+        },
+        overviewMap: {
+          hideOnZoom: 0,
+        },
+        components: [],
+        corePackages: [],
+        externalPackages: [],
+        serviceUrls: {
+          geocoreUrl: 'https://geocore.api.geo.ca',
+          geolocator: 'https://geolocator.api.geo.ca?keys=geonames,nominatim,locate',
+          proxyUrl: 'https://maps.canada.ca/wmsproxy/ws/wmsproxy/executeFromProxy',
+        },
+        schemaVersionUsed: '1.0',
+      };
+      cgpv.api.createMapFromConfig('mapWM', JSON.stringify(config));
+      // initialize cgpv and api events, a callback is optional, used if calling api's after the rendering is ready
+      cgpv.init((mapId) => {});
+
+      // create snippets
+      window.addEventListener('load', () => {
+        createCodeSnippet();
+        createConfigSnippet();
+      });</script></body></html>
