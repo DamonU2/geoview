@@ -33,6 +33,13 @@ export type RGBA = [r: number, g: number, b: number, a: number];
  */
 export declare function range(start: number, end: number, step?: number): number[];
 /**
+ * Normalizes a value to an array.
+ *
+ * @param value - The value to normalize
+ * @returns The value as an array
+ */
+export declare function toArray<T>(value: T | T[]): T[];
+/**
  * Converts a string to camelCase.
  *
  * Replaces hyphens (`-`), underscores (`_`), and spaces with capitalization
@@ -160,14 +167,21 @@ export declare function deepMergeObjects<T>(...objects: unknown[]): T;
  * @param str - The object to test
  * @returns true if the object is numeric, false otherwise
  */
-export declare function isNumeric(str: string): boolean;
+export declare function isNumeric(str: string | undefined): boolean;
 /**
  * Check if an object is empty.
  *
  * @param obj - The object to test
- * @returns true if the object is empty, false otherwise
+ * @returns true if the object is nullish or has no enumerable properties, false otherwise
  */
-export declare function isObjectEmpty(obj: object): boolean;
+export declare function isObjectEmpty(obj: object | undefined | null): boolean;
+/**
+ * Checks if an object is defined and has enumerable properties.
+ *
+ * @param obj - The object to test
+ * @returns Whether the object is defined and non-empty
+ */
+export declare function isObjectNonEmpty<T extends object>(obj: T | undefined | null): obj is T;
 /**
  * Get the URL of main script cgpv-main so we can access the assets.
  *
