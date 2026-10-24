@@ -35,6 +35,33 @@ export type TypeMapFeaturesInstance = {
 };
 /** An array of numbers representing an extent: `[minx, miny, maxx, maxy]`; kept as `Array<number>` to align with OpenLayers' Extent type. */
 export type Extent = Array<number>;
+/** Boundary samples in [longitude, latitude] degrees, labelled by screen position rather than geographic direction. */
+export interface TypeViewportBoundaryLonLat {
+    /** Corners of the viewport rectangle excluding OL View padding. */
+    corners: {
+        /** Top-left corner. */
+        nw: Coordinate;
+        /** Top-right corner. */
+        ne: Coordinate;
+        /** Bottom-right corner. */
+        se: Coordinate;
+        /** Bottom-left corner. */
+        sw: Coordinate;
+    };
+    /** Edge midpoints of the viewport rectangle excluding OL View padding. */
+    midpoints: {
+        /** Top edge midpoint. */
+        n: Coordinate;
+        /** Right edge midpoint. */
+        e: Coordinate;
+        /** Bottom edge midpoint. */
+        s: Coordinate;
+        /** Left edge midpoint. */
+        w: Coordinate;
+    };
+    /** Four [longitude, latitude] pairs in west, south, east, north screen-edge order, not a numeric bbox. */
+    midpointWSENCoords: Coordinate[];
+}
 /** ISO 639-1 language code prefix. */
 export type TypeDisplayLanguage = 'en' | 'fr';
 /** Constante mainly use for language validation. */
@@ -476,7 +503,8 @@ export type TypeOutfields = {
     /** Display alias for the field. */
     alias: string;
     /** Field data type. */
-    type: TypeOutfieldsType;
+    type?: TypeOutfieldsType;
+    /** Field domain */
     domain?: TypeDomain;
     /** Whether this field appears in summary views. Default = true. */
     summary?: boolean;
@@ -687,6 +715,8 @@ export interface TypeLineStringVectorConfig extends TypeBaseVectorGeometryConfig
     type: 'lineString';
     /** Line stroke symbology */
     stroke: TypeStrokeSymbolConfig;
+    /** Additional line strokes rendered over the primary stroke. */
+    additionalStrokes?: TypeStrokeSymbolConfig[];
     /** The additional graphic stroke symbology for special strokes */
     graphicStrokes?: GraphicStrokeWithPlacement[];
     /** The text / label settings */
@@ -833,8 +863,6 @@ export type TypeFeatureInfoEntry = {
     featureKey: number;
     /** Geoview layer type that produced the result. */
     geoviewLayerType: TypeGeoviewLayerType;
-    /** Whether the feature supports zooming. */
-    supportZoomTo: boolean;
     /** Optional feature identifier from the source. */
     uid?: string;
     /** Optional OpenLayers feature. */
