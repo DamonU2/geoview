@@ -300,6 +300,14 @@ export declare abstract class GeoUtilities {
      */
     static isVectorLegend(verifyIfLegend: TypeLegend, schemaTag: TypeGeoviewLayerType): verifyIfLegend is TypeVectorLegend;
     /**
+     * Extracts a scalar time position from a parsed GML temporal value.
+     *
+     * @param feature - Feature containing the date field.
+     * @param fieldName - Name of the date field to read.
+     * @returns A date-compatible value, or its string representation when the value is an unsupported object
+     */
+    static readFeatureField(feature: Feature, fieldName: string): unknown;
+    /**
      * Returns the WKT representation of a given geometry.
      *
      * @param geometry - The geometry
@@ -515,6 +523,13 @@ export declare abstract class GeoUtilities {
      */
     static isExtentLonLat(extent: Extent): boolean;
     /**
+     * Checks if a given coordinate is a valid longitude/latitude pair.
+     *
+     * @param coord - The coordinate to check
+     * @returns Whether or not the coordinate is valid
+     */
+    static isValidLonLatCoord(coord: Coordinate | number[]): boolean;
+    /**
      * Gets the area of a given geometry.
      *
      * @param geometry - The geometry to calculate the area
@@ -593,13 +608,20 @@ export declare abstract class GeoUtilities {
      */
     static writeGeometryToGML(geometry: Geometry, srsName: string, gmlNamespace: string): string;
     /**
+     * Determines whether a field type represents a GML geometry property.
+     *
+     * @param fieldType - The field type string to inspect
+     * @returns `true` if the field type is a GML geometry type; otherwise, `false`
+     */
+    static isGmlGeometryField(fieldType: string | undefined): boolean;
+    /**
      * Converts a WFS geometry type string to a TypeStyleGeometry.
      *
      * @param wfsGeometryType - The wfs geometry type to convert
      * @returns The corresponding TypeStyleGeometry
      * @throws {NotSupportedError} When the geometry type is not supported
      */
-    static wfsConvertGeometryTypeToOLGeometryType(wfsGeometryType: string): TypeStyleGeometry;
+    static wfsConvertGeometryTypeToOLGeometryType(wfsGeometryType: string | undefined): TypeStyleGeometry;
     /**
      * Converts an esri geometry type string to a TypeStyleGeometry.
      *
@@ -607,7 +629,7 @@ export declare abstract class GeoUtilities {
      * @returns The corresponding TypeStyleGeometry
      * @throws {NotSupportedError} When the geometry type is not supported
      */
-    static esriConvertEsriGeometryTypeToOLGeometryType(esriGeometryType: string): TypeStyleGeometry;
+    static esriConvertEsriGeometryTypeToOLGeometryType(esriGeometryType: string | undefined): TypeStyleGeometry;
 }
 /** Result from a fetch operation that may have required a proxy fallback. */
 export type FetchWithProxyResult<T> = {
