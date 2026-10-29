@@ -2,6 +2,11 @@
 
 Welcome to the GeoView documentation! This documentation is organized by audience and use case.
 
+## For Evaluators and Integrators
+
+- [Where GeoView fits](app/geoview-comparison.md) explains four geospatial product categories and their trade-offs, links to representative examples, and helps you choose a standalone viewer, portal integration, or another approach.
+- [GeoView capabilities](app/geoview-capabilities.md) highlights supported data, exploration tools, optional packages, HTML/API customization, accessibility support, and deployment considerations.
+
 ## 📖 For GeoView Users (API Documentation)
 
 > **🔍 Something not working?** See the **[Troubleshooting Guide](app/ui/troubleshooting.md)** for how GeoView reports errors and what to do when things go wrong.
@@ -26,6 +31,7 @@ Complete API reference for interacting with GeoView:
 Layer types, configuration, and management:
 
 - **[Layers Overview](app/layers/layers.md)** - Layer types, configuration, and concepts
+- **[OGC Raster and Vector Interoperability](app/layers/ogc-raster-vector-interoperability.md)** - Associate WMS layers with WFS or OGC API Features records and styles
 - **[Layer Sets](app/layers/layersets.md)** - Layer set architecture and management
 
 ### Events
@@ -99,6 +105,8 @@ Best practices and patterns for contributing to GeoView core:
 - **[Adding Layer Types](programming/adding-layer-types.md)** - Implementing new layer types
 - **[Logging](programming/logging.md)** - Logging standards and practices
 - **[Object-Oriented Patterns](programming/object-oriented.md)** - OOP patterns in GeoView
+- **[Dependency Management](programming/dependency-management.md)** - Toolchain, dependency updates and security audits
+- **[CI Workflows](programming/ci-workflows.md)** - GitHub Actions builds, deployment and type publication
 - **[Using AI Assistants](programming/using-ai.md)** - Copilot agents, skills, instructions and CLI for this repo
 
 ## 🔌 For Packages & Extension Developers
@@ -125,7 +133,7 @@ Guides for extending GeoView functionality:
 
 ### UI & Theming
 
-- **[Accessibility](./app/accessibility.md)** - WCAG compliance and accessibility features
+- **[Accessibility](./app/accessibility.md)** - Accessibility features, interaction patterns, and documented limitations
 - **[Theming](./app/ui/theming.md)** - UI themes and styling
 - **[Troubleshooting](./app/ui/troubleshooting.md)** - Error messages, notifications, and what to do when something goes wrong
 

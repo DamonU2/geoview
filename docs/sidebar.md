@@ -4,6 +4,8 @@
 
 - **Getting Started**
   - [Documentation Overview](README.md)
+  - [Where GeoView Fits](app/geoview-comparison.md)
+  - [GeoView Capabilities](app/geoview-capabilities.md)
 
 - **Configuration**
   - [Creating Maps](app/config/create-map.md)
@@ -19,6 +21,7 @@
 
 - **Layers**
   - [Layers Guide](app/layers/layers.md)
+  - [OGC Raster and Vector Interoperability](app/layers/ogc-raster-vector-interoperability.md)
   - [Layer Sets](app/layers/layersets.md)
 
 - **Events**
@@ -67,6 +70,8 @@
   - [Notifications](programming/notifications.md)
   - [Object Oriented](programming/object-oriented.md)
   - [Troubleshooting](programming/troubleshooting.md)
+  - [Dependency Management](programming/dependency-management.md)
+  - [CI Workflows](programming/ci-workflows.md)
   - [Using AI Assistants](programming/using-ai.md)
 
 - **TypeDoc API**
