@@ -135,10 +135,9 @@ export declare abstract class GeoviewRenderer {
     /**
      * Loads the image of an icon that compose the legend.
      *
-     * This is an alternate method of loadImage because the latter had some issues? See the GV comments in the callers. Refactor them together?
-     *
      * @param src - Source information (base64 image) of the image to load
-     * @returns A promise that resolves with the loaded image, or null if loading fails
+     * @returns A promise that resolves with the loaded image
+     * @throws {Error} When the image fails to load
      */
     static loadImageFromDataUrl(src: string): Promise<HTMLImageElement>;
     /**
