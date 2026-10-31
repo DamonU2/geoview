@@ -338,6 +338,20 @@ export declare abstract class GeoUtilities {
      */
     static isGeoJSONObject(value: any): boolean;
     /**
+     * Collects every position of a GeoJSON geometry, including the members of a GeometryCollection.
+     *
+     * @param geometry - The GeoJSON geometry value to read
+     * @returns The 2D positions of the geometry, or an empty array when the value is not a GeoJSON geometry
+     */
+    static getGeoJsonCoordinates(geometry: unknown): Coordinate[];
+    /**
+     * Extracts polygons from GeoJSON Polygon, MultiPolygon, or GeometryCollection values.
+     *
+     * @param geometry - GeoJSON geometry value
+     * @returns Polygons as arrays of valid rings, in the GeoJSON coordinate order
+     */
+    static getGeoJsonPolygons(geometry: unknown): [number, number][][][];
+    /**
      * Extracts the EPSG code from a GeoJSON object's CRS definition.
      *
      * Accepts either a GeoJSON object or a JSON string. If the GeoJSON contains
@@ -523,12 +537,26 @@ export declare abstract class GeoUtilities {
      */
     static isExtentLonLat(extent: Extent): boolean;
     /**
+     * Converts a 2D or 3D GeoJSON bbox to a 2D extent.
+     *
+     * @param bbox - A bbox ordered as [minX, minY, maxX, maxY] or [minX, minY, minZ, maxX, maxY, maxZ]
+     * @returns The 2D extent [minX, minY, maxX, maxY], or undefined when the bbox length is unsupported
+     */
+    static bboxToExtent2D(bbox?: number[]): [number, number, number, number] | undefined;
+    /**
      * Checks if a given coordinate is a valid longitude/latitude pair.
      *
      * @param coord - The coordinate to check
      * @returns Whether or not the coordinate is valid
      */
     static isValidLonLatCoord(coord: Coordinate | number[]): boolean;
+    /**
+     * Checks if a given coordinate is an unwrapped longitude/latitude pair.
+     *
+     * @param coord - The coordinate to check
+     * @returns Whether or not the coordinate is unwrapped
+     */
+    static isUnwrappedLonLatCoord(coord: Coordinate | number[]): boolean;
     /**
      * Gets the area of a given geometry.
      *

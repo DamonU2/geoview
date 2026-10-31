@@ -1,7 +1,10 @@
 import type { Root } from 'react-dom/client';
+import linkifyHtml from 'linkify-html';
+import type { Style as WebGLTileStyle } from 'ol/layer/WebGLTile';
 import type { TypeDisplayLanguage } from '@/api/types/map-schema-types';
 import type { TypeGuideObject } from '@/core/stores/states/app-state';
 import type { TypeHTMLElement } from '@/core/types/global-types';
+export { isLocalhost, formatDuration } from '@/core/utils/runtime-utilities';
 /** Result of a URL reachability ping check. */
 export type PingResult = {
     /** Whether the URL has valid syntax. */
@@ -261,6 +264,15 @@ export declare function validateAndPingUrlOGC(targetUrl: string, configProxyUrl?
  */
 export declare function extractGeotiffColorMap(url: string): Promise<RGBA[] | undefined>;
 /**
+ * Builds a WebGLTile style that renders band 1 through an embedded GeoTIFF color palette.
+ *
+ * The nodata index (0) is made fully transparent so that pixels outside the data extent do not render as a solid color.
+ *
+ * @param palette - Array of RGBA color tuples from the GeoTIFF color map
+ * @returns The WebGLTile style using the OpenLayers palette expression
+ */
+export declare function getGeotiffPaletteStyle(palette: RGBA[]): WebGLTileStyle;
+/**
  * Set alpha for a color.
  *
  * @param colorArray - The array of color numbers
@@ -342,6 +354,15 @@ export declare function containsHtmlTags(text: string): boolean;
  */
 export declare function enhanceLinksAccessibility(html: string, announcementText: string): string;
 /**
+ * Converts URLs in text to accessible external links and sanitizes the resulting HTML.
+ *
+ * @param content - Plain text content that may contain URLs
+ * @param announcementText - Screen reader announcement for links opening in a new tab
+ * @param options - Optional caller-specific link display options
+ * @returns Sanitized HTML with URLs rendered as accessible links
+ */
+export declare function linkifyAndSanitizeHtml(content: string, announcementText: string, options?: Parameters<typeof linkifyHtml>[1]): string;
+/**
  * Sets up a MutationObserver to monitor when a specific DOM element (e.g., a div container)
  * is removed from the document.
  *
@@ -359,16 +380,26 @@ export declare function watchHtmlElementRemoval(key: string, element: HTMLElemen
  * `requestFullscreen()` API first, then falling back to vendor-prefixed
  * versions for Safari, IE11, and Firefox.
  * Any errors from the standard promise-based fullscreen request are caught
- * and logged using `logger.logPromiseFailed`.
+ * and logged using `logger.logPromiseFailed`, then propagated to the caller.
  *
  * @param element - The element to display in fullscreen mode
+ * @returns A promise that resolves when the fullscreen request succeeds
  */
-export declare function requestFullscreen(element: TypeHTMLElement): void;
+export declare function requestFullscreen(element: TypeHTMLElement): Promise<void>;
+/**
+ * Gets the element currently displayed in fullscreen mode, if any.
+ *
+ * Uses the standard `document.fullscreenElement` and falls back to vendor-prefixed versions for Safari, IE11, and Firefox.
+ *
+ * @returns The fullscreen element, or undefined when the document is not in fullscreen
+ */
+export declare function getFullscreenElement(): Element | undefined;
 /**
  * Exits fullscreen mode if the document is currently in fullscreen.
  *
  * This function uses the standard `exitFullscreen()` API when available,
  * and falls back to vendor-prefixed exit methods for Safari, IE11, and Firefox.
+ * Does nothing when the document is not in fullscreen (avoids a rejected `exitFullscreen()` promise).
  * Any errors from the standard promise-based exit request are caught
  * and logged using `logger.logPromiseFailed`.
  */
@@ -424,6 +455,14 @@ export declare function findPropertyByRegexPath<T = Record<string, unknown>>(obj
  */
 export declare function isImage(item: string): boolean;
 /**
+ * Loads an image from a URL or a data URL.
+ *
+ * @param src - The image URL or data URL
+ * @returns A promise that resolves with the loaded image
+ * @throws {Error} When the image fails to load
+ */
+export declare function loadImage(src: string): Promise<HTMLImageElement>;
+/**
  * Checks object to see if it can be converted to a string; if not, returns an empty string
  *
  * @param str - The unknown object to stringify
@@ -441,13 +480,6 @@ export declare function stringify(str: unknown): unknown | string;
  *   - `timeoutId`: The ID of the underlying setTimeout, useful for advanced control.
  */
 export declare function doTimeout(timeout: number): DelayJob;
-/**
- * Formats a duration in milliseconds into a compact human-readable string.
- *
- * @param durationMs - The duration in milliseconds to format
- * @returns A formatted string such as "150ms", "2.500s", "3m 05s", or "1h 03m 05s"
- */
-export declare function formatDuration(durationMs: number): string;
 /**
  * Awaits for a specified duration before resolving.
  *
@@ -604,12 +636,6 @@ export declare function scrollIfNotVisible(el: HTMLElement, blockValue: ScrollLo
  * @param listItem - The list item element to scroll into view
  */
 export declare function scrollListItemIntoView(listItem: HTMLElement): void;
-/**
- * Checks whether the current environment is running on localhost port 8080.
- *
- * @returns True if the current hostname is localhost and the port is 8080; otherwise, false
- */
-export declare function isLocalhost(): boolean;
 /**
  * Formats a numeric value according to the display language.
  *
