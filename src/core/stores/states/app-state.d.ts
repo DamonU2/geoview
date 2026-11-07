@@ -3,7 +3,20 @@ import type { TypeInitialGeoviewLayerType } from '@/api/types/layer-schema-types
 import type { TypeSetStore, TypeGetStore } from '@/core/stores/geoview-store';
 import type { NotificationDetailsType } from '@/core/components/notifications/notifications';
 import type { TypeMapFeaturesConfig } from '@/core/types/global-types';
+import type { DrawGeometryType } from '@/core/stores/states/drawer-state';
 import type { TimeIANA, TypeDisplayDateDefaults } from '@/core/utils/date-mgt';
+/** Describes the visible map hint for drawing, measurement, or editing. */
+export type TypeDrawingHint = {
+    /** The tool that owns the drawing workflow. */
+    tool: 'drawing' | 'measurement';
+    /** Geometry workflow described by the hint. */
+    geometry: DrawGeometryType;
+    /** Whether the first coordinate has been placed. */
+    started: boolean;
+} | {
+    /** Identifies the editing workflow. */
+    tool: 'editing';
+} | undefined;
 /**
  * Represents the application-level Zustand store slice.
  *
@@ -37,6 +50,8 @@ export interface IAppState {
     isCircularProgressActive: boolean;
     /** Whether the map crosshairs overlay is currently active. */
     isCrosshairsActive: boolean;
+    /** Current drawing instructions displayed on the map, if any. */
+    drawingHint: TypeDrawingHint;
     /** Whether the viewer is currently in fullscreen mode. */
     isFullscreenActive: boolean;
     /** The list of active notification messages shown to the user. */
@@ -55,6 +70,8 @@ export interface IAppState {
     actions: {
         setCircularProgress: (active: boolean) => void;
         setCrosshairActive: (active: boolean) => void;
+        /** Sets the visible drawing or editing instructions. */
+        setDrawingHint: (drawingHint: TypeDrawingHint) => void;
         setDisplayLanguage: (lang: TypeDisplayLanguage) => void;
         setDisplayDateMode: (displayDateMode: DisplayDateMode) => void;
         setDisplayDateTimezone: (displayDateTimezone: TimeIANA) => void;
@@ -91,6 +108,8 @@ export declare const useStoreAppIsCircularProgressActive: () => boolean;
 export declare const getStoreAppIsCrosshairsActive: (mapId: string) => boolean;
 /** Hook that returns whether the crosshairs overlay is active. */
 export declare const useStoreAppIsCrosshairsActive: () => boolean;
+/** Hook that returns the current on-map drawing instructions. */
+export declare const useStoreAppDrawingHint: () => TypeDrawingHint;
 /**
  * Gets the disabled layer types for the given map.
  *
@@ -321,6 +340,13 @@ export declare const setStoreAppDisplayDateTimezone: (mapId: string, displayDate
  * @param active - Whether the crosshairs are active
  */
 export declare const setStoreAppCrosshairActive: (mapId: string, active: boolean) => void;
+/**
+ * Sets the current on-map drawing instructions.
+ *
+ * @param mapId - The map identifier
+ * @param drawingHint - The drawing type and whether its sketch has started
+ */
+export declare const setStoreAppDrawingHint: (mapId: string, drawingHint: TypeDrawingHint) => void;
 /**
  * Sets the fullscreen mode active state.
  *

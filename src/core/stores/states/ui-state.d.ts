@@ -38,6 +38,8 @@ export interface IUIState {
     navBarComponents: TypeValidNavBarProps[];
     /** Version counter that increments when nav-bar button panels are added or removed (triggers re-render). */
     navBarButtonPanelVersion: number;
+    /** Version counter that closes map-control popovers when incremented. */
+    popoverCloseVersion: number;
     /** The current resize value (percentage) for the footer panel. */
     footerPanelResizeValue: number;
     /** Whether the map info bar is expanded (dynamic mode only). */
@@ -72,6 +74,8 @@ export interface IUIState {
         removeAppBarPanelId: (id: string) => void;
         /** Increments the nav-bar button panel version to trigger a re-render. */
         bumpNavBarButtonPanelVersion: () => void;
+        /** Requests that map-control popovers close. */
+        closeMapPopovers: () => void;
         /** Sets the map info bar expanded state. */
         setMapInfoExpanded: (expanded: boolean) => void;
     };
@@ -158,6 +162,8 @@ export declare const getStoreUIAppBarPanelIds: (mapId: string) => string[];
 export declare const useStoreUIAppBarPanelIds: () => string[];
 /** Hooks the nav-bar button panel version counter (triggers re-render on change). */
 export declare const useStoreUINavBarButtonPanelVersion: () => number;
+/** Hooks the map-control popover close request counter. */
+export declare const useStoreUIPopoverCloseVersion: () => number;
 /** Hooks the current focus-trap item from the UI state. */
 export declare const useStoreUIActiveFocusItem: () => FocusItemProps;
 /** Hooks whether the GeoView-level keyboard focus trap is active. */
@@ -283,6 +289,12 @@ export declare const removeStoreUIAppBarPanelId: (mapId: string, id: string) => 
  * @param mapId - The map identifier
  */
 export declare const bumpStoreUINavBarButtonPanelVersion: (mapId: string) => void;
+/**
+ * Requests that map-control popovers close.
+ *
+ * @param mapId - The map identifier
+ */
+export declare const closeStoreUIMapPopovers: (mapId: string) => void;
 /** Describes which element holds the focus trap and where to restore focus on release. */
 export type FocusItemProps = {
     /** The id of the element that currently has focus, or false if no focus trap is active. */
