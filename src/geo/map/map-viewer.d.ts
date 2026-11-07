@@ -4,6 +4,7 @@ import { Overlay } from 'ol';
 import OLMap from 'ol/Map';
 import View from 'ol/View';
 import type { Coordinate } from 'ol/coordinate';
+import type { Pixel } from 'ol/pixel';
 import type { Extent } from 'ol/extent';
 import type { Type as OLGeomType } from 'ol/geom/Geometry';
 import type { Projection as OLProjection } from 'ol/proj';
@@ -654,6 +655,27 @@ export declare class MapViewer {
      * @throws {CancelledError} When another interaction interrupts the fit animation
      */
     fitViewportToMidpointsLonLat(midpointWSENCoords: readonly Coordinate[], useRotation?: boolean, useAnimation?: boolean): Promise<void>;
+    /**
+     * Gets map position information at a rendered viewport pixel, accounting for view padding and rotation.
+     *
+     * @param pixel - The pixel relative to the map viewport
+     * @returns The position information, or undefined before a coordinate transform is available
+     */
+    getMapPositionFromPixel(pixel: Pixel): TypeMapMouseInfo | undefined;
+    /**
+     * Gets the map position under a pointer given in browser client coordinates.
+     *
+     * @param clientX - The pointer X position in the browser viewport
+     * @param clientY - The pointer Y position in the browser viewport
+     * @returns The position, or undefined when the pointer is outside the map or the viewport has no size
+     */
+    getMapPositionFromClientPoint(clientX: number, clientY: number): TypeMapMouseInfo | undefined;
+    /**
+     * Gets the map position under the crosshair, centered on the full viewport rather than the padded view.
+     *
+     * @returns The position, or undefined before the viewport has a size
+     */
+    getViewportCenterPosition(): TypeMapMouseInfo | undefined;
     /**
      * Transforms extent from LonLat to the current projection of the map.
      *

@@ -609,6 +609,13 @@ export declare function createGuideObject(language: TypeDisplayLanguage, assetsU
  */
 export declare function handleEscapeKey(key: string, cb?: () => void, callbackId?: string, isFocusTrapped?: boolean): void;
 /**
+ * Checks whether an element accepts typed text or selection, so keyboard shortcuts must not override its native keys.
+ *
+ * @param element - The element to check, such as the active element
+ * @returns True when the element is a text input, textarea, select or content-editable element
+ */
+export declare function isEditableElement(element: Element | null): boolean;
+/**
  * Check if element is in viewport.
  *
  * @param el - The element to check for

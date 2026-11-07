@@ -3,6 +3,7 @@ import type { Extent, TypeDisplayLanguage, TypeDisplayTheme } from '@/api/types/
 import { AbstractMapViewerController } from '@/core/controllers/base/abstract-map-viewer-controller';
 import type { ControllerRegistry } from '@/core/controllers/base/controller-registry';
 import { type FocusItemProps, type TypeFooterTabEntry } from '@/core/stores/states/ui-state';
+import { type TypeDrawingHint } from '@/core/stores/states/app-state';
 import type { TimeIANA } from '@/core/utils/date-mgt';
 import type { TypeHTMLElement } from '@/core/types/global-types';
 import type { SnackbarType } from '@/core/utils/notifications';
@@ -169,6 +170,24 @@ export declare class UIController extends AbstractMapViewerController {
      * @param active - Whether the crosshair is active
      */
     setCrosshairActive(active: boolean): void;
+    /**
+     * Closes map-control popovers and releases their focus trap without restoring caller focus.
+     */
+    closeMapPopovers(): void;
+    /**
+     * Returns focus to the navbar button that started a keyboard drawing tool.
+     *
+     * Does nothing unless the map itself has focus, and not in fullscreen, where Escape exits fullscreen instead.
+     *
+     * @param suffix - The map-relative id suffix of the tool button
+     */
+    focusToolButton(suffix: string): void;
+    /**
+     * Sets the current on-map drawing instructions.
+     *
+     * @param drawingHint - The drawing type and whether its sketch has started
+     */
+    setDrawingHint(drawingHint: TypeDrawingHint): void;
     /**
      * Activates or deactivates WCAG keyboard map interactions (pan and zoom).
      *
