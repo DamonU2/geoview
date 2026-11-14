@@ -10,6 +10,8 @@ interface NavbarPanelButtonType {
     keepPanelMounted?: boolean;
     /** Accessible live-region content that must remain available when the panel is closed. */
     liveRegionContent?: ReactNode;
+    /** Requests a change to the panel's open state. */
+    onOpenChange?: (isOpen: boolean) => void;
 }
 /**
  * Creates a navbar button with a popover panel.
@@ -17,6 +19,6 @@ interface NavbarPanelButtonType {
  * @param props - The navbar panel button properties
  * @returns The navbar panel button component
  */
-export default function NavbarPanelButton({ buttonPanel, isActive, keepPanelMounted, liveRegionContent, }: NavbarPanelButtonType): JSX.Element;
+export default function NavbarPanelButton({ buttonPanel, isActive, keepPanelMounted, liveRegionContent, onOpenChange, }: NavbarPanelButtonType): JSX.Element;
 export {};
 //# sourceMappingURL=nav-bar-panel-button.d.ts.map
