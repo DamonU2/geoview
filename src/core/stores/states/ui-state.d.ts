@@ -28,6 +28,10 @@ export interface IUIState {
     corePackagesComponents: TypeValidMapCorePackageProps[];
     /** Identifies which element currently holds focus-trap control. */
     focusItem: FocusItemProps;
+    /** One-shot request for the UI shell to restore focus after a focus trap closes. */
+    focusRestoreRequest: TypeFocusRestoreRequest | undefined;
+    /** Monotonic identifier used to distinguish successive focus restoration requests. */
+    focusRestoreSequence: number;
     /** Tab identifiers that are hidden from the footer bar. */
     hiddenTabs: string[];
     /** Footer tab entries registered via the FooterBarApi (serializable metadata only — no JSX). */
@@ -50,8 +54,10 @@ export interface IUIState {
     actions: {
         /** Enables the focus trap on a specific UI element. */
         enableFocusTrap: (uiFocus: FocusItemProps) => void;
-        /** Disables the focus trap and optionally restores focus to a callback element. */
+        /** Disables the focus trap and publishes an optional focus restoration request. */
         disableFocusTrap: (callbackElementId?: string) => void;
+        /** Clears a focus restoration request after the UI shell handles it. */
+        clearFocusRestoreRequest: (requestId: number) => void;
         /** Sets the active footer-bar tab by id. */
         setActiveFooterBarTab: (id: string | undefined) => void;
         /** Sets the active app-bar tab, its open state, and whether focus is trapped. */
@@ -166,6 +172,8 @@ export declare const useStoreUINavBarButtonPanelVersion: () => number;
 export declare const useStoreUIPopoverCloseVersion: () => number;
 /** Hooks the current focus-trap item from the UI state. */
 export declare const useStoreUIActiveFocusItem: () => FocusItemProps;
+/** Hooks the pending focus restoration request for the UI shell. */
+export declare const useStoreUIFocusRestoreRequest: () => TypeFocusRestoreRequest | undefined;
 /** Hooks whether the GeoView-level keyboard focus trap is active. */
 export declare const useStoreUIActiveTrapGeoView: () => boolean;
 /** Hooks the footer panel resize value. */
@@ -220,6 +228,12 @@ export declare const enableStoreUIFocusTrap: (mapId: string, uiFocus: FocusItemP
  * @param callbackElementId - Optional element identifier to restore focus to. If 'no-focus' is passed, focus is not restored
  */
 export declare const disableStoreUIFocusTrap: (mapId: string, callbackElementId?: string) => void;
+/** Clears a focus restoration request after the UI shell handles it.
+ *
+ * @param mapId - The map identifier
+ * @param requestId - The identifier of the completed request
+ */
+export declare const clearStoreUIFocusRestoreRequest: (mapId: string, requestId: number) => void;
 /**
  * Toggles the GeoView-level keyboard focus trap.
  *
@@ -301,6 +315,13 @@ export type FocusItemProps = {
     activeElementId: string | false;
     /** The id of the element to restore focus to when the trap is released, or false. */
     callbackElementId: string | false;
+};
+/** A one-shot request for the UI shell to restore focus after a focus trap closes. */
+export type TypeFocusRestoreRequest = {
+    /** Unique identifier for this request. */
+    requestId: number;
+    /** Map-scoped element id to receive focus. */
+    elementId: string;
 };
 /** Describes the active app-bar tab state. */
 export type ActiveAppBarTabType = {
