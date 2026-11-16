@@ -1,0 +1,11 @@
+{
+  "isOpen": true,
+  "legendList": [
+    {
+      "legendTitle": "My Legend Item",
+      "content": "Custom Legend Text",
+      "extent": []
+    }
+  ],
+  "version": "1.0"
+}

@@ -1,0 +1,161 @@
+<!doctype html><html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/><title>OSDP Integration - Canadian Geospatial Platform Viewer</title><link rel="shortcut icon" href="./favicon.ico"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="msapplication-config" content="./img/browserconfig.xml"/><meta name="theme-color" content="#ffffff"/><meta name="msapplication-TileColor" content="#da532c"/><meta name="theme-color" content="#ffffff"/><link href="https://fonts.googleapis.com/css?family=Roboto|Montserrat:200,300,400,900|Merriweather" rel="stylesheet"/><link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/><link rel="stylesheet" href="css/style.css"/><script src="cgpv-main.js"></script></head><body><div class="header-table"><table><tbody><tr><td><img class="header-logo" alt="logo" src="./img/Logo.png"/></td><td class="header-title"><h1><strong>OSDP Integration</strong></h1></td></tr><tr><td><a href="./demos.html">Main</a><br/></td></tr></tbody></table><table><tbody><tr><td><p>Demonstration of Open Science Data Portal Integration</p></td></tr></tbody></table></div><div class="map-title-holder"><h4 id="HMap1">OSDP Integration</h4></div><div id="mapSection"><div id="Map1" class="geoview-map" data-lang="fr" data-config="{
+        'map': {
+          'interaction': 'dynamic',
+          'viewSettings': {
+            'projection': 3857,
+            'homeView': {
+              'zoomAndCenter': [8, [-71.26, 46.8]]
+            }
+          },
+          'basemapOptions': {
+            'basemapId': 'transport',
+            'shaded': false,
+            'labeled': true
+          },
+          'listOfGeoviewLayerConfig': []
+        },
+        'components': ['overview-map'],
+        'navBar': ['zoom', 'fullscreen', 'home', 'location', 'basemap-select'],
+        'appBar': {
+          'tabs': {
+            'core': ['legend', 'details', 'geolocator', 'export']
+          }
+        },
+        'footerBar': {
+          'tabs': {
+            'core': ['layers', 'data-table', 'time-slider', 'geochart']
+          }
+        },
+        'corePackages': [],
+        'serviceUrls': {
+          'metadataUrl': 'https://osdp-psdo.canada.ca/dp/en/search/metadata/NRCAN-FGP-1-'
+        },
+        'theme': 'geo.ca'
+      }"></div></div><div style="display: flex"><h3>Changes to map div:</h3><div><button id="deleteMap" style="margin: 10px;margin-left: 30px;" title="Deletes map div if it exists (deleting and unmounting the MapViewer in the process).">Delete map div</button></div><div><button id="createMap" style="margin: 10px" title="Creates a new div for the map, if the original div has been deleted">Create map div</button></div><div><button id="refreshMap" style="margin: 10px">Refresh map</button></div></div><br><br><script src="codedoc.js"></script><script>// Empty map config
+      let mapConfig = {
+        map: {
+          interaction: 'dynamic',
+          viewSettings: {
+            projection: 3857,
+            homeView: {
+              zoomAndCenter: [8, [-71.26, 46.8]]
+            }
+          },
+          basemapOptions: {
+            basemapId: 'transport',
+            shaded: false,
+            labeled: true,
+          },
+          listOfGeoviewLayerConfig: [],
+        },
+        components: ['overview-map'],
+        navBar: ['zoom', 'fullscreen', 'home', 'location', 'basemap-select'],
+        appBar: {
+          tabs: {
+            core: ['legend', 'details', 'geolocator', 'export'],
+          },
+        },
+        footerBar: {
+          tabs: {
+            core: ['layers', 'data-table', 'time-slider', 'geochart'],
+          },
+        },
+        corePackages: [],
+        serviceUrls: {
+          metadataUrl: 'https://osdp-psdo.canada.ca/dp/en/search/metadata/NRCAN-FGP-1-'
+        },
+        theme: 'geo.ca',
+      };
+
+      function createMapDiv() {
+        if (!document.getElementById('Map1')) {
+          // Create the div
+          const newDiv = document.createElement('div');
+
+          // Create id and data-lang attributes and add them to div
+          const id = document.createAttribute('id');
+          id.value = 'Map1';
+          newDiv.setAttributeNode(id);
+          const dataLang = document.createAttribute('data-lang');
+          dataLang.value = lang;
+          newDiv.setAttributeNode(dataLang);
+
+          // Append the div to the mapSection div
+          document.getElementById('mapSection').appendChild(newDiv);
+        }
+      }
+
+      /** OSDP function
+       * Removes a map if it exists.
+       *
+       * @param map The map id.
+       * @returns Promise<void>
+       */
+      async function removeMap(mapId) {
+        if (cgpv.api.hasMapViewer(mapId)) {
+            await cgpv.api.deleteMapViewer(mapId, false);
+        }
+      }
+
+      /** OSDP function
+       * Refresh the map.
+       *
+       * @param layers Array of layers.
+       */
+      async function refreshMap() {
+        try {
+          // Remove the map
+          await removeMap('Map1');
+
+          // Create map from config
+          await cgpv.api.createMapFromConfig('Map1', JSON.stringify(mapConfig), 800).then((mapViewer) => {
+
+
+          });
+        } catch (error) {
+          console.error('Failed to create map from config', error);
+        }
+      }
+
+      // Delete Button============================================================================================================
+      const deleteMapButton = document.getElementById('deleteMap');
+
+      // add an event listener when a button is clicked
+      deleteMapButton.addEventListener('click', function () {
+        // Delete map div
+        document.getElementById('Map1').remove();
+      });
+
+      // Create Button============================================================================================================
+      const createMapButton = document.getElementById('createMap');
+
+      // add an event listener when a button is clicked
+      createMapButton.addEventListener('click', createMapDiv);
+
+      // Refresh Button============================================================================================================
+      const refreshMapButton = document.getElementById('refreshMap');
+
+      // add an event listener when a button is clicked
+      refreshMapButton.addEventListener('click', function () {
+        createMapDiv();
+        refreshMap();
+      });
+
+      // OSDP event trapping for notification
+      cgpv.onMapInit((mapViewer) => {
+
+        // listen to map language changed event
+        mapViewer.onMapLanguageChanged((sender, payload) => {
+          mapViewer.notifications.addNotificationWarning(`MapViewer: Map language changed to ${payload.language}`);
+          mapViewer.notifications.showWarning('Map language changed', [])
+        });
+
+        // Listen to layer removed event
+        mapViewer.layer.onLayerConfigRemoved((sender, payload) => {
+          mapViewer.notifications.addNotificationSuccess('LayerApi: ' + payload.layerName + ' removed'); // does not show on map
+          mapViewer.notifications.showMessage('Layer '  + payload.layerName + ' removed', [], true); // true will add a notification
+        });
+      });
+
+      // initialize cgpv
+      cgpv.init();</script></body></html>
