@@ -221,6 +221,18 @@ export declare class DrawerController extends AbstractMapViewerController {
      */
     addCoordinateToDrawing(coordinate: number[]): boolean;
     /**
+     * Returns focus to the drawer edit button.
+     *
+     * Does nothing unless the map itself has focus, and not in fullscreen, where Escape exits fullscreen instead.
+     */
+    focusDrawerEditButton(): void;
+    /**
+     * Returns focus to the drawer draw button.
+     *
+     * Does nothing unless the map itself has focus, and not in fullscreen, where Escape exits fullscreen instead.
+     */
+    focusDrawerDrawButton(): void;
+    /**
      * Finishes the current drawing when using keyboard/crosshair input.
      */
     finishCurrentDrawing(): void;
